@@ -7,10 +7,6 @@ export class AuthRouter extends BaseRouter<AuthController> {
   }
 
   initializeRoutes(): void {
-    this.router.get('/auth', (_req, res) => {
-      res.json({
-        message: 'Auth Router',
-      });
-    });
+    this.router.get('/auth', this.controller.greeting);
   }
 }

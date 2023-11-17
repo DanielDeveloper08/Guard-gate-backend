@@ -11,7 +11,7 @@ class AppServer extends ConfigServer {
     super();
     this.app = express();
     this.middlewares();
-
+    this.dbConnect();
     this.app.use('/api/v1', this.routers());
   }
 
@@ -26,9 +26,17 @@ class AppServer extends ConfigServer {
     ];
   }
 
+  private dbConnect(): Promise<void> {
+    return this.initConnect
+      .then(() => console.info('Database connected!'))
+      .catch((err) => {
+        console.error('Database connection error', err);
+      });
+  }
+
   public listen() {
     this.app.listen(this.port, () => {
-      console.info(`Listen in port: ${this.port}`);
+      console.info(`Server started on port: ${this.port}`);
     });
   }
 }

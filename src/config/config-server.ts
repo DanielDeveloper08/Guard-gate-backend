@@ -1,4 +1,6 @@
 import * as dotenv from 'dotenv';
+import { DataSource } from 'typeorm';
+import { AppDataSource } from '../database';
 
 export abstract class ConfigServer {
   constructor() {
@@ -31,5 +33,9 @@ export abstract class ConfigServer {
     }
 
     return '.' + arrEnv.join('.');
+  }
+
+  public get initConnect(): Promise<DataSource> {
+    return AppDataSource.initialize();
   }
 }
