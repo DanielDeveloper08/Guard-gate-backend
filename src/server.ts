@@ -11,7 +11,7 @@ class AppServer extends ConfigServer {
     super();
     this.app = express();
     this.middlewares();
-    this.dbConnect();
+    this.initDbConnect();
     this.app.use('/api/v1', this.routers());
   }
 
@@ -24,14 +24,6 @@ class AppServer extends ConfigServer {
     return [
       new AuthRouter().router
     ];
-  }
-
-  private dbConnect(): Promise<void> {
-    return this.initConnect
-      .then(() => console.info('Database connected!'))
-      .catch((err) => {
-        console.error('Database connection error', err);
-      });
   }
 
   public listen() {

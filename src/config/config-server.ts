@@ -1,5 +1,4 @@
 import * as dotenv from 'dotenv';
-import { DataSource } from 'typeorm';
 import { AppDataSource } from '../database';
 
 export abstract class ConfigServer {
@@ -35,7 +34,12 @@ export abstract class ConfigServer {
     return '.' + arrEnv.join('.');
   }
 
-  public get initConnect(): Promise<DataSource> {
-    return AppDataSource.initialize();
+  protected async initDbConnect(): Promise<void> {
+    try {
+      await AppDataSource.initialize();
+      console.info('Database connected!');
+    } catch (error) {
+      console.error('Database connection error', error);
+    }
   }
 }

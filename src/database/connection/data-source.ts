@@ -1,10 +1,8 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
-import path from 'path';
+import { UserEntity } from '../entities/user.entity';
 
 dotenv.config();
-
-const entitiesPath = path.resolve('src', 'database', 'entities');
 
 const dataSourceConfig: DataSourceOptions = {
   type: 'postgres',
@@ -13,10 +11,10 @@ const dataSourceConfig: DataSourceOptions = {
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  synchronize: true,
-  logging: true,
+  synchronize: JSON.parse(process.env.DB_SYNC!),
+  logging: false,
   entities: [
-    `${entitiesPath}/*.entity{.ts,.js}`
+    UserEntity,
   ],
   migrations: [],
   poolSize: 10,
