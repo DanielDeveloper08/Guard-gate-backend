@@ -1,12 +1,23 @@
 import { BaseRouter } from '../../shared/base-router';
 import { AuthController } from './controller';
+import { AuthMiddleware } from './middleware';
 
-export class AuthRouter extends BaseRouter<AuthController> {
+export class AuthRouter extends BaseRouter<AuthController, AuthMiddleware> {
   constructor() {
-    super(AuthController);
+    super(AuthController, AuthMiddleware);
   }
 
   initializeRoutes(): void {
-    this.router.get('/auth', this.controller.greeting);
+    this.router.post(
+      '/auth/login',
+      this.middleware!.loginMdw(),
+      this.controller.login
+    );
+
+    this.router.post(
+      '/auth/register',
+      this.middleware!.loginMdw(),
+      this.controller.register
+    );
   }
 }

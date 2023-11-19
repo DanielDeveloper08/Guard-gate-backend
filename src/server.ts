@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { ConfigServer } from './config/config-server';
-import { AuthRouter } from './modules/auth/router';
+import { AuthRouter } from './modules';
+import { GlobalMiddleware } from './middlewares/global-middleware';
 
 class AppServer extends ConfigServer {
   private readonly app: express.Application;
@@ -13,6 +14,7 @@ class AppServer extends ConfigServer {
     this.middlewares();
     this.initDbConnect();
     this.app.use('/api/v1', this.routers());
+    this.app.use(GlobalMiddleware.wrapValidations);
   }
 
   private middlewares() {

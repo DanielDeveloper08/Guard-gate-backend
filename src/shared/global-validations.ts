@@ -1,6 +1,6 @@
 import { Joi } from 'express-validation';
 
-export class Validations {
+export class GlobalValidations {
   constructor() {}
 
   validString(propiedad: string, maximoCaracteres: number) {

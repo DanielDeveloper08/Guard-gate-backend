@@ -1,45 +1,25 @@
-import * as dotenv from 'dotenv';
+import { DataSource } from 'typeorm';
 import { AppDataSource } from '../database';
+import { Environments } from './environments';
 
-export abstract class ConfigServer {
-  constructor() {
-    const nodeNameEnv = this.createPathEnv(this.nodeEnv);
-    dotenv.config({
-      path: nodeNameEnv,
-    });
+export abstract class ConfigServer extends Environments {
+
+  constructor(
+    private readonly _appDataSource = AppDataSource.getInstance(),
+  ) {
+    super();
   }
 
-  public getEnvironment(key: string): string | undefined {
-    return process.env[key];
-  }
-
-  public getNumberEnv(key: string): number | undefined {
-    return this.getEnvironment(key)
-      ? Number(this.getEnvironment(key))
-      : undefined;
-  }
-
-  public get nodeEnv(): string {
-    return this.getEnvironment('NODE_ENV')?.trim() ?? '';
-  }
-
-  public createPathEnv(path: string): string {
-    const arrEnv = ['env'];
-
-    if (path.length > 0) {
-      const stringToArray = path.split('.');
-      arrEnv.unshift(...stringToArray);
-    }
-
-    return '.' + arrEnv.join('.');
+  private get dataSource(): DataSource {
+    return this._appDataSource.getSource();
   }
 
   protected async initDbConnect(): Promise<void> {
     try {
-      await AppDataSource.initialize();
+      await this.dataSource.initialize();
       console.info('Database connected!');
     } catch (error) {
-      console.error('Database connection error', error);
+      console.error('Database connection error:', error);
     }
   }
 }

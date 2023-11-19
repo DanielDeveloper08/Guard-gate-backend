@@ -17,17 +17,17 @@ export abstract class BaseRouter<T, U = undefined> implements BaseRouterI {
     this.initializeRoutes();
   }
 
-  protected handleMiddleware(
-    _req: Request,
-    _res: Response,
-    next: NextFunction
-  ): void {
-    if (this.middleware) {
-      console.log('Middleware ejecutado!');
-    }
+  // protected handleMiddleware(
+  //   _req: Request,
+  //   _res: Response,
+  //   next: NextFunction
+  // ): void {
+  //   if (this.middleware) {
+  //     console.log('Middleware ejecutado!');
+  //   }
 
-    next();
-  }
+  //   next();
+  // }
 
   abstract initializeRoutes(): void;
 }
