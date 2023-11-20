@@ -7,11 +7,17 @@ import { RoleEntity } from './role.entity';
 @Entity({ name: 'usuario' })
 export class UserEntity extends BaseEntity {
 
-  @Column('varchar', { name: 'usuario', length: 255 })
+  @Column('varchar', { name: 'usuario', length: 255, unique: true })
   user!: string;
 
   @Column('varchar', { name: 'contrasenia', length: 255 })
   password!: string;
+
+  @Column('integer', { name: 'id_persona' })
+  personId!: number;
+
+  @Column('integer', { name: 'id_rol', nullable: true })
+  roleId!: number | null;
 
   @Column('boolean', { name: 'estado', default: true })
   status!: boolean;

@@ -1,4 +1,4 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { OperationEntity } from './operation.entity';
 import { RoleEntity } from './role.entity';
 
@@ -7,6 +7,12 @@ export class RoleOperationEntity {
 
   @PrimaryGeneratedColumn('increment', { type: 'integer', name: 'id' })
   id!: number;
+
+  @Column('integer', { name: 'id_rol' })
+  roleId!: number;
+
+  @Column('integer', { name: 'id_operacion' })
+  operationId!: number;
 
   @ManyToOne(() => RoleEntity, (role) => role.roleOperations)
   @JoinColumn([{ name: 'id_rol', referencedColumnName: 'id' }])

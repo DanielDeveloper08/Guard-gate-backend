@@ -11,6 +11,9 @@ export class TokenOtpEntity extends BaseEntity {
   @Column('boolean', { name: 'usado', default: false })
   used!: boolean;
 
+  @Column('integer', { name: 'id_usuario' })
+  userId!: number;
+
   @Column('boolean', { name: 'estado', default: true })
   status!: boolean;
 

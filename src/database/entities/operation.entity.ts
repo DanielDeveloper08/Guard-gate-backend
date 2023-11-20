@@ -9,6 +9,9 @@ export class OperationEntity extends BaseEntity {
   @Column('varchar', { name: 'nombre', length: 255 })
   name!: string;
 
+  @Column('integer', { name: 'id_modulo' })
+  moduleId!: number;
+
   @ManyToOne(() => ModuleEntity, (module) => module.operations)
   @JoinColumn([{ name: 'id_modulo', referencedColumnName: 'id' }])
   module!: ModuleEntity;
