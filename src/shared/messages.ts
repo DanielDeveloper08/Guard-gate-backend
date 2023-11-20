@@ -15,7 +15,11 @@ export const RECOVER_PASSWORD =
   'Se ha enviado un correo de recuperación con instrucciones a su dirección de correo electrónico.';
 
 export const SEND_OTP_MESSAGE =
-  'Se ha enviado un código de seguridad al correo registrado';
+  'Se ha enviado un código de acceso al correo registrado';
+
+export const INVALID_OTP = 'Código de acceso incorrecto';
+export const OTP_USED = 'Código de acceso ya fue utilizado';
+export const OTP_EXPIRED = 'Código de acceso ya expiró';
 
 export const EXISTS_RECORD = (detail: string) => `Ya existe ${detail}`;
 

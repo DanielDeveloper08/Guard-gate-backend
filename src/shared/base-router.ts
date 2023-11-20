@@ -7,27 +7,15 @@ interface BaseRouterI {
 export abstract class BaseRouter<T, U = undefined> implements BaseRouterI {
   public router: Router;
   public controller: T;
-  public middleware?: U;
+  public validation?: U;
 
-  constructor(TController: new () => T, UMiddleware?: new () => U) {
+  constructor(TController: new () => T, UValidation?: new () => U) {
     this.router = Router();
     this.controller = new TController();
-    this.middleware = UMiddleware ? new UMiddleware() : undefined;
+    this.validation = UValidation ? new UValidation() : undefined;
 
     this.initializeRoutes();
   }
-
-  // protected handleMiddleware(
-  //   _req: Request,
-  //   _res: Response,
-  //   next: NextFunction
-  // ): void {
-  //   if (this.middleware) {
-  //     console.log('Middleware ejecutado!');
-  //   }
-
-  //   next();
-  // }
 
   abstract initializeRoutes(): void;
 }
