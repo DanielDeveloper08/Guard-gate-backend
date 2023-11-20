@@ -24,7 +24,7 @@ export class GlobalMiddleware {
 
       return ServiceResponse.fail({
         res,
-        error,
+        error: message,
       });
     }
 
