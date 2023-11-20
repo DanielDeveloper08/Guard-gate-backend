@@ -2,8 +2,8 @@ import * as jwt from 'jsonwebtoken';
 import { Environments } from '../config/environments';
 
 export class JwtHelper extends Environments {
-  private _jwtKey: string;
-  private _expired: string;
+  private readonly _jwtKey: string;
+  private readonly _expired: string;
 
   constructor() {
     super();
