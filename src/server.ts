@@ -30,6 +30,7 @@ class AppServer extends ConfigServer {
 
   public listen() {
     this.app.listen(this.port, () => {
+      process.env.TZ = 'America/Guayaquil';
       console.info(`Server started on port: ${this.port}`);
     });
   }
