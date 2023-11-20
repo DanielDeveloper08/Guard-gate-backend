@@ -13,7 +13,7 @@ export class UserRepository {
   getByUser(cnx: EntityManager, user: string) {
     return cnx.findOne(
       UserEntity,
-      { where: { user } },
+      { where: { user, status: true } },
     );
   }
 
