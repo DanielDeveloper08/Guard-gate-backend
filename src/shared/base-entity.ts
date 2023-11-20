@@ -11,6 +11,11 @@ export abstract class BaseEntity {
   @CreateDateColumn({ type: 'timestamp', name: 'fecha_creacion' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', name: 'fecha_edicion' })
-  updatedAt!: Date;
+  @UpdateDateColumn({
+    type: 'timestamp',
+    name: 'fecha_edicion',
+    nullable: true,
+    default: null,
+  })
+  updatedAt!: Date | null;
 }
