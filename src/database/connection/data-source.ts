@@ -1,6 +1,14 @@
 import { DataSource, DataSourceOptions, EntityManager } from 'typeorm';
 import { Environments } from '../../config/environments';
-import { UserEntity } from '../entities/user.entity';
+import {
+  ModuleEntity,
+  OperationEntity,
+  PersonEntity,
+  RoleOperationEntity,
+  RoleEntity,
+  TokenOtpEntity,
+  UserEntity,
+} from '..';
 
 export class AppDataSource extends Environments {
   private static instance: AppDataSource | null = null;
@@ -23,7 +31,13 @@ export class AppDataSource extends Environments {
       synchronize: false,
       logging: false,
       entities: [
-        UserEntity
+        ModuleEntity,
+        OperationEntity,
+        PersonEntity,
+        RoleOperationEntity,
+        RoleEntity,
+        TokenOtpEntity,
+        UserEntity,
       ],
       migrations: [],
       poolSize: 10,
