@@ -1,7 +1,13 @@
 import { EntityManager } from 'typeorm';
 import { PersonEntity, TokenOtpEntity, UserEntity } from '../../database';
 import { UserRepository } from '../user/repository';
-import { JwtHelper, EncryptorHelper, RandomHelper, DateFormatHelper } from '../../helpers';
+import {
+  JwtHelper,
+  EncryptorHelper,
+  RandomHelper,
+  DateFormatHelper,
+  EmailHelper,
+} from '../../helpers';
 import {
   LoginPayloadI,
   RegisterPayloadI,
@@ -14,6 +20,7 @@ import {
   OTP_EXPIRED,
   OTP_USED,
   RECORD_CREATED_FAIL,
+  SEND_EMAIL_FAIL,
   SEND_OTP_MESSAGE,
   UNREGISTERED_USER,
   USER_REGISTERED,
@@ -32,6 +39,7 @@ export class AuthService extends Environments {
     private readonly _encryptor = new EncryptorHelper(),
     private readonly _random = new RandomHelper(),
     private readonly _dateFormat = new DateFormatHelper(),
+    private readonly _email = new EmailHelper()
   ) {
     super();
   }
@@ -58,6 +66,14 @@ export class AuthService extends Environments {
     } as TokenOtpEntity;
 
     await this._repoOtp.create(cnx, otpPayload);
+
+    const [, emailSuccess] = await this._email.sendLoginMail({
+      to: person.email,
+      fullname: `${person.names} ${person.surnames}`,
+      code: otpPayload.code,
+    });
+
+    if (!emailSuccess) throw SEND_EMAIL_FAIL;
 
     return SEND_OTP_MESSAGE;
   }
@@ -126,7 +142,8 @@ export class AuthService extends Environments {
 
     const personCreated = await this._repoPerson.create(cnx, personPayload);
 
-    if (!personCreated) return RECORD_CREATED_FAIL(`persona: ${nombres} ${apellidos}`);
+    if (!personCreated)
+      return RECORD_CREATED_FAIL(`persona: ${nombres} ${apellidos}`);
 
     const passwordHashed = this._encryptor.encrypt(contrasenia);
 
@@ -155,13 +172,8 @@ export class AuthService extends Environments {
     };
   }
 
-  private comparePassword(
-    plainPass: string,
-    encryptPass: string
-  ): boolean {
-    return (
-      this._encryptor.encrypt(plainPass) === encryptPass
-    );
+  private comparePassword(plainPass: string, encryptPass: string): boolean {
+    return this._encryptor.encrypt(plainPass) === encryptPass;
   }
 
   private generateOtp(): string {

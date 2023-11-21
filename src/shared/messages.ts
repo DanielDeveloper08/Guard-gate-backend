@@ -17,6 +17,8 @@ export const RECOVER_PASSWORD =
 export const SEND_OTP_MESSAGE =
   'Se ha enviado un código de acceso al correo registrado';
 
+export const SEND_EMAIL_FAIL = 'Ocurrio un error al enviar el correo';
+
 export const INVALID_OTP = 'Código de acceso incorrecto';
 export const OTP_USED = 'Código de acceso ya fue utilizado';
 export const OTP_EXPIRED = 'Código de acceso ya expiró';
