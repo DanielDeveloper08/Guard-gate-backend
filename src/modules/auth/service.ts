@@ -10,7 +10,9 @@ import {
 } from '../../helpers';
 import {
   LoginPayloadI,
+  RecoverPasswordI,
   RegisterPayloadI,
+  ResetPasswordI,
   UserTokenPayloadI,
   ValidateLoginI,
 } from '../../interfaces/auth.interface';
@@ -20,6 +22,9 @@ import {
   OTP_EXPIRED,
   OTP_USED,
   RECORD_CREATED_FAIL,
+  RECORD_EDIT_FAIL,
+  RECOVER_PASSWORD,
+  RESET_PASSWORD,
   SEND_EMAIL_FAIL,
   SEND_OTP_MESSAGE,
   UNREGISTERED_USER,
@@ -28,6 +33,7 @@ import {
 import { PersonRespository } from '../person/repository';
 import { TokenOtpRepository } from '../token-otp/repository';
 import { Environments } from '../../config/environments';
+import { AuthTypeEnum } from '../../enums/auth.enum';
 
 export class AuthService extends Environments {
 
@@ -47,30 +53,18 @@ export class AuthService extends Environments {
   async login(cnx: EntityManager, payload: LoginPayloadI) {
     const { usuario, contrasenia } = payload;
 
-    const user = await this._repo.getByUser(cnx, usuario);
-
-    if (!user) throw UNREGISTERED_USER;
-
-    const person = await this._repoPerson.getById(cnx, user.personId);
-
-    if (!person) throw UNREGISTERED_USER;
+    const { user, person } = await this.getValidUser(cnx, usuario);
 
     const isMatch = this.comparePassword(contrasenia, user.password);
-
     if (!isMatch) throw LOGIN_FAIL;
 
-    const otpPayload = {
-      code: this.generateOtp(),
-      userId: user.id,
-      createdAt: new Date(),
-    } as TokenOtpEntity;
+    const otpCreated = await this.createOtpCode(cnx, user.id);
 
-    await this._repoOtp.create(cnx, otpPayload);
-
-    const [, emailSuccess] = await this._email.sendLoginMail({
+    const [, emailSuccess] = await this._email.sendTwoStepAuth({
       to: person.email,
       fullname: `${person.names} ${person.surnames}`,
-      code: otpPayload.code,
+      code: otpCreated.code,
+      type: AuthTypeEnum.LOGIN,
     });
 
     if (!emailSuccess) throw SEND_EMAIL_FAIL;
@@ -79,29 +73,7 @@ export class AuthService extends Environments {
   }
 
   async validateLogin(cnx: EntityManager, payload: ValidateLoginI) {
-    const { usuario, codigo } = payload;
-
-    const user = await this._repo.getByUser(cnx, usuario);
-
-    if (!user) throw UNREGISTERED_USER;
-
-    const person = await this._repoPerson.getById(cnx, user.personId);
-
-    if (!person) throw UNREGISTERED_USER;
-
-    const codeOtp = await this._repoOtp.getValidCode(cnx, user.id, codigo);
-
-    if (!codeOtp) throw INVALID_OTP;
-    if (codeOtp.used) throw OTP_USED;
-
-    const invalidOtp = this.validateDurationOTP(codeOtp.createdAt);
-
-    if (invalidOtp) {
-      await this._repoOtp.setUsed(cnx, codeOtp.id);
-      throw OTP_EXPIRED;
-    }
-
-    await this._repoOtp.setUsed(cnx, codeOtp.id);
+    const { user, person } = await this.validateOtp(cnx, payload);
 
     const tokenPayload: UserTokenPayloadI = {
       id: user.id,
@@ -143,7 +115,7 @@ export class AuthService extends Environments {
     const personCreated = await this._repoPerson.create(cnx, personPayload);
 
     if (!personCreated)
-      return RECORD_CREATED_FAIL(`persona: ${nombres} ${apellidos}`);
+      throw RECORD_CREATED_FAIL(`persona: ${nombres} ${apellidos}`);
 
     const passwordHashed = this._encryptor.encrypt(contrasenia);
 
@@ -155,7 +127,7 @@ export class AuthService extends Environments {
 
     const userCreated = await this._repo.create(cnx, userPayload);
 
-    if (!userCreated) return RECORD_CREATED_FAIL(`usuario: ${usuario}`);
+    if (!userCreated) throw RECORD_CREATED_FAIL(`usuario: ${usuario}`);
 
     const tokenPayload: UserTokenPayloadI = {
       id: userCreated.id,
@@ -172,12 +144,100 @@ export class AuthService extends Environments {
     };
   }
 
-  private comparePassword(plainPass: string, encryptPass: string): boolean {
-    return this._encryptor.encrypt(plainPass) === encryptPass;
+  async recoverPassword(cnx: EntityManager, payload: RecoverPasswordI) {
+    const { usuario } = payload;
+
+    const { user, person } = await this.getValidUser(cnx, usuario);
+
+    const otpCreated = await this.createOtpCode(cnx, user.id);
+
+    const [, emailSuccess] = await this._email.sendTwoStepAuth({
+      to: person.email,
+      fullname: `${person.names} ${person.surnames}`,
+      code: otpCreated.code,
+      type: AuthTypeEnum.RECOVER_PASSWORD,
+    });
+
+    if (!emailSuccess) throw SEND_EMAIL_FAIL;
+
+    return RECOVER_PASSWORD;
   }
 
-  private generateOtp(): string {
-    return this._random.generateCharacters('num', 6);
+  async resetPassword(cnx: EntityManager, payload: ResetPasswordI) {
+    const { usuario, nueva_contrasenia } = payload;
+
+    const { user } = await this.getValidUser(cnx, usuario);
+
+    const passwordHashed = this._encryptor.encrypt(nueva_contrasenia);
+
+    const userPayload = {
+      password: passwordHashed,
+    } as UserEntity;
+
+    const userUpdated = await this._repo.update(cnx, user.id, userPayload);
+
+    if (!userUpdated) throw RECORD_EDIT_FAIL('la contraseña');
+
+    return RESET_PASSWORD;
+  }
+
+  async validateOtp(cnx: EntityManager, payload: ValidateLoginI) {
+    const { usuario, codigo } = payload;
+
+    const { user, person } = await this.getValidUser(cnx, usuario);
+
+    const codeOtp = await this._repoOtp.getValidCode(cnx, user.id, codigo);
+    if (!codeOtp) throw INVALID_OTP;
+    if (codeOtp.used) throw OTP_USED;
+
+    const invalidOtp = this.validateDurationOTP(codeOtp.createdAt);
+
+    if (invalidOtp) {
+      await this._repoOtp.setUsed(cnx, codeOtp.id);
+      throw OTP_EXPIRED;
+    }
+
+    await this._repoOtp.setUsed(cnx, codeOtp.id);
+
+    return {
+      user,
+      person,
+    };
+  }
+
+  private async getValidUser(cnx: EntityManager, user: string) {
+    const existsUser = await this._repo.getByUser(cnx, user);
+    if (!existsUser) throw UNREGISTERED_USER;
+
+    const existsPerson = await this._repoPerson.getById(
+      cnx,
+      existsUser.personId
+    );
+
+    if (!existsPerson) throw UNREGISTERED_USER;
+
+    return {
+      user: existsUser,
+      person: existsPerson,
+    };
+  }
+
+  private async createOtpCode(cnx: EntityManager, userId: number) {
+    const code = this._random.generateCharacters('num', 6);
+
+    const otpPayload = {
+      code,
+      userId,
+      createdAt: new Date(),
+    } as TokenOtpEntity;
+
+    const otpCreated = await this._repoOtp.create(cnx, otpPayload);
+
+    return otpCreated;
+  }
+
+  private comparePassword(plainPass: string, encryptPass: string): boolean {
+    return this._encryptor.encrypt(plainPass) === encryptPass;
   }
 
   private validateDurationOTP(creationDate: Date): boolean {

@@ -4,7 +4,9 @@ import { AppDataSource } from '../../database';
 import { ServiceResponse } from '../../helpers/service-response';
 import {
   LoginPayloadI,
+  RecoverPasswordI,
   RegisterPayloadI,
+  ResetPasswordI,
   ValidateLoginI,
 } from '../../interfaces/auth.interface';
 
@@ -53,6 +55,57 @@ export class AuthController {
     try {
       const payload = req.body as RegisterPayloadI;
       const data = await this._authSrv.register(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  recoverPassword = async (req: Request, res: Response) => {
+    try {
+      const payload = req.body as RecoverPasswordI;
+      const data = await this._authSrv.recoverPassword(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  validateOtp = async (req: Request, res: Response) => {
+    try {
+      const payload = req.body as ValidateLoginI;
+      const data = await this._authSrv.validateOtp(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  resetPassword = async (req: Request, res: Response) => {
+    try {
+      const payload = req.body as ResetPasswordI;
+      const data = await this._authSrv.resetPassword(this._cnx, payload);
 
       return ServiceResponse.success({
         res,

@@ -43,4 +43,25 @@ export class AuthValidations {
 
     return validate(registerSchema);
   };
+
+  recoverPassword = () => {
+    const recoverPasswordSchema: schema = {
+      body: Joi.object({
+        usuario: this._validations.validString('usuario', 255),
+      }),
+    };
+
+    return validate(recoverPasswordSchema);
+  };
+
+  resetPassword = () => {
+    const resetPasswordSchema: schema = {
+      body: Joi.object({
+        usuario: this._validations.validString('usuario', 255),
+        nueva_contrasenia: this._validations.validString('nueva_contrasenia', 255),
+      }),
+    };
+
+    return validate(resetPasswordSchema);
+  };
 }

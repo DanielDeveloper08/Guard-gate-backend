@@ -23,3 +23,9 @@ export interface UserTokenPayloadI {
   telefono?: string;
   rol?: string;
 }
+
+export type RecoverPasswordI = Pick<LoginPayloadI, 'usuario'>;
+
+export type ResetPasswordI = Pick<LoginPayloadI, 'usuario'> & {
+  nueva_contrasenia: string;
+};

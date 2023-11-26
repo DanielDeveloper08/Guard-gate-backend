@@ -2,7 +2,7 @@ import nodemailer, { Transporter } from 'nodemailer';
 import { Options } from 'nodemailer/lib/smtp-connection';
 import { Environments } from '../config/environments';
 import { TemplateHelper } from './template-helper';
-import { LoginMailPayloadI } from '../interfaces/email.interface';
+import { TwoStepAuthMailI } from '../interfaces/email.interface';
 
 export class EmailHelper extends Environments {
   private readonly _transporter: Transporter;
@@ -40,18 +40,19 @@ export class EmailHelper extends Environments {
     }
   }
 
-  async sendLoginMail(payload: LoginMailPayloadI): Promise<[unknown, boolean]> {
+  async sendTwoStepAuth(
+    payload: TwoStepAuthMailI
+  ): Promise<[unknown, boolean]> {
     try {
-      const loginTemplate = await this._template.generate('login', payload);
+      const template = await this._template.generate('two_step_auth', payload);
 
-      if (!loginTemplate) return [null, false];
+      if (!template) return [null, false];
 
       await this._transporter.sendMail({
         from: '"GuardGateApp.com" <guard_gate_app@mail.com>',
         to: payload.to,
-        subject: 'Inicia Sesión - GuardGateApp',
-        text: 'Inicia Sesión - GuardGateApp',
-        html: loginTemplate,
+        subject: `${payload.type.toUpperCase()} - GuardGateApp`,
+        html: template,
       });
 
       return [null, true];

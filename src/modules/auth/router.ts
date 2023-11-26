@@ -32,5 +32,29 @@ export class AuthRouter extends BaseRouter<AuthController, AuthValidations> {
       ],
       this.controller.register
     );
+
+    this.router.post(
+      '/auth/recover-password',
+      [
+        this.validation!.recoverPassword()
+      ],
+      this.controller.recoverPassword
+    );
+
+    this.router.post(
+      '/auth/validate-otp',
+      [
+        this.validation!.validateLogin()
+      ],
+      this.controller.validateOtp
+    );
+
+    this.router.post(
+      '/auth/reset-password',
+      [
+        this.validation!.resetPassword()
+      ],
+      this.controller.resetPassword
+    );
   }
 }
