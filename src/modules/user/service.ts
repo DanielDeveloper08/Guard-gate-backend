@@ -15,11 +15,10 @@ export class UserService {
   async getByUser(
     cnx: EntityManager,
     user: string
-  ): Promise<UserEntity | undefined> {
+  ) {
     const userFound = await this._repo.getByUser(cnx, user);
+    if (!userFound) return null;
 
-    if (userFound !== null) {
-      return userFound;
-    }
+    return userFound;
   }
 }

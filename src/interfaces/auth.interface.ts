@@ -20,8 +20,8 @@ export interface UserTokenPayloadI {
   nombres: string;
   apellidos: string;
   correo: string;
-  telefono?: string;
-  rol?: string;
+  telefono: string | null;
+  rol: string | null;
 }
 
 export type RecoverPasswordI = Pick<LoginPayloadI, 'usuario'>;

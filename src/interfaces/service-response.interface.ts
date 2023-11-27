@@ -1,5 +1,6 @@
 import { type Response } from 'express';
 import { HttpCodes } from '../enums/http-codes.enum';
+import { ServiceException } from '../shared/service-exception';
 
 export interface ServiceResponseI {
   statusCode: HttpCodes;
@@ -15,5 +16,5 @@ export interface ResponseSuccessI {
 }
 
 export interface ResponseFailI extends Omit<ResponseSuccessI, 'data'> {
-  error: any;
+  error: unknown | Error | ServiceException;
 }

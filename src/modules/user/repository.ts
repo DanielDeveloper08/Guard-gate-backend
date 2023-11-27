@@ -1,5 +1,6 @@
 import { EntityManager } from 'typeorm';
-import { UserEntity } from '../../database';
+import { PersonEntity, RoleEntity, UserEntity } from '../../database';
+import { UserI } from '../../interfaces/user.interface';
 
 export class UserRepository {
 
@@ -11,10 +12,25 @@ export class UserRepository {
   }
 
   getByUser(cnx: EntityManager, user: string) {
-    return cnx.findOne(
-      UserEntity,
-      { where: { user, status: true } },
-    );
+    const query = cnx
+      .createQueryBuilder()
+      .select([
+        'user.id as id',
+        'person.nombres as name',
+        'person.apellidos as surnames',
+        'person.correo as email',
+        'person.telefono as phone',
+        'role.name as role',
+        'user.contrasenia as password',
+      ])
+      .from(UserEntity, 'user')
+      .leftJoin(PersonEntity, 'person', 'user.id_persona = person.id')
+      .leftJoin(RoleEntity, 'role', 'user.id_rol = role.id')
+      .where('user.usuario = :user', { user })
+      .andWhere('user.estado = true')
+      .getRawOne<UserI>();
+
+    return query;
   }
 
   create(cnx: EntityManager, payload: UserEntity) {
