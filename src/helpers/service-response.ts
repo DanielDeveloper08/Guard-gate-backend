@@ -1,11 +1,11 @@
-import _ from 'lodash';
 import { HttpCodes } from '../enums/http-codes.enum';
 import {
   ResponseFailI,
   ResponseSuccessI,
   ServiceResponseI,
 } from '../interfaces/service-response.interface';
-import { OK_200 } from '../shared/messages';
+import { ERR_400, OK_200 } from '../shared/messages';
+import { ServiceException } from '../shared/service-exception';
 
 export class ServiceResponse {
 
@@ -24,11 +24,14 @@ export class ServiceResponse {
   static fail(payload: ResponseFailI) {
     const statusCode = payload.statusCode ?? HttpCodes.BAD_REQUEST;
 
+    const message =
+      payload.error instanceof ServiceException
+        ? payload.error.message
+        : ERR_400;
+
     const response: ServiceResponseI = {
       statusCode,
-      message: _.isObject(payload.error)
-        ? (payload.error as any).message
-        : payload.error,
+      message,
       data: null,
     };
 
