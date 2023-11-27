@@ -25,6 +25,13 @@ export class Environments {
     return Number(value);
   }
 
+  public getBoolEnv(key: string): boolean {
+    const value = this.getEnv(key);
+    if (!value) return false;
+
+    return value.toLowerCase() === 'true';
+  }
+
   public get nodeEnv(): string {
     return this.getEnv('NODE_ENV')?.trim() ?? '';
   }

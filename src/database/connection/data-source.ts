@@ -28,8 +28,8 @@ export class AppDataSource extends Environments {
       username: this.getEnv('DB_USER')!,
       password: this.getEnv('DB_PASS')!,
       database: this.getEnv('DB_NAME')!,
-      synchronize: false,
-      logging: false,
+      synchronize: this.getBoolEnv('DB_SYNC'),
+      logging: this.getBoolEnv('DB_SYNC'),
       entities: [
         ModuleEntity,
         OperationEntity,
@@ -53,11 +53,11 @@ export class AppDataSource extends Environments {
     return AppDataSource.instance;
   }
 
-  public getSource(): DataSource {
+  public get source(): DataSource {
     return this.dataSource;
   }
 
   public get cnx(): EntityManager {
-    return this.getSource().manager;
+    return this.source.manager;
   }
 }
