@@ -58,23 +58,39 @@ export class AuthService extends Environments {
   async login(cnx: EntityManager, payload: LoginPayloadI) {
     const { usuario, contrasenia } = payload;
 
-    const user = await this.getValidUser(cnx, usuario);
+    const user = await this.getValidUser(cnx, usuario, true);
 
-    const isMatch = this.comparePassword(contrasenia, user.password);
+    const isMatch = this.comparePassword(contrasenia, user.password!);
     if (!isMatch) throw new ServiceException(LOGIN_FAIL);
 
-    const otpCreated = await this.createOtpCode(cnx, user.id);
+    // const otpCreated = await this.createOtpCode(cnx, user.id);
 
-    const [, emailSuccess] = await this._email.sendTwoStepAuth({
-      to: user.email,
-      fullname: `${user.names} ${user.surnames}`,
-      code: otpCreated.code,
-      type: AuthTypeEnum.LOGIN,
-    });
+    // const [, emailSuccess] = await this._email.sendTwoStepAuth({
+    //   to: user.email,
+    //   fullname: `${user.names} ${user.surnames}`,
+    //   code: otpCreated.code,
+    //   type: AuthTypeEnum.LOGIN,
+    // });
 
-    if (!emailSuccess) throw new ServiceException(SEND_EMAIL_FAIL);
+    // if (!emailSuccess) throw new ServiceException(SEND_EMAIL_FAIL);
 
-    return SEND_OTP_MESSAGE;
+    // return SEND_OTP_MESSAGE;
+
+    const tokenPayload: UserTokenPayloadI = {
+      id: user.id,
+      nombres: user.names,
+      apellidos: user.surnames,
+      correo: user.email,
+      telefono: user.phone,
+      rol: user.role,
+    };
+
+    const token = this._jwt.create(tokenPayload);
+
+    return {
+      token,
+      usuario: tokenPayload,
+    };
   }
 
   async validateLogin(cnx: EntityManager, payload: ValidateLoginI) {
@@ -93,7 +109,7 @@ export class AuthService extends Environments {
 
     return {
       token,
-      user: tokenPayload,
+      usuario: tokenPayload,
     };
   }
 
@@ -193,6 +209,7 @@ export class AuthService extends Environments {
 
     const userPayload = {
       password: passwordHashed,
+      updatedAt: new Date(),
     } as UserEntity;
 
     const userUpdated = await this._repo.update(cnx, user.id, userPayload);
@@ -225,8 +242,12 @@ export class AuthService extends Environments {
     return user;
   }
 
-  private async getValidUser(cnx: EntityManager, user: string): Promise<UserI> {
-    const existsUser = await this._repo.getByUser(cnx, user);
+  private async getValidUser(
+    cnx: EntityManager,
+    user: string,
+    withPass: boolean = false
+  ): Promise<UserI> {
+    const existsUser = await this._repo.getByUser(cnx, user, withPass);
     if (!existsUser) throw new ServiceException(UNREGISTERED_USER);
 
     return existsUser;

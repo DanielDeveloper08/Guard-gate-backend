@@ -27,7 +27,9 @@ export class ServiceResponse {
     const message =
       payload.error instanceof ServiceException
         ? payload.error.message
-        : ERR_400;
+        : payload.error instanceof Error
+        ? ERR_400
+        : (payload.error as string);
 
     const response: ServiceResponseI = {
       statusCode,

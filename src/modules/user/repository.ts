@@ -11,26 +11,28 @@ export class UserRepository {
     );
   }
 
-  getByUser(cnx: EntityManager, user: string) {
+  getByUser(cnx: EntityManager, user: string, withPass: boolean = false) {
     const query = cnx
       .createQueryBuilder()
       .select([
         'user.id as id',
-        'person.nombres as name',
+        'person.nombres as names',
         'person.apellidos as surnames',
         'person.correo as email',
         'person.telefono as phone',
         'role.name as role',
-        'user.contrasenia as password',
       ])
       .from(UserEntity, 'user')
       .leftJoin(PersonEntity, 'person', 'user.id_persona = person.id')
       .leftJoin(RoleEntity, 'role', 'user.id_rol = role.id')
       .where('user.usuario = :user', { user })
-      .andWhere('user.estado = true')
-      .getRawOne<UserI>();
+      .andWhere('user.estado = :status', { status: true })
 
-    return query;
+    if (withPass) {
+      query.addSelect('user.contrasenia as password');
+    }
+
+    return query.getRawOne<UserI>();
   }
 
   create(cnx: EntityManager, payload: UserEntity) {
