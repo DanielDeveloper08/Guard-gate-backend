@@ -1,5 +1,9 @@
 import * as jwt from 'jsonwebtoken';
 import { Environments } from '../config/environments';
+import {
+  UserTokenPayloadI,
+  UserTokenDecodeI,
+} from '../interfaces/auth.interface';
 
 export class JwtHelper extends Environments {
   private readonly _jwtKey: string;
@@ -11,17 +15,17 @@ export class JwtHelper extends Environments {
     this._expired = this.getEnv('TIME_JWT') ?? '7d';
   }
 
-  public create(payload: object): string {
+  public create(payload: UserTokenPayloadI): string {
     return jwt.sign({ data: { ...payload } }, this._jwtKey, {
       expiresIn: this._expired,
       algorithm: 'HS512',
     });
   }
 
-  public validate(token: string): unknown | null {
+  public validate(token: string): UserTokenDecodeI | null {
     try {
-      return jwt.verify(token, this._jwtKey);
-    } catch (error) {
+      return jwt.verify(token, this._jwtKey) as UserTokenDecodeI;
+    } catch (_) {
       return null;
     }
   }

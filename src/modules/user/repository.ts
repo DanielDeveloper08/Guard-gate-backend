@@ -35,6 +35,12 @@ export class UserRepository {
     return query.getRawOne<UserI>();
   }
 
+  getById(cnx: EntityManager, id: number) {
+    return cnx.findOne(UserEntity, {
+      where: { id },
+    });
+  }
+
   create(cnx: EntityManager, payload: UserEntity) {
     const insert = cnx.create(UserEntity, payload);
     return cnx.save(insert);

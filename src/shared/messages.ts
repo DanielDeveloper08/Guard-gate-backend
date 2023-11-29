@@ -3,7 +3,7 @@ export const ERR_401 = 'No tiene autorización para ejecutar este proceso';
 export const ERR_400 = 'Ocurrio un error, comuníquese con el administrador';
 export const LOGIN_FAIL = 'Usuario y/o contraseña incorrecta';
 
-export const TOKEN_INVALID = 'Su sesión ha expirado Inicie sesión nuevamente';
+export const TOKEN_INVALID = 'Su sesión ha expirado. Inicie sesión nuevamente';
 
 export const USER_REGISTERED = 'Usuario ya tiene una cuenta previa registrada';
 export const UNREGISTERED_USER = 'Usuario no tiene una cuenta previa registrada';

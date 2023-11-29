@@ -1,12 +1,42 @@
 import { Request, Response, NextFunction } from 'express';
 import { ValidationError } from 'express-validation';
-import { ServiceResponse } from '../helpers/service-response';
-import { ERR_400 } from '../shared/messages';
+import { ServiceResponse, JwtHelper } from '../helpers';
+import { ERR_400, ERR_401, TOKEN_INVALID } from '../shared/messages';
+import { HttpCodes } from '../enums/http-codes.enum';
 
 export class GlobalMiddleware {
-  constructor() {}
 
-  static validateJwtToken = () => {};
+  static validateJwtToken = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const token = req.header('Authorization')?.split(' ').at(1);
+
+    if (!token) {
+      return ServiceResponse.fail({
+        res,
+        error: ERR_401,
+        statusCode: HttpCodes.UNAUTHORIZED,
+      });
+    }
+
+    const jwtHelper = new JwtHelper();
+    const tokenPayload = jwtHelper.validate(token);
+
+    if (!tokenPayload) {
+      return ServiceResponse.fail({
+        res,
+        error: TOKEN_INVALID,
+        statusCode: HttpCodes.UNAUTHORIZED,
+      });
+    }
+
+    global.token = token;
+    global.user = tokenPayload.data;
+
+    return next();
+  };
 
   static wrapValidations = (
     error: Error,

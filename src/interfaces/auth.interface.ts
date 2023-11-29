@@ -29,3 +29,8 @@ export type RecoverPasswordI = Pick<LoginPayloadI, 'usuario'>;
 export type ResetPasswordI = Pick<LoginPayloadI, 'usuario'> & {
   nueva_contrasenia: string;
 };
+
+export type UserTokenDecodeI = Record<'data', UserTokenPayloadI> & {
+  iat: number;
+  exp: number;
+};
