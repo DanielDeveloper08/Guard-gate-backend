@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../shared/base-entity';
 import { UserEntity } from './user.entity';
+import { ResidencyEntity } from './residency.entity';
 
 @Entity({ name: 'persona' })
 export class PersonEntity extends BaseEntity {
@@ -19,4 +20,7 @@ export class PersonEntity extends BaseEntity {
 
   @OneToMany(() => UserEntity, (user) => user.person)
   users!: UserEntity[];
+
+  @OneToMany(() => ResidencyEntity, (residency) => residency.person)
+  residences!: ResidencyEntity[];
 }
