@@ -21,4 +21,9 @@ export class UserService {
 
     return userFound;
   }
+
+  async existsUser(cnx: EntityManager, id: number): Promise<boolean> {
+    const userFound = await this._repo.getById(cnx, id);
+    return !!userFound;
+  }
 }
