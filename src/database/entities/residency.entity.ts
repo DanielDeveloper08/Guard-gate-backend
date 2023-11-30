@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../shared/base-entity';
 import { PersonEntity } from './person.entity';
+import { VisitEntity } from './visit.entity';
 
 @Entity({ name: 'residencia' })
 export class ResidencyEntity extends BaseEntity {
@@ -23,4 +24,7 @@ export class ResidencyEntity extends BaseEntity {
   @ManyToOne(() => PersonEntity, person => person.residences)
   @JoinColumn([{ name: 'id_persona', referencedColumnName: 'id' }])
   person!: PersonEntity;
+
+  @OneToMany(() => VisitEntity, visit => visit.residence)
+  visits!: VisitEntity[];
 }

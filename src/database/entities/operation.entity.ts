@@ -16,6 +16,6 @@ export class OperationEntity extends BaseEntity {
   @JoinColumn([{ name: 'id_modulo', referencedColumnName: 'id' }])
   module!: ModuleEntity;
 
-  @OneToMany(() => RoleOperationEntity, (roleOperation) => roleOperation.operations)
+  @OneToMany(() => RoleOperationEntity, (roleOperation) => roleOperation.operation)
   roleOperations!: RoleOperationEntity[];
 }
