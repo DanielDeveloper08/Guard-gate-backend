@@ -16,9 +16,9 @@ export class RoleOperationEntity {
 
   @ManyToOne(() => RoleEntity, (role) => role.roleOperations)
   @JoinColumn([{ name: 'id_rol', referencedColumnName: 'id' }])
-  roles!: RoleEntity[];
+  rol!: RoleEntity;
 
   @ManyToOne(() => OperationEntity, (operation) => operation.roleOperations)
   @JoinColumn([{ name: 'id_operacion', referencedColumnName: 'id' }])
-  operations!: OperationEntity[];
+  operation!: OperationEntity;
 }

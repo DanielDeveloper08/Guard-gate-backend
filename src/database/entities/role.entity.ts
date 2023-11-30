@@ -13,6 +13,6 @@ export class RoleEntity extends BaseEntity {
   @OneToMany(() => UserEntity, (user) => user.role)
   users!: UserEntity[];
 
-  @OneToMany(() => RoleOperationEntity, (roleOperation) => roleOperation.roles)
+  @OneToMany(() => RoleOperationEntity, (roleOperation) => roleOperation.rol)
   roleOperations!: RoleOperationEntity[];
 }
