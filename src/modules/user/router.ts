@@ -18,5 +18,14 @@ export class UserRouter extends BaseRouter<UserController, UserValidations> {
       ],
       this.controller.getResidencesByUserId
     );
+
+    this.router.patch(
+      '/users/main-residency',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.setMainResidency()
+      ],
+      this.controller.setMainResidency
+    )
   }
 }
