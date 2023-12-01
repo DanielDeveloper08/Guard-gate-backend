@@ -20,7 +20,6 @@ export class UserController {
         data,
       });
     } catch (error) {
-      console.error(error);
       return ServiceResponse.fail({
         res,
         error,
