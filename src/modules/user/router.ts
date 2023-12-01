@@ -1,21 +1,22 @@
-import { Request, Response } from 'express';
-import { GlobalMiddleware } from '../../middlewares/global-middleware';
 import { BaseRouter } from '../../shared/base-router';
 import { UserController } from './controller';
+import { UserValidations } from './validations';
+import { GlobalMiddleware } from '../../middlewares/global-middleware';
 
-export class UserRouter extends BaseRouter<UserController> {
+export class UserRouter extends BaseRouter<UserController, UserValidations> {
 
   constructor() {
-    super(UserController);
+    super(UserController, UserValidations);
   }
 
   initializeRoutes(): void {
     this.router.get(
-      '/users',
+      '/users/residences/:id',
       [
-        GlobalMiddleware.validateJwtToken
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.getById()
       ],
-      (req: Request, res: Response) => res.json({ message: 'Hello World' })
-    )
+      this.controller.getResidencesByUserId
+    );
   }
 }

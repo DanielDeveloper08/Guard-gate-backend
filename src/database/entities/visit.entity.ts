@@ -47,7 +47,7 @@ export class VisitEntity extends BaseEntity {
 
   @ManyToOne(() => ResidencyEntity, residence => residence.visits)
   @JoinColumn([{ name: 'id_residencia', referencedColumnName: 'id' }])
-  residence!: ResidencyEntity;
+  residency!: ResidencyEntity;
 
   @ManyToOne(() => VisitStatusEntity, status => status.visits)
   @JoinColumn([{ name: 'id_estado', referencedColumnName: 'id' }])
