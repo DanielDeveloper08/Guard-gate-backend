@@ -49,7 +49,7 @@ export class EmailHelper extends Environments {
       if (!template) return [null, false];
 
       await this._transporter.sendMail({
-        from: '"GuardGateApp.com" <guard_gate_app@mail.com>',
+        from: '"GuardGateApp.com" <guardgate@younet.ec>',
         to: payload.to,
         subject: `${payload.type.toUpperCase()} - GuardGateApp`,
         html: template,
