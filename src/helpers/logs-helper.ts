@@ -22,7 +22,7 @@ export class LogsHelper {
       .toLocaleDateString('es-EC')
       .replace(/\//g, '_');
 
-    const fileName = `error-${currentDay}.txt`;
+    const fileName = `errors-${currentDay}.log`;
     const filePath = path.join(this._dir, fileName);
 
     const content = `${dateStr} - ${message}\n`;
