@@ -42,19 +42,29 @@ export class ResidencyRepository {
     return update.affected;
   }
 
-
-  async disableMain(
-    cnx: EntityManager,
-    idxs: Array<number>
-  ) {
+  async disableMain(cnx: EntityManager) {
     const update = await cnx
       .createQueryBuilder()
       .update(ResidencyEntity)
       .set({
         isMain: false,
+        updatedAt: new Date(),
       })
-      .where('id IN (:...idxs)', { idxs })
+      .where('es_principal = true')
       .execute();
+
+    return update.affected;
+  }
+
+  async setMain(
+    cnx: EntityManager,
+    id: number,
+  ) {
+    const update = await cnx.update(
+      ResidencyEntity,
+      { id },
+      { isMain: true }
+    );
 
     return update.affected;
   }

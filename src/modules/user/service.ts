@@ -1,10 +1,10 @@
 import { EntityManager } from 'typeorm';
 import { UserEntity } from '../../database';
 import { UserRepository } from './repository';
-import { NO_EXIST_RECORD } from '../../shared/messages';
 import { ResidencyRepository } from '../residency/repository';
 import { ServiceException } from '../../shared/service-exception';
 import { MainResidencyPayloadI } from '../../interfaces/user.interface';
+import { NO_EXIST_RECORD, RECORD_EDIT, RECORD_EDIT_FAIL } from '../../shared/messages';
 
 export class UserService {
 
@@ -63,9 +63,14 @@ export class UserService {
 
     if (!residences.length) return null;
 
+    await this._repoResidency.disableMain(cnx);
 
-    const idxs = residences.filter(r => r.esPrincipal).map(r => r.id);
+    const residencyUpdated = await this._repoResidency.setMain(cnx, idResidencia);
 
-    return residences;
+    if (!residencyUpdated) {
+      throw new ServiceException(RECORD_EDIT_FAIL('residencia como principal'));
+    }
+
+    return RECORD_EDIT('Residencia');
   }
 }

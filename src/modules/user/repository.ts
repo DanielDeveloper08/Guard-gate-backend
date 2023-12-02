@@ -59,6 +59,7 @@ export class UserRepository {
       ])
       .from(ResidencyEntity, 'residency')
       .where('residency.id_persona = person.id')
+      .orderBy('residency.id', 'ASC')
       .getQuery();
 
     const query = cnx
