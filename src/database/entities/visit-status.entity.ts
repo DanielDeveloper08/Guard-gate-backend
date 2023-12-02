@@ -8,6 +8,6 @@ export class VisitStatusEntity extends BaseEntity {
   @Column('varchar', { name: 'nombre', length: 255 })
   name!: string;
 
-  @OneToMany(() => VisitEntity, visit => visit.residence)
+  @OneToMany(() => VisitEntity, visit => visit.residency)
   visits!: VisitEntity[];
 }

@@ -25,6 +25,6 @@ export class ResidencyEntity extends BaseEntity {
   @JoinColumn([{ name: 'id_persona', referencedColumnName: 'id' }])
   person!: PersonEntity;
 
-  @OneToMany(() => VisitEntity, visit => visit.residence)
+  @OneToMany(() => VisitEntity, visit => visit.residency)
   visits!: VisitEntity[];
 }

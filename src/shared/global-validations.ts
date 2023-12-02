@@ -57,7 +57,7 @@ export class GlobalValidations {
       });
   }
 
-  validNumero(propiedad: string) {
+  validNumber(propiedad: string) {
     return Joi.number()
       .required()
       .integer()

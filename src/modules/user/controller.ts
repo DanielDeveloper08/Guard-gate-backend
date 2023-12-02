@@ -1,3 +1,47 @@
+import { Request, Response } from 'express';
+import { AppDataSource } from '../../database';
+import { ServiceResponse } from '../../helpers';
+import { UserService } from './service';
+import { MainResidencyPayloadI } from '../../interfaces/user.interface';
+
 export class UserController {
-  constructor() {}
+
+  constructor(
+    private readonly _userSrv = new UserService(),
+    private readonly _cnx = AppDataSource.getInstance().cnx
+  ) {}
+
+  getResidencesByUserId = async (req: Request, res: Response) => {
+    try {
+      const userId = Number(req.params.id);
+      const data = await this._userSrv.getResidencesByUserId(this._cnx, userId);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  setMainResidency = async (req: Request, res: Response) => {
+    try {
+      const payload = req.body as MainResidencyPayloadI;
+      const data = await this._userSrv.setMainResidency(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
 }
