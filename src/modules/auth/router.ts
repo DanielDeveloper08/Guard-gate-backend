@@ -8,7 +8,7 @@ export class AuthRouter extends BaseRouter<AuthController, AuthValidations> {
     super(AuthController, AuthValidations);
   }
 
-  initializeRoutes(): void {
+  initRoutes(): void {
     this.router.post(
       '/auth/login',
       [

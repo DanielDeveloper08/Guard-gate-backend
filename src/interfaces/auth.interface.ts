@@ -1,33 +1,33 @@
 export interface LoginPayloadI {
-  usuario: string;
-  contrasenia: string;
+  username: string;
+  password: string;
 }
 
 export interface RegisterPayloadI extends LoginPayloadI {
-  nombres: string;
-  apellidos: string;
-  correo: string;
-  telefono?: string;
+  names: string;
+  surnames: string;
+  email: string;
+  phone?: string;
 }
 
 export interface ValidateLoginI {
-  usuario: string;
-  codigo: string;
+  username: string;
+  code: string;
 }
 
 export interface UserTokenPayloadI {
   id: number;
-  nombres: string;
-  apellidos: string;
-  correo: string;
-  telefono: string | null;
-  rol: string | null;
+  names: string;
+  surnames: string;
+  email: string;
+  phone: string | null;
+  role: string | null;
 }
 
-export type RecoverPasswordI = Pick<LoginPayloadI, 'usuario'>;
+export type RecoverPasswordI = Pick<LoginPayloadI, 'username'>;
 
-export type ResetPasswordI = Pick<LoginPayloadI, 'usuario'> & {
-  nueva_contrasenia: string;
+export type ResetPasswordI = Pick<LoginPayloadI, 'username'> & {
+  newPassword: string;
 };
 
 export type UserTokenDecodeI = Record<'data', UserTokenPayloadI> & {

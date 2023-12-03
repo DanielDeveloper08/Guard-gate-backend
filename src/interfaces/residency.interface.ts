@@ -1,7 +1,9 @@
 export interface ResidencyI {
-  id:           number;
-  manzana:      string;
-  villa:        string;
-  urbanizacion: string;
-  esPrincipal:  boolean;
+  id: number;
+  block: string;
+  town: string;
+  urbanization: string;
+  personId: number;
 }
+
+export type ResidencyDTO = Omit<ResidencyI, 'id' >;

@@ -56,40 +56,27 @@ export class AuthService extends Environments {
   }
 
   async login(cnx: EntityManager, payload: LoginPayloadI) {
-    const { usuario, contrasenia } = payload;
+    const { username, password } = payload;
 
-    const user = await this.getValidUser(cnx, usuario, true);
+    const user = await this.getValidUser(cnx, username, true);
 
-    const isMatch = this.comparePassword(contrasenia, user.password!);
+    const isMatch = this.comparePassword(password, user.password!);
     if (!isMatch) throw new ServiceException(LOGIN_FAIL);
-
-    // const otpCreated = await this.createOtpCode(cnx, user.id);
-
-    // const [, emailSuccess] = await this._email.sendTwoStepAuth({
-    //   to: user.email,
-    //   fullname: `${user.names} ${user.surnames}`,
-    //   code: otpCreated.code,
-    //   type: AuthTypeEnum.LOGIN,
-    // });
-
-    // if (!emailSuccess) throw new ServiceException(SEND_EMAIL_FAIL);
-
-    // return SEND_OTP_MESSAGE;
 
     const tokenPayload: UserTokenPayloadI = {
       id: user.id,
-      nombres: user.names,
-      apellidos: user.surnames,
-      correo: user.email,
-      telefono: user.phone,
-      rol: user.role,
+      names: user.names,
+      surnames: user.surnames,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
     };
 
     const token = this._jwt.create(tokenPayload);
 
     return {
       token,
-      usuario: tokenPayload,
+      user: tokenPayload,
     };
   }
 
@@ -98,11 +85,11 @@ export class AuthService extends Environments {
 
     const tokenPayload: UserTokenPayloadI = {
       id: user.id,
-      nombres: user.names,
-      apellidos: user.surnames,
-      correo: user.email,
-      telefono: user.phone,
-      rol: user.role,
+      names: user.names,
+      surnames: user.surnames,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
     };
 
     const token = this._jwt.create(tokenPayload);
@@ -115,32 +102,32 @@ export class AuthService extends Environments {
 
   async register(cnx: EntityManager, payload: RegisterPayloadI) {
     const {
-      usuario,
-      contrasenia,
-      nombres,
-      apellidos,
-      correo,
-      telefono,
+      username,
+      password,
+      names,
+      surnames,
+      email,
+      phone,
     } = payload;
 
-    const existsUser = await this._repo.getByUser(cnx, usuario);
-    const existsEmail = await this._repoPerson.getByEmail(cnx, correo);
+    const existsUser = await this._repo.getByUsername(cnx, username);
+    const existsEmail = await this._repoPerson.getByEmail(cnx, email);
 
     if (existsUser || existsEmail) {
       throw new ServiceException(USER_REGISTERED);
     }
 
     const personPayload = {
-      names: nombres,
-      surnames: apellidos,
-      email: correo,
-      phone: telefono ?? null,
+      names,
+      surnames,
+      email,
+      phone: phone ?? null,
     } as PersonEntity;
 
     const personCreated = await this._repoPerson.create(cnx, personPayload);
 
     if (!personCreated) {
-      throw new ServiceException(RECORD_CREATED_FAIL(`persona: ${nombres} ${apellidos}`));
+      throw new ServiceException(RECORD_CREATED_FAIL(`persona: ${names} ${surnames}`));
     }
 
     const exitsRole = await this._repoRole.getByRoleName(
@@ -154,10 +141,10 @@ export class AuthService extends Environments {
 
     const role = exitsRole ?? (await this._repoRole.create(cnx, rolePayload));
 
-    const passwordHashed = this._encryptor.encrypt(contrasenia);
+    const passwordHashed = this._encryptor.encrypt(password);
 
     const userPayload = {
-      user: payload.usuario,
+      user: username,
       password: passwordHashed,
       personId: personCreated.id,
       roleId: role.id,
@@ -166,25 +153,25 @@ export class AuthService extends Environments {
     const userCreated = await this._repo.create(cnx, userPayload);
 
     if (!userCreated) {
-      throw new ServiceException(RECORD_CREATED_FAIL(`usuario: ${usuario}`));
+      throw new ServiceException(RECORD_CREATED_FAIL(`usuario: ${username}`));
     }
 
     const user: UserTokenPayloadI = {
       id: userCreated.id,
-      nombres: personCreated.names,
-      apellidos: personCreated.surnames,
-      correo,
-      telefono: personCreated.phone,
-      rol: role.name,
+      names: personCreated.names,
+      surnames: personCreated.surnames,
+      email,
+      phone: personCreated.phone,
+      role: role.name,
     };
 
     return user;
   }
 
   async recoverPassword(cnx: EntityManager, payload: RecoverPasswordI) {
-    const { usuario } = payload;
+    const { username } = payload;
 
-    const user = await this.getValidUser(cnx, usuario);
+    const user = await this.getValidUser(cnx, username);
 
     const otpCreated = await this.createOtpCode(cnx, user.id);
 
@@ -201,11 +188,11 @@ export class AuthService extends Environments {
   }
 
   async resetPassword(cnx: EntityManager, payload: ResetPasswordI) {
-    const { usuario, nueva_contrasenia } = payload;
+    const { username, newPassword } = payload;
 
-    const user = await this.getValidUser(cnx, usuario);
+    const user = await this.getValidUser(cnx, username);
 
-    const passwordHashed = this._encryptor.encrypt(nueva_contrasenia);
+    const passwordHashed = this._encryptor.encrypt(newPassword);
 
     const userPayload = {
       password: passwordHashed,
@@ -222,11 +209,11 @@ export class AuthService extends Environments {
   }
 
   async validateOtp(cnx: EntityManager, payload: ValidateLoginI) {
-    const { usuario, codigo } = payload;
+    const { username, code } = payload;
 
-    const user = await this.getValidUser(cnx, usuario);
+    const user = await this.getValidUser(cnx, username);
 
-    const codeOtp = await this._repoOtp.getValidCode(cnx, user.id, codigo);
+    const codeOtp = await this._repoOtp.getValidCode(cnx, user.id, code);
     if (!codeOtp) throw new ServiceException(INVALID_OTP);
     if (codeOtp.used) throw new ServiceException(OTP_USED);
 
@@ -244,10 +231,10 @@ export class AuthService extends Environments {
 
   private async getValidUser(
     cnx: EntityManager,
-    user: string,
+    username: string,
     withPass: boolean = false
   ): Promise<UserI> {
-    const existsUser = await this._repo.getByUser(cnx, user, withPass);
+    const existsUser = await this._repo.getByUsername(cnx, username, withPass);
     if (!existsUser) throw new ServiceException(UNREGISTERED_USER);
 
     return existsUser;

@@ -10,8 +10,8 @@ export class AuthValidations {
   login = () => {
     const loginSchema: schema = {
       body: Joi.object({
-        usuario: this._validations.validString('usuario', 255),
-        contrasenia: this._validations.validString('contrasenia', 255),
+        username: this._validations.validString('username', 255),
+        password: this._validations.validString('password', 255),
       }),
     };
 
@@ -21,8 +21,8 @@ export class AuthValidations {
   validateLogin = () => {
     const validateLoginSchema: schema = {
       body: Joi.object({
-        usuario: this._validations.validString('usuario', 255),
-        codigo: this._validations.validString('codigo', 8),
+        username: this._validations.validString('username', 255),
+        code: this._validations.validString('code', 8),
       }),
     };
 
@@ -32,12 +32,12 @@ export class AuthValidations {
   register = () => {
     const registerSchema: schema = {
       body: Joi.object({
-        usuario: this._validations.validString('usuario', 255),
-        contrasenia: this._validations.validString('contrasenia', 255),
-        nombres: this._validations.validString('nombres', 255),
-        apellidos: this._validations.validString('apellidos', 255),
-        correo: this._validations.validString('correo', 255),
-        telefono: this._validations.validStringNoRequired('telefono', 255),
+        username: this._validations.validString('username', 255),
+        password: this._validations.validString('password', 255),
+        names: this._validations.validString('names', 255),
+        surnames: this._validations.validString('surnames', 255),
+        email: this._validations.validString('email', 255),
+        phone: this._validations.validStringNoRequired('phone', 255),
       }),
     };
 
@@ -47,7 +47,7 @@ export class AuthValidations {
   recoverPassword = () => {
     const recoverPasswordSchema: schema = {
       body: Joi.object({
-        usuario: this._validations.validString('usuario', 255),
+        username: this._validations.validString('username', 255),
       }),
     };
 
@@ -57,8 +57,8 @@ export class AuthValidations {
   resetPassword = () => {
     const resetPasswordSchema: schema = {
       body: Joi.object({
-        usuario: this._validations.validString('usuario', 255),
-        nueva_contrasenia: this._validations.validString('nueva_contrasenia', 255),
+        username: this._validations.validString('username', 255),
+        newPassword: this._validations.validString('newPassword', 255),
       }),
     };
 

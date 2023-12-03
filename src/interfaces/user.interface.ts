@@ -10,22 +10,22 @@ export interface UserI {
 
 export interface UserResidencesI {
   id:          number;
-  usuario:     string;
-  nombres:     string;
-  apellidos:   string;
-  residencias: Array<Residency>;
+  username:     string;
+  names:     string;
+  surnames:   string;
+  residences: Array<Residency>;
 }
 
 export interface Residency {
-  idResidencia: number;
-  idPersona:    number;
-  manzana:      string;
-  villa:        string;
-  urbanizacion: string;
-  esPrincipal:  boolean;
+  residencyId: number;
+  personId:    number;
+  block:      string;
+  town:        string;
+  urbanization: string;
+  isMain:  boolean;
 }
 
 export interface MainResidencyPayloadI {
-  idUsuario:    number;
-  idResidencia: number;
+  userId:    number;
+  residencyId: number;
 }

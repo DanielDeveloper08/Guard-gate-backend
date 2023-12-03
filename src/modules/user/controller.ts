@@ -13,8 +13,7 @@ export class UserController {
 
   getResidencesByUserId = async (req: Request, res: Response) => {
     try {
-      const userId = Number(req.params.id);
-      const data = await this._userSrv.getResidencesByUserId(this._cnx, userId);
+      const data = await this._userSrv.getResidencesByUserId(this._cnx);
 
       return ServiceResponse.success({
         res,
@@ -30,8 +29,8 @@ export class UserController {
 
   setMainResidency = async (req: Request, res: Response) => {
     try {
-      const payload = req.body as MainResidencyPayloadI;
-      const data = await this._userSrv.setMainResidency(this._cnx, payload);
+      const residencyId = Number(req.query.residencyId);
+      const data = await this._userSrv.setMainResidency(this._cnx, residencyId);
 
       return ServiceResponse.success({
         res,
