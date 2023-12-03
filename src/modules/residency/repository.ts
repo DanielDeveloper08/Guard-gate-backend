@@ -1,31 +1,79 @@
 import { EntityManager, In } from 'typeorm';
 import { PersonEntity, ResidencyEntity, UserEntity } from '../../database';
 import { ResidencyI } from '../../interfaces/residency.interface';
+import { PaginationI, ResponsePaginationI } from '../../interfaces/global.interface';
+import { GlobalEnum } from '../../enums/global.enum';
 
 export class ResidencyRepository {
 
-  getByUserId(cnx: EntityManager, userId: number) {
+  async getAll(cnx: EntityManager, payload: PaginationI) {
+    const {
+      page = GlobalEnum.PAGE,
+      limit = GlobalEnum.LIMIT,
+      search = '',
+    } = payload;
+
     const query = cnx
       .createQueryBuilder()
       .select([
         'residency.id as id',
-        'residency.manzana',
-        'residency.villa',
-        'residency.urbanizacion',
-        'residency.es_Principal as "esPrincipal"',
+        'residency.manzana as block',
+        'residency.villa as town',
+        'residency.urbanizacion as urbanization',
+        'residency.id_persona as "personId"',
       ])
+      .from(ResidencyEntity, 'residency');
+
+    if (search.trim()) {
+      query.where(
+        `residency.manzana ILIKE :search OR
+        residency.villa ILIKE :search OR
+        residency.urbanizacion ILIKE :search`,
+        { search: `%${search}%` }
+      );
+    }
+
+    const totalRecords = await query.getCount();
+    const totalPages = Math.ceil(totalRecords / limit);
+
+    const records = await query
+      .limit(limit)
+      .offset(limit * page - limit)
+      .orderBy('residency.id', 'ASC')
+      .getRawMany<ResidencyI>();
+
+    const response: ResponsePaginationI<ResidencyI> = {
+      records,
+      meta: {
+        page: Number(page),
+        totalPages,
+        totalRecords,
+      },
+    };
+
+    return response;
+  }
+
+  getByUserId(cnx: EntityManager, userId: number) {
+    const query = cnx
+      .createQueryBuilder()
       .from(ResidencyEntity, 'residency')
       .leftJoin(PersonEntity, 'person', 'residency.id_persona = person.id')
       .leftJoin(UserEntity, 'user', 'person.id = user.id_persona')
       .where('user.id = :userId', { userId });
 
-    return query.getRawMany<ResidencyI>();
+    return query.getRawMany<ResidencyEntity>();
   }
 
   getById(cnx: EntityManager, id: number) {
     return cnx.findOne(ResidencyEntity, {
       where: { id },
     });
+  }
+
+  create(cnx: EntityManager, payload: ResidencyEntity) {
+    const insert = cnx.create(ResidencyEntity, payload);
+    return cnx.save(insert);
   }
 
   async update(

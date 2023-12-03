@@ -9,12 +9,11 @@ export class UserRouter extends BaseRouter<UserController, UserValidations> {
     super(UserController, UserValidations);
   }
 
-  initializeRoutes(): void {
+  initRoutes(): void {
     this.router.get(
-      '/users/residences/:id',
+      '/users/residences',
       [
         GlobalMiddleware.validateJwtToken,
-        this.validation!.getById()
       ],
       this.controller.getResidencesByUserId
     );

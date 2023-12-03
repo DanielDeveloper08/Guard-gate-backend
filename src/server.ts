@@ -1,9 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { ConfigServer } from './config/config-server';
-import { AuthRouter } from './modules';
+import { AuthRouter, UserRouter, ResidencyRouter } from './modules';
 import { GlobalMiddleware } from './middlewares/global-middleware';
-import { UserRouter } from './modules/user/router';
 
 class AppServer extends ConfigServer {
   private readonly app: express.Application;
@@ -27,6 +26,7 @@ class AppServer extends ConfigServer {
     return [
       new AuthRouter().router,
       new UserRouter().router,
+      new ResidencyRouter().router,
     ];
   }
 
