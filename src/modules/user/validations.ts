@@ -7,21 +7,10 @@ export class UserValidations {
     private readonly _validations = new GlobalValidations()
   ) {}
 
-  getById = () => {
-    const getByIdSchema: schema = {
-      params: Joi.object({
-        id: this._validations.validNumber('id'),
-      }),
-    };
-
-    return validate(getByIdSchema);
-  };
-
   setMainResidency = () => {
     const setMainResidencySchema: schema = {
-      body: Joi.object({
-        idUsuario: this._validations.validNumber('idUsuario'),
-        idResidencia: this._validations.validNumber('idResidencia'),
+      query: Joi.object({
+        residencyId: this._validations.validNumber('residencyId'),
       }),
     };
 

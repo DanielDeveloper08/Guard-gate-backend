@@ -4,7 +4,7 @@ import { UserRepository } from './repository';
 import { ResidencyRepository } from '../residency/repository';
 import { ServiceException } from '../../shared/service-exception';
 import { MainResidencyPayloadI } from '../../interfaces/user.interface';
-import { NO_EXIST_RECORD, RECORD_EDIT, RECORD_EDIT_FAIL } from '../../shared/messages';
+import { ERR_401, NO_EXIST_RECORD, RECORD_EDIT, RECORD_EDIT_FAIL } from '../../shared/messages';
 
 export class UserService {
 
@@ -17,11 +17,11 @@ export class UserService {
     return this._repo.getAll(cnx);
   }
 
-  async getByUser(
+  async getByUsername(
     cnx: EntityManager,
     user: string
   ) {
-    const userFound = await this._repo.getByUser(cnx, user);
+    const userFound = await this._repo.getByUsername(cnx, user);
     if (!userFound) return null;
 
     return userFound;
@@ -32,8 +32,13 @@ export class UserService {
     return !!userFound;
   }
 
-  async getResidencesByUserId(cnx: EntityManager, id: number) {
-    const userInfo = await this._repo.getResidencesByUserId(cnx, id);
+  async getResidencesByUserId(cnx: EntityManager) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+
+    const userId = global.user.id;
+    const userInfo = await this._repo.getResidencesByUserId(cnx, userId);
 
     if (!userInfo) {
       throw new ServiceException(NO_EXIST_RECORD('usuario'));
@@ -44,12 +49,15 @@ export class UserService {
 
   async setMainResidency(
     cnx: EntityManager,
-    payload: MainResidencyPayloadI
+    residencyId: number
   ) {
-    const { idUsuario, idResidencia } = payload;
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
 
-    const user = await this._repo.getById(cnx, idUsuario);
-    const residency = await this._repoResidency.getById(cnx, idResidencia);
+    const userId = global.user.id;
+    const user = await this._repo.getById(cnx, userId);
+    const residency = await this._repoResidency.getById(cnx, residencyId);
 
     if (!user) {
       throw new ServiceException(NO_EXIST_RECORD('usuario'));
@@ -59,18 +67,18 @@ export class UserService {
       throw new ServiceException(NO_EXIST_RECORD('residencia'));
     }
 
-    const residences = await this._repoResidency.getByUserId(cnx, idUsuario);
+    const residences = await this._repoResidency.getByUserId(cnx, userId);
 
     if (!residences.length) return null;
 
     await this._repoResidency.disableMain(cnx);
 
-    const residencyUpdated = await this._repoResidency.setMain(cnx, idResidencia);
+    const residencyUpdated = await this._repoResidency.setMain(cnx, residencyId);
 
     if (!residencyUpdated) {
       throw new ServiceException(RECORD_EDIT_FAIL('residencia como principal'));
     }
 
-    return RECORD_EDIT('Residencia');
+    return RECORD_EDIT('Residencia principal');
   }
 }

@@ -68,6 +68,15 @@ export class GlobalValidations {
       });
   }
 
+  validNumberNoRequired(propiedad: string) {
+    return Joi.number()
+      .integer()
+      .min(0)
+      .messages({
+        'number.base': `"${propiedad}" debe ser número`,
+      });
+  }
+
   validEmail(propiedad: string) {
     return Joi.string()
       .required()

@@ -16,7 +16,7 @@ export class UserRepository {
     );
   }
 
-  getByUser(cnx: EntityManager, user: string, withPass: boolean = false) {
+  getByUsername(cnx: EntityManager, username: string, withPass: boolean = false) {
     const query = cnx
       .createQueryBuilder()
       .select([
@@ -30,7 +30,7 @@ export class UserRepository {
       .from(UserEntity, 'user')
       .leftJoin(PersonEntity, 'person', 'user.id_persona = person.id')
       .leftJoin(RoleEntity, 'role', 'user.id_rol = role.id')
-      .where('user.usuario = :user', { user })
+      .where('user.usuario = :username', { username })
       .andWhere('user.estado = :status', { status: true });
 
     if (withPass) {
@@ -50,12 +50,12 @@ export class UserRepository {
     const residencyQuery = cnx
       .createQueryBuilder()
       .select([
-        'residency.id as "idResidencia"',
-        'residency.id_persona as "idPersona"',
-        'residency.manzana',
-        'residency.villa',
-        'residency.urbanizacion',
-        'residency.es_principal as "esPrincipal"',
+        'residency.id as "residencyId"',
+        'residency.id_persona as "personId"',
+        'residency.manzana as block',
+        'residency.villa as town',
+        'residency.urbanizacion as urbanization',
+        'residency.es_principal as "isMain"',
       ])
       .from(ResidencyEntity, 'residency')
       .where('residency.id_persona = person.id')
@@ -66,16 +66,16 @@ export class UserRepository {
       .createQueryBuilder()
       .select([
         'user.id as id',
-        'user.usuario',
-        'person.nombres',
-        'person.apellidos',
+        'user.usuario as username',
+        'person.nombres as names',
+        'person.apellidos as surnames',
       ])
       .addSelect([
         `
         (
           SELECT COALESCE(json_agg(row_to_json(item)), '[]'::json)
           FROM (${residencyQuery}) item
-        ) AS "residencias"
+        ) AS "residences"
       `,
       ])
       .from(UserEntity, 'user')

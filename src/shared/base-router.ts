@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 interface BaseRouterI {
-  initializeRoutes(): void;
+  initRoutes(): void;
 }
 
 export abstract class BaseRouter<T, U = undefined> implements BaseRouterI {
@@ -14,8 +14,8 @@ export abstract class BaseRouter<T, U = undefined> implements BaseRouterI {
     this.controller = new TController();
     this.validation = UValidation ? new UValidation() : undefined;
 
-    this.initializeRoutes();
+    this.initRoutes();
   }
 
-  abstract initializeRoutes(): void;
+  abstract initRoutes(): void;
 }

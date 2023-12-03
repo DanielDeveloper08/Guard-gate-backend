@@ -36,10 +36,10 @@ export const RECORD_EDIT = (detail: string) =>
   `${detail} actualizado con éxito`;
 
 export const RECORD_CREATED_FAIL = (detail: string) =>
-  `No se puede crear ${detail}`;
+  `No se pudo crear ${detail}`;
 
 export const RECORD_EDIT_FAIL = (detail: string) =>
-  `No se puede actualizar ${detail}`;
+  `No se pudo actualizar ${detail}`;
 
 export const RECORD_DELETE_FAIL = (detail: string) =>
-  `No se puede eliminar ${detail}`;
+  `No se pudo eliminar ${detail}`;
