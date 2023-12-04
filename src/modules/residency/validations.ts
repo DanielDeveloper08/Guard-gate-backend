@@ -19,6 +19,16 @@ export class ResidencyValidations {
     return validate(getAllSchema);
   };
 
+  getOne = () => {
+    const getOneSchema: schema = {
+      params: Joi.object({
+        id: this._validations.validNumber('id'),
+      }),
+    };
+
+    return validate(getOneSchema);
+  };
+
   create = () => {
     const createSchema: schema = {
       body: Joi.object({
@@ -30,5 +40,31 @@ export class ResidencyValidations {
     };
 
     return validate(createSchema);
+  };
+
+  update = () => {
+    const updateSchema: schema = {
+      params: Joi.object({
+        id: this._validations.validNumber('id'),
+      }),
+      body: Joi.object({
+        block: this._validations.validString('block', 255),
+        town: this._validations.validString('town', 255),
+        urbanization: this._validations.validString('urbanization', 255),
+        personId: this._validations.validNumber('personId'),
+      }),
+    };
+
+    return validate(updateSchema);
+  };
+
+  remove = () => {
+    const removeSchema: schema = {
+      params: Joi.object({
+        id: this._validations.validNumber('id'),
+      }),
+    };
+
+    return validate(removeSchema);
   };
 }

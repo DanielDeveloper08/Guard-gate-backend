@@ -90,6 +90,11 @@ export class ResidencyRepository {
     return update.affected;
   }
 
+  async remove(cnx: EntityManager, id: number) {
+    const remove = await cnx.delete(ResidencyEntity, { id });
+    return remove.affected;
+  }
+
   async disableMain(cnx: EntityManager) {
     const update = await cnx
       .createQueryBuilder()

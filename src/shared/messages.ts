@@ -35,6 +35,9 @@ export const RECORD_CREATED = (detail: string) => `${detail} creado con éxito`;
 export const RECORD_EDIT = (detail: string) =>
   `${detail} actualizado con éxito`;
 
+export const RECORD_DELETE = (detail: string) =>
+  `${detail} eliminado con éxito`;
+
 export const RECORD_CREATED_FAIL = (detail: string) =>
   `No se pudo crear ${detail}`;
 
