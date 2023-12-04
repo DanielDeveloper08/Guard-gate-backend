@@ -19,6 +19,15 @@ export class ResidencyRouter extends BaseRouter<ResidencyController, ResidencyVa
       this.controller.getAll
     );
 
+    this.router.get(
+      '/residences/:id',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.getOne()
+      ],
+      this.controller.getOne
+    );
+
     this.router.post(
       '/residences',
       [
@@ -26,6 +35,24 @@ export class ResidencyRouter extends BaseRouter<ResidencyController, ResidencyVa
         this.validation!.create()
       ],
       this.controller.create
+    );
+
+    this.router.put(
+      '/residences/:id',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.update()
+      ],
+      this.controller.update
+    );
+
+    this.router.delete(
+      '/residences/:id',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.remove()
+      ],
+      this.controller.remove
     );
   }
 }
