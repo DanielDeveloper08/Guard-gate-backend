@@ -4,6 +4,7 @@ import { ServiceResponse } from '../../helpers';
 import { ResidencyService } from './service';
 import { ResidencyDTO } from '../../interfaces/residency.interface';
 import { HttpCodes } from '../../enums/http-codes.enum';
+import { PaginationI } from '../../interfaces/global.interface';
 
 export class ResidencyController {
 
@@ -14,7 +15,7 @@ export class ResidencyController {
 
   getAll = async (req: Request, res: Response) => {
     try {
-      const payload = req.query;
+      const payload = req.query as PaginationI;
       const data = await this._residencySrv.getAll(this._cnx, payload);
 
       return ServiceResponse.success({
@@ -68,11 +69,7 @@ export class ResidencyController {
     try {
       const { id } = req.params;
       const payload = req.body as ResidencyDTO;
-      const data = await this._residencySrv.update(
-        this._cnx,
-        Number(id),
-        payload
-      );
+      const data = await this._residencySrv.update(this._cnx, Number(id), payload);
 
       return ServiceResponse.success({
         res,
