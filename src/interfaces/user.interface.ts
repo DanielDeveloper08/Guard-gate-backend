@@ -24,8 +24,3 @@ export interface Residency {
   urbanization: string;
   isMain:  boolean;
 }
-
-export interface MainResidencyPayloadI {
-  userId:    number;
-  residencyId: number;
-}
