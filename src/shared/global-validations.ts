@@ -3,88 +3,118 @@ import { Joi } from 'express-validation';
 export class GlobalValidations {
   constructor() {}
 
-  validString(propiedad: string, maximoCaracteres: number) {
+  validString(prop: string, maxChar: number) {
     return Joi.string()
       .required()
       .trim()
       .strict()
       .min(1)
-      .max(maximoCaracteres)
+      .max(maxChar)
       .messages({
-        'any.required': `"${propiedad}" es requerido`,
-        'string.empty': `"${propiedad}" es requerido`,
-        'string.base': `"${propiedad}" debe ser texto'`,
-        'string.min': `"${propiedad}" debe estar en el rango de 1 a ${maximoCaracteres} caracteres`,
-        'string.max': `"${propiedad}" debe estar en el rango de 1 a ${maximoCaracteres} caracteres`,
-        'string.trim': `"${propiedad}" no permite espacios en blanco`,
+        'any.required': `"${prop}" es requerido`,
+        'string.empty': `"${prop}" es requerido`,
+        'string.base': `"${prop}" debe ser texto'`,
+        'string.min': `"${prop}" debe estar en el rango de 1 a ${maxChar} caracteres`,
+        'string.max': `"${prop}" debe estar en el rango de 1 a ${maxChar} caracteres`,
+        'string.trim': `"${prop}" no permite espacios en blanco`,
       });
   }
 
-  validIdentification(propiedad: string, caracteres: number) {
+  validIdentification(prop: string, maxChar: number) {
     return Joi.string()
       .required()
-      .min(caracteres)
-      .max(caracteres)
+      .min(maxChar)
+      .max(maxChar)
       .messages({
-        'any.required': `"${propiedad}" es requerido`,
-        'string.empty': `"${propiedad}" es requerido`,
-        'string.base': `"${propiedad}" debe ser texto'`,
-        'string.min': `"${propiedad}" debe tener ${caracteres} caracteres`,
-        'string.max': `"${propiedad}" debe tener ${caracteres} caracteres`,
+        'any.required': `"${prop}" es requerido`,
+        'string.empty': `"${prop}" es requerido`,
+        'string.base': `"${prop}" debe ser texto'`,
+        'string.min': `"${prop}" debe tener ${maxChar} caracteres`,
+        'string.max': `"${prop}" debe tener ${maxChar} caracteres`,
       });
   }
 
-  validStringNoRequired(propiedad: string, maximoCaracteres: number) {
+  validStringNoRequired(prop: string, maxChar: number) {
     return Joi.string()
       .min(1)
-      .max(maximoCaracteres)
+      .max(maxChar)
       .messages({
-        'any.required': `"${propiedad}" es requerido`,
-        'string.empty': `"${propiedad}" es requerido`,
-        'string.base': `"${propiedad}" debe ser texto'`,
-        'string.min': `"${propiedad}" debe estar en el rango de 1 a ${maximoCaracteres} caracteres`,
-        'string.max': `"${propiedad}" debe estar en el rango de 1 a ${maximoCaracteres} caracteres`,
+        'any.required': `"${prop}" es requerido`,
+        'string.empty': `"${prop}" es requerido`,
+        'string.base': `"${prop}" debe ser texto'`,
+        'string.min': `"${prop}" debe estar en el rango de 1 a ${maxChar} caracteres`,
+        'string.max': `"${prop}" debe estar en el rango de 1 a ${maxChar} caracteres`,
       });
   }
 
-  validStringNoMaxLength(propiedad: string) {
+  validStringNoMaxLength(prop: string) {
     return Joi.string()
       .min(1)
       .messages({
-        'any.required': `"${propiedad}" es requerido`,
-        'string.empty': `"${propiedad}" es requerido`,
-        'string.base': `"${propiedad}" debe ser texto'`,
+        'any.required': `"${prop}" es requerido`,
+        'string.empty': `"${prop}" es requerido`,
+        'string.base': `"${prop}" debe ser texto'`,
       });
   }
 
-  validNumber(propiedad: string) {
+  validNumber(prop: string) {
     return Joi.number()
       .required()
       .integer()
       .min(0)
       .messages({
-        'any.required': `"${propiedad}" es requerida`,
-        'number.base': `"${propiedad}" debe ser número`,
+        'any.required': `"${prop}" es requerida`,
+        'number.base': `"${prop}" debe ser número`,
       });
   }
 
-  validNumberNoRequired(propiedad: string) {
+  validNumberNoRequired(prop: string) {
     return Joi.number()
       .integer()
       .min(0)
       .messages({
-        'number.base': `"${propiedad}" debe ser número`,
+        'number.base': `"${prop}" debe ser número`,
       });
   }
 
-  validEmail(propiedad: string) {
+  validEmail(prop: string) {
     return Joi.string()
       .required()
       .email()
       .messages({
-        'any.required': `"${propiedad}" es requerido`,
-        'string.empty': `"${propiedad}" es requerido`,
-        'string.base': `"${propiedad}" debe contener @ y el .'`,
+        'any.required': `"${prop}" es requerido`,
+        'string.empty': `"${prop}" es requerido`,
+        'string.base': `"${prop}" debe contener @ y el .'`,
+      });
+  }
+
+  validArray(prop: string, obj: object) {
+    return Joi.array()
+      .required()
+      .items(Joi.object(obj))
+      .messages({
+        'any.required': `"${prop}" es requerido`,
+        'array.base': `"${prop}" debe ser un array`,
+      });
+  }
+
+  validArrayNumber(prop: string) {
+    return Joi.array()
+      .required()
+      .items(Joi.number())
+      .messages({
+        'any.required': `"${prop}" es requerido`,
+        'array.base': `"${prop}" debe ser un array de números`,
+      });
+  }
+
+  validOptions(prop: string, options: Array<string>, label: string) {
+    return Joi.string()
+      .required()
+      .valid(...options)
+      .messages({
+        'any.required': `"${prop}" es requerido`,
+        'any.only': `"${prop}" debe estar entre: ${label}`,
       });
   }
 }
