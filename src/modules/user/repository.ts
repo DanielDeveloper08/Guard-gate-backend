@@ -66,9 +66,9 @@ export class UserRepository {
       .createQueryBuilder()
       .select([
         'user.id as id',
-        'user.usuario as username',
-        'person.nombres as names',
-        'person.apellidos as surnames',
+        'UPPER(user.usuario) as username',
+        'UPPER(person.nombres) as names',
+        'UPPER(person.apellidos) as surnames',
       ])
       .addSelect([
         `
