@@ -3,7 +3,6 @@ import { UserEntity } from '../../database';
 import { UserRepository } from './repository';
 import { ResidencyRepository } from '../residency/repository';
 import { ServiceException } from '../../shared/service-exception';
-import { MainResidencyPayloadI } from '../../interfaces/user.interface';
 import { ERR_401, NO_EXIST_RECORD, RECORD_EDIT, RECORD_EDIT_FAIL } from '../../shared/messages';
 
 export class UserService {

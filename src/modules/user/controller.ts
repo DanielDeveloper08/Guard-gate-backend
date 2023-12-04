@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../../database';
 import { ServiceResponse } from '../../helpers';
 import { UserService } from './service';
-import { MainResidencyPayloadI } from '../../interfaces/user.interface';
 
 export class UserController {
 
