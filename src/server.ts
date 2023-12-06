@@ -1,16 +1,25 @@
+import http from 'node:http';
 import express from 'express';
+import io from 'socket.io';
 import cors from 'cors';
 import { ConfigServer } from './config/config-server';
-import { AuthRouter, UserRouter, ResidencyRouter, RoleRouter } from './modules';
 import { GlobalMiddleware } from './middlewares/global-middleware';
+import { AuthRouter, UserRouter, ResidencyRouter, RoleRouter } from './modules';
 
 class AppServer extends ConfigServer {
   private readonly app: express.Application;
+  private readonly httpServer: http.Server;
+  private readonly ioServer: io.Server;
   private readonly port: number = this.getNumberEnv('PORT') ?? 5000;
 
   constructor() {
     super();
     this.app = express();
+    this.httpServer = http.createServer(this.app);
+    this.ioServer = new io.Server(this.httpServer, {
+      cors: { origin: '*' },
+    });
+
     this.middlewares();
     this.initDbConnect();
     this.app.use('/api/v1', this.routers());
@@ -31,8 +40,20 @@ class AppServer extends ConfigServer {
     ];
   }
 
+  private listenSockets() {
+    this.ioServer.on('connection', (socket) => {
+      const handshakeId = socket.id;
+      const auth = socket.handshake.auth;
+      const serial = auth.serial;
+
+      console.info('Conecction ID', handshakeId);
+    });
+  }
+
   public listen() {
-    this.app.listen(this.port, () => {
+    this.listenSockets();
+
+    this.httpServer.listen(this.port, () => {
       process.env.TZ = 'America/Guayaquil';
       console.info(`Server started on port: ${this.port}`);
     });
