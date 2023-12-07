@@ -80,4 +80,12 @@ export class UserService {
 
     return RECORD_EDIT('Residencia principal');
   }
+
+  notifyPanicAlert() {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+
+    return Promise.resolve('Notificación enviada');
+  }
 }
