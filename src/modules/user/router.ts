@@ -25,6 +25,14 @@ export class UserRouter extends BaseRouter<UserController, UserValidations> {
         this.validation!.setMainResidency()
       ],
       this.controller.setMainResidency
-    )
+    );
+
+    this.router.get(
+      '/users/notify-panic-alert',
+      [
+        GlobalMiddleware.validateJwtToken,
+      ],
+      this.controller.notifyPanicAlert
+    );
   }
 }

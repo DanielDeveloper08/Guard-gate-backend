@@ -66,7 +66,7 @@ export class UserRepository {
       .createQueryBuilder()
       .select([
         'user.id as id',
-        'UPPER(user.usuario) as username',
+        'user.usuario as username',
         'UPPER(person.nombres) as names',
         'UPPER(person.apellidos) as surnames',
       ])
@@ -84,6 +84,8 @@ export class UserRepository {
 
     return query.getRawOne<UserResidencesI>();
   }
+
+  async getByRole(cnx: EntityManager) {}
 
   create(cnx: EntityManager, payload: UserEntity) {
     const insert = cnx.create(UserEntity, payload);

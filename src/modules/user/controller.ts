@@ -42,4 +42,20 @@ export class UserController {
       });
     }
   };
+
+  notifyPanicAlert = async (_: Request, res: Response) => {
+    try {
+      const data = await this._userSrv.notifyPanicAlert();
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
 }
