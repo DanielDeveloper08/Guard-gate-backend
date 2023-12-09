@@ -1,5 +1,5 @@
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 
 export interface SocketEventI {
-  init(ioServer: Server, socket: Socket): void;
+  init(socket: Socket): void;
 }

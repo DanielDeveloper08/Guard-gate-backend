@@ -5,6 +5,7 @@ import cors from 'cors';
 import { ConfigServer } from './config/config-server';
 import { GlobalMiddleware } from './middlewares/global-middleware';
 import { AuthRouter, UserRouter, ResidencyRouter, RoleRouter } from './modules';
+import { PanicAlertEvent } from './events/panic-alert/event';
 
 class AppServer extends ConfigServer {
   private readonly app: express.Application;
@@ -41,12 +42,16 @@ class AppServer extends ConfigServer {
   }
 
   private listenSockets() {
+    const panicAlertEvent = new PanicAlertEvent();
+
     this.ioServer.on('connection', (socket) => {
       const handshakeId = socket.id;
       const auth = socket.handshake.auth;
       const serial = auth.serial;
 
       console.info('Conecction ID', handshakeId);
+
+      panicAlertEvent.init(socket);
     });
   }
 
