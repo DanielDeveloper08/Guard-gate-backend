@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
-import { SocketEventI } from '../../interfaces/events.interface';
 import { PanicAlertResolver } from './resolver';
 import { EventsEnum } from '../../enums/events.enum';
+import { SocketEventI } from '../../interfaces/events.interface';
 
 export class PanicAlertEvent implements SocketEventI {
 
@@ -12,7 +12,7 @@ export class PanicAlertEvent implements SocketEventI {
   init(socket: Socket): void {
     socket.on(
       EventsEnum.NOTIFY_PANIC_ALERT,
-      this._resolver.handleAlert.bind(null, socket)
+      this._resolver.handleAlert.bind(this._resolver, socket)
     );
   }
 
