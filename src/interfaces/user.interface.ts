@@ -24,3 +24,11 @@ export interface Residency {
   urbanization: string;
   isMain:  boolean;
 }
+
+export interface UserRoleI {
+  id: number;
+  names: string;
+  surnames: string;
+  role: string;
+  personId: number;
+}
