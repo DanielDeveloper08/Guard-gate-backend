@@ -45,11 +45,14 @@ export class ResidencyService {
       throw new ServiceException(NO_EXIST_RECORD('persona'));
     }
 
+    const existsResidency = await this._repo.getByPersonId(cnx, personId);
+
     const residencyData = {
       block,
       town,
       urbanization,
       personId,
+      isMain: !existsResidency,
     } as ResidencyEntity;
 
     const residencyCreated = await this._repo.create(cnx, residencyData);

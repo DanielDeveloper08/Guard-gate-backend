@@ -71,6 +71,12 @@ export class ResidencyRepository {
     });
   }
 
+  getByPersonId(cnx: EntityManager, personId: number) {
+    return cnx.findOne(ResidencyEntity, {
+      where: { personId },
+    });
+  }
+
   create(cnx: EntityManager, payload: ResidencyEntity) {
     const insert = cnx.create(ResidencyEntity, payload);
     return cnx.save(insert);

@@ -5,7 +5,8 @@ import {
   RoleEntity,
   UserEntity,
 } from '../../database';
-import { UserI, UserResidencesI } from '../../interfaces/user.interface';
+import { UserI, UserResidencesI, UserRoleI } from '../../interfaces/user.interface';
+import { RoleTypeEnum } from '../../enums/role.enum';
 
 export class UserRepository {
 
@@ -80,12 +81,30 @@ export class UserRepository {
       ])
       .from(UserEntity, 'user')
       .leftJoin(PersonEntity, 'person', 'user.id_persona = person.id')
-      .where('user.id = :id', { id });
+      .where('user.id = :id', { id })
+      .andWhere('user.estado = :status', { status: true });
 
     return query.getRawOne<UserResidencesI>();
   }
 
-  async getByRole(cnx: EntityManager) {}
+  async getByRole(cnx: EntityManager, role: RoleTypeEnum) {
+    const query = cnx
+      .createQueryBuilder()
+      .select([
+        'user.id as id',
+        'person.nombres as names',
+        'person.apellidos as surnames',
+        'role.name as role',
+        'person.id as "personId"',
+      ])
+      .from(UserEntity, 'user')
+      .leftJoin(PersonEntity, 'person', 'user.id_persona = person.id')
+      .leftJoin(RoleEntity, 'role', 'user.id_rol = role.id')
+      .where('role.name = :role', { role })
+      .andWhere('user.estado = :status', { status: true });
+
+    return query.getRawOne<UserRoleI>();
+  }
 
   create(cnx: EntityManager, payload: UserEntity) {
     const insert = cnx.create(UserEntity, payload);
