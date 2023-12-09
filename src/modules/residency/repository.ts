@@ -1,4 +1,4 @@
-import { EntityManager, In } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { PersonEntity, ResidencyEntity, UserEntity } from '../../database';
 import { ResidencyI } from '../../interfaces/residency.interface';
 import { PaginationI, ResponsePaginationI } from '../../interfaces/global.interface';

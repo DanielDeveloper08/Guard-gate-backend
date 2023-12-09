@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { Brackets, EntityManager } from 'typeorm';
 import {
   PersonEntity,
   ResidencyEntity,
@@ -47,7 +47,7 @@ export class UserRepository {
     });
   }
 
-  getResidencesByUserId(cnx: EntityManager, id: number) {
+  getResidencesByUserId(cnx: EntityManager, id: number, showMain: boolean = false) {
     const residencyQuery = cnx
       .createQueryBuilder()
       .select([
@@ -60,6 +60,13 @@ export class UserRepository {
       ])
       .from(ResidencyEntity, 'residency')
       .where('residency.id_persona = person.id')
+      .andWhere(
+        new Brackets(qb => {
+          if (showMain) {
+            return qb.where('residency.es_principal = true');
+          }
+        })
+      )
       .orderBy('residency.id', 'ASC')
       .getQuery();
 
