@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../shared/base-entity';
 import { PersonEntity } from './person.entity';
 import { VisitEntity } from './visit.entity';
+import { VisitorEntity } from './visitor.entity';
 
 @Entity({ name: 'residencia' })
 export class ResidencyEntity extends BaseEntity {
@@ -21,10 +22,13 @@ export class ResidencyEntity extends BaseEntity {
   @Column('integer', { name: 'id_persona' })
   personId!: number;
 
-  @ManyToOne(() => PersonEntity, person => person.residences)
+  @ManyToOne(() => PersonEntity, (person) => person.residences)
   @JoinColumn([{ name: 'id_persona', referencedColumnName: 'id' }])
   person!: PersonEntity;
 
-  @OneToMany(() => VisitEntity, visit => visit.residency)
+  @OneToMany(() => VisitEntity, (visit) => visit.residency)
   visits!: VisitEntity[];
+
+  @OneToMany(() => VisitorEntity, (visitors) => visitors.residency)
+  visitors!: VisitorEntity[];
 }

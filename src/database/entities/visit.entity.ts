@@ -36,7 +36,7 @@ export class VisitEntity extends BaseEntity {
   typeVisitId!: number;
 
   @Column('integer', { name: 'id_residencia' })
-  residenceId!: number;
+  residencyId!: number;
 
   @Column('integer', { name: 'id_estado' })
   statusId!: number;
