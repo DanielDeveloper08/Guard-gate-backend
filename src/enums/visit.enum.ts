@@ -1,0 +1,13 @@
+export enum VisitTypeEnum {
+  QR = 'QR',
+  PREAUTHORIZED = 'PREAUTORIZADO',
+}
+
+export enum VisitStatusEnum {
+  PENDING = 'PENDIENTE',
+  UNFILLED = 'SIN COMPLETAR',
+  FULFILLED = 'COMPLETADA',
+  CANCELLED = 'CANCELADA',
+  APPROVED = 'APROBADA',
+  REJECTED = 'RECHAZADA',
+}

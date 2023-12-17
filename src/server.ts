@@ -4,8 +4,15 @@ import io from 'socket.io';
 import cors from 'cors';
 import { ConfigServer } from './config/config-server';
 import { GlobalMiddleware } from './middlewares/global-middleware';
-import { AuthRouter, UserRouter, ResidencyRouter, RoleRouter, VisitorRouter } from './modules';
 import { PanicAlertEvent } from './events/panic-alert/event';
+import {
+  AuthRouter,
+  UserRouter,
+  ResidencyRouter,
+  RoleRouter,
+  VisitRouter,
+  VisitorRouter,
+} from './modules';
 
 class AppServer extends ConfigServer {
   private readonly app: express.Application;
@@ -38,6 +45,7 @@ class AppServer extends ConfigServer {
       new UserRouter().router,
       new ResidencyRouter().router,
       new RoleRouter().router,
+      new VisitRouter().router,
       new VisitorRouter().router,
     ];
   }
