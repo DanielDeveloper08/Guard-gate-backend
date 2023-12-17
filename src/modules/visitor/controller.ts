@@ -9,14 +9,14 @@ import { HttpCodes } from '../../enums/http-codes.enum';
 export class VisitorController {
 
   constructor(
-    private readonly _vistorSrv = new VisitorService(),
+    private readonly _visitorSrv = new VisitorService(),
     private readonly _cnx = AppDataSource.getInstance().cnx
   ) {}
 
   getAll = async (req: Request, res: Response) => {
     try {
       const payload = req.query as PaginationI;
-      const data = await this._vistorSrv.getAll(this._cnx, payload);
+      const data = await this._visitorSrv.getAll(this._cnx, payload);
 
       return ServiceResponse.success({
         res,
@@ -33,7 +33,7 @@ export class VisitorController {
   create = async (req: Request, res: Response) => {
     try {
       const payload = req.body as VisitorDTO;
-      const data = await this._vistorSrv.create(this._cnx, payload);
+      const data = await this._visitorSrv.create(this._cnx, payload);
 
       return ServiceResponse.success({
         res,
