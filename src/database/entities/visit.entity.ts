@@ -10,25 +10,26 @@ export class VisitEntity extends BaseEntity {
 
   @Column('timestamp', {
     name: 'fecha_inicio',
-    nullable: false,
+    nullable: true,
   })
   startDate!: Date;
 
   @Column('timestamp', {
     name: 'fecha_fin',
-    nullable: false,
+    nullable: true,
   })
   endDate!: Date;
 
-  @Column('time', {
+  @Column('integer', {
     name: 'horas_validez',
-    nullable: false,
+    nullable: true,
   })
   validityHours!: number;
 
   @Column('varchar', {
     name: 'motivo',
     length: 255,
+    nullable: true,
   })
   reason!: string;
 

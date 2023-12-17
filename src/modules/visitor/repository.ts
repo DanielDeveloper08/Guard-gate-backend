@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 import { VisitorEntity } from '../../database';
-import { VisitorDTO, VisitorI } from '../../interfaces/visitor.interface';
+import { VisitorI } from '../../interfaces/visitor.interface';
 import { GlobalEnum } from '../../enums/global.enum';
 import {
   PaginationI,
@@ -55,6 +55,12 @@ export class VisitorRepository {
     };
 
     return response;
+  }
+
+  getById(cnx: EntityManager, id: number) {
+    return cnx.findOne(VisitorEntity, {
+      where: { id },
+    });
   }
 
   create(cnx: EntityManager, payload: VisitorEntity) {

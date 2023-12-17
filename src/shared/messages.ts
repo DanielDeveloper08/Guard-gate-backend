@@ -6,7 +6,8 @@ export const LOGIN_FAIL = 'Usuario y/o contraseña incorrecta';
 export const TOKEN_INVALID = 'Su sesión ha expirado. Inicie sesión nuevamente';
 
 export const USER_REGISTERED = 'Usuario ya tiene una cuenta previa registrada';
-export const UNREGISTERED_USER = 'Usuario no tiene una cuenta previa registrada';
+export const UNREGISTERED_USER =
+  'Usuario no tiene una cuenta previa registrada';
 
 export const REGISTER_SUCCESS =
   'Registro exitoso, se ha enviado un correo de confirmación con instrucciones a su dirección de correo electrónico';
@@ -14,8 +15,7 @@ export const REGISTER_SUCCESS =
 export const RECOVER_PASSWORD =
   'Se ha enviado un correo para la recuperación de su contraseña';
 
-  export const RESET_PASSWORD =
-  'Se ha restablecido su contraseña exitosamente';
+export const RESET_PASSWORD = 'Se ha restablecido su contraseña exitosamente';
 
 export const SEND_OTP_MESSAGE =
   'Se ha enviado un código de acceso al correo registrado';
@@ -46,3 +46,5 @@ export const RECORD_EDIT_FAIL = (detail: string) =>
 
 export const RECORD_DELETE_FAIL = (detail: string) =>
   `No se pudo eliminar ${detail}`;
+
+export const VALID_LIST_VISITORS = 'Debe seleccionar mínimo un visitante';
