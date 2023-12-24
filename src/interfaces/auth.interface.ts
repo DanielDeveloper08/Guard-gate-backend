@@ -22,6 +22,7 @@ export interface UserTokenPayloadI {
   email: string;
   phone: string | null;
   role: string | null;
+  mainResidencyId?: number;
 }
 
 export type RecoverPasswordI = Pick<LoginPayloadI, 'username'>;

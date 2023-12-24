@@ -5,7 +5,7 @@ import {
   RoleEntity,
   UserEntity,
 } from '../../database';
-import { UserI, UserResidencesI, UserRoleI } from '../../interfaces/user.interface';
+import { UserI, UserMainResidencyI, UserResidencesI, UserRoleI } from '../../interfaces/user.interface';
 import { RoleTypeEnum } from '../../enums/role.enum';
 
 export class UserRepository {
@@ -92,6 +92,27 @@ export class UserRepository {
       .andWhere('user.estado = :status', { status: true });
 
     return query.getRawOne<UserResidencesI>();
+  }
+
+  getMainResidency(cnx: EntityManager, id: number) {
+    const query = cnx
+      .createQueryBuilder()
+      .select([
+        'user.id as id',
+        'residency.id as "mainResidencyId"',
+      ])
+      .from(UserEntity, 'user')
+      .leftJoin(PersonEntity, 'person', 'user.id_persona = person.id')
+      .leftJoin(
+        ResidencyEntity,
+        'residency',
+        'person.id = residency.id_persona'
+      )
+      .where('user.id = :id', { id })
+      .andWhere('user.estado = true')
+      .andWhere('residency.es_principal = true');
+
+    return query.getRawOne<UserMainResidencyI>();
   }
 
   async getByRole(cnx: EntityManager, role: RoleTypeEnum) {

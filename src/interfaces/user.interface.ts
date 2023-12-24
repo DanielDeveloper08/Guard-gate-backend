@@ -6,23 +6,29 @@ export interface UserI {
   phone: string;
   role: string;
   password?: string;
+  mainResidencyId?: number;
 }
 
 export interface UserResidencesI {
-  id:          number;
-  username:     string;
-  names:     string;
-  surnames:   string;
+  id: number;
+  username: string;
+  names: string;
+  surnames: string;
   residences: Array<Residency>;
+}
+
+export interface UserMainResidencyI {
+  id: number;
+  mainResidencyId: number;
 }
 
 export interface Residency {
   residencyId: number;
-  personId:    number;
-  block:      string;
-  town:        string;
+  personId: number;
+  block: string;
+  town: string;
   urbanization: string;
-  isMain:  boolean;
+  isMain: boolean;
 }
 
 export interface UserRoleI {
