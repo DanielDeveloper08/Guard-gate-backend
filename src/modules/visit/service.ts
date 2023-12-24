@@ -123,4 +123,14 @@ export class VisitService {
       return visitCreated;
     });
   }
+
+  async getById(cnx: EntityManager, id: number) {
+    const visit = await this._repo.getById(cnx, id);
+
+    if (!visit) {
+      throw new ServiceException(NO_EXIST_RECORD('la visita'));
+    }
+
+    return visit;
+  }
 }

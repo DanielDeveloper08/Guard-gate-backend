@@ -29,4 +29,14 @@ export class VisitValidations {
 
     return validate(createSchema);
   };
+
+  getById = () => {
+    const getOneSchema: schema = {
+      params: Joi.object({
+        id: this._validations.validNumber('id'),
+      }),
+    };
+
+    return validate(getOneSchema);
+  };
 }
