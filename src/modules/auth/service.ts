@@ -26,8 +26,6 @@ import {
   RECOVER_PASSWORD,
   RESET_PASSWORD,
   SEND_EMAIL_FAIL,
-  SEND_OTP_MESSAGE,
-  UNREGISTERED_USER,
   USER_REGISTERED,
 } from '../../shared/messages';
 import { PersonRespository } from '../person/repository';
@@ -70,6 +68,7 @@ export class AuthService extends Environments {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      mainResidencyId: user.mainResidencyId,
     };
 
     const token = this._jwt.create(tokenPayload);
@@ -90,13 +89,14 @@ export class AuthService extends Environments {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      mainResidencyId: user.mainResidencyId,
     };
 
     const token = this._jwt.create(tokenPayload);
 
     return {
       token,
-      usuario: tokenPayload,
+      user: tokenPayload,
     };
   }
 
@@ -235,9 +235,14 @@ export class AuthService extends Environments {
     withPass: boolean = false
   ): Promise<UserI> {
     const existsUser = await this._repo.getByUsername(cnx, username, withPass);
-    if (!existsUser) throw new ServiceException(UNREGISTERED_USER);
+    if (!existsUser) throw new ServiceException(LOGIN_FAIL);
 
-    return existsUser;
+    const residency = await this._repo.getMainResidency(cnx, existsUser.id);
+
+    return {
+      ...existsUser,
+      mainResidencyId: residency?.mainResidencyId,
+    };
   }
 
   private async createOtpCode(cnx: EntityManager, userId: number) {
