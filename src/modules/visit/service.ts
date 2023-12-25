@@ -1,7 +1,6 @@
 import { EntityManager } from 'typeorm';
 import { VisitDTO } from '../../interfaces/visit.interface';
 import { VisitRepository } from './repository';
-import { UserRepository } from '../user/repository';
 import { ResidencyRepository } from '../residency/repository';
 import { TypeVisitRepository } from '../type-visit/repository';
 import { VisitStatusRepository } from '../visit-status/repository';
@@ -26,7 +25,6 @@ export class VisitService {
 
   constructor(
     private readonly _repo = new VisitRepository(),
-    private readonly _repoUser = new UserRepository(),
     private readonly _repoResidency = new ResidencyRepository(),
     private readonly _repoVisitStatus = new VisitStatusRepository(),
     private readonly _repoTypeVisit = new TypeVisitRepository(),
@@ -42,22 +40,11 @@ export class VisitService {
 
       const { startDate, validityHours, listVisitors, type } = payload;
 
-      const userId = global.user.id;
-      const userInfo = await this._repoUser.getResidencesByUserId(
-        cnxTran,
-        userId,
-        true
-      );
-
-      if (!userInfo) {
-        throw new ServiceException(NO_EXIST_RECORD('información de usuario'));
-      }
-
       if (!listVisitors.length) {
         throw new ServiceException(VALID_LIST_VISITORS);
       }
 
-      const residencyId = userInfo.residences.at(0)?.residencyId;
+      const residencyId = global.user.mainResidencyId;
       const residency = await this._repoResidency.getById(cnxTran, residencyId!);
 
       if (!residency) {
@@ -86,7 +73,7 @@ export class VisitService {
         startDate,
         validityHours,
         typeVisitId: typeVisit.id,
-        residencyId: residencyId,
+        residencyId: residency.id,
         statusId: statusVisit.id,
       } as VisitEntity;
 

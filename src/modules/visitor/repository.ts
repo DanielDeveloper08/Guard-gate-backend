@@ -9,7 +9,7 @@ import {
 
 export class VisitorRepository {
 
-  async getAll(cnx: EntityManager, payload: PaginationI) {
+  async getAll(cnx: EntityManager, payload: PaginationI, residencyId?: number) {
     const {
       page = GlobalEnum.PAGE,
       limit = GlobalEnum.LIMIT,
@@ -25,10 +25,11 @@ export class VisitorRepository {
         'visitor.cedula as "docNumber"',
         'visitor.id_residencia as "idResidency"',
       ])
-      .from(VisitorEntity, 'visitor');
+      .from(VisitorEntity, 'visitor')
+      .where('visitor.id_residencia = :residencyId', { residencyId });
 
     if (search.trim()) {
-      query.where(
+      query.andWhere(
         `visitor.nombre ILIKE :search OR
         visitor.apellidos ILIKE :search OR
         visitor.cedula ILIKE :search`,
