@@ -111,12 +111,14 @@ export class VisitService {
       }
 
       for (const visitorId of listVisitors) {
-        const visitor = await this._repoVisitor.getById(cnxTran, visitorId);
+        const visitor = await this._repoVisitor.getValidVisitor(
+          cnxTran,
+          visitorId,
+          residency.id
+        );
 
         if (!visitor) {
-          throw new ServiceException(
-            NO_EXIST_RECORD(`visitante con ID: ${visitorId}`)
-          );
+          throw new ServiceException(NO_EXIST_RECORD('visitante'));
         }
       }
 
