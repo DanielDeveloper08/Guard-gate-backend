@@ -4,6 +4,7 @@ import { HttpCodes } from '../../enums/http-codes.enum';
 import { ServiceResponse } from '../../helpers';
 import { VisitDTO } from '../../interfaces/visit.interface';
 import { VisitService } from './service';
+import { PaginationI } from '../../interfaces/global.interface';
 
 export class VisitController {
 
@@ -12,15 +13,14 @@ export class VisitController {
     private readonly _cnx = AppDataSource.getInstance().cnx
   ) {}
 
-  create = async (req: Request, res: Response) => {
+  getAll = async (req: Request, res: Response) => {
     try {
-      const payload = req.body as VisitDTO;
-      const data = await this._visitSrv.create(this._cnx, payload);
+      const payload = req.query as PaginationI;
+      const data = await this._visitSrv.getAll(this._cnx, payload);
 
       return ServiceResponse.success({
         res,
         data,
-        statusCode: HttpCodes.CREATED,
       });
     } catch (error) {
       return ServiceResponse.fail({
@@ -38,6 +38,24 @@ export class VisitController {
       return ServiceResponse.success({
         res,
         data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  create = async (req: Request, res: Response) => {
+    try {
+      const payload = req.body as VisitDTO;
+      const data = await this._visitSrv.create(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+        statusCode: HttpCodes.CREATED,
       });
     } catch (error) {
       return ServiceResponse.fail({
