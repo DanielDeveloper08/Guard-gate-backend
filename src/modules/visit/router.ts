@@ -9,13 +9,13 @@ export class VisitRouter extends BaseRouter<VisitController, VisitValidations> {
   }
 
   initRoutes(): void {
-    this.router.post(
+    this.router.get(
       '/visits',
       [
         GlobalMiddleware.validateJwtToken,
-        this.validation!.create(),
+        this.validation!.getAll(),
       ],
-      this.controller.create
+      this.controller.getAll
     );
 
     this.router.get(
@@ -25,6 +25,15 @@ export class VisitRouter extends BaseRouter<VisitController, VisitValidations> {
         this.validation!.getById(),
       ],
       this.controller.getById
+    );
+
+    this.router.post(
+      '/visits',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.create(),
+      ],
+      this.controller.create
     );
   }
 }

@@ -8,6 +8,28 @@ export class VisitValidations {
     private readonly _validations = new GlobalValidations()
   ) {}
 
+  getAll = () => {
+    const getAllSchema: schema = {
+      query: Joi.object({
+        page: this._validations.validNumberNoRequired('page'),
+        limit: this._validations.validNumberNoRequired('limit'),
+        search: this._validations.validStringNoRequired('search', 255),
+      }),
+    };
+
+    return validate(getAllSchema);
+  };
+
+  getById = () => {
+    const getOneSchema: schema = {
+      params: Joi.object({
+        id: this._validations.validNumber('id'),
+      }),
+    };
+
+    return validate(getOneSchema);
+  };
+
   create = () => {
     const typeOptions = [
       VisitTypeEnum.QR,
@@ -28,15 +50,5 @@ export class VisitValidations {
     };
 
     return validate(createSchema);
-  };
-
-  getById = () => {
-    const getOneSchema: schema = {
-      params: Joi.object({
-        id: this._validations.validNumber('id'),
-      }),
-    };
-
-    return validate(getOneSchema);
   };
 }

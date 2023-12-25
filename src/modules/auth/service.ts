@@ -68,7 +68,6 @@ export class AuthService extends Environments {
       email: user.email,
       phone: user.phone,
       role: user.role,
-      mainResidencyId: user.mainResidencyId,
     };
 
     const token = this._jwt.create(tokenPayload);
@@ -89,7 +88,6 @@ export class AuthService extends Environments {
       email: user.email,
       phone: user.phone,
       role: user.role,
-      mainResidencyId: user.mainResidencyId,
     };
 
     const token = this._jwt.create(tokenPayload);
@@ -237,12 +235,7 @@ export class AuthService extends Environments {
     const existsUser = await this._repo.getByUsername(cnx, username, withPass);
     if (!existsUser) throw new ServiceException(LOGIN_FAIL);
 
-    const residency = await this._repo.getMainResidency(cnx, existsUser.id);
-
-    return {
-      ...existsUser,
-      mainResidencyId: residency?.mainResidencyId,
-    };
+    return existsUser;
   }
 
   private async createOtpCode(cnx: EntityManager, userId: number) {

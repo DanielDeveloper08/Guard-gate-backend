@@ -9,13 +9,13 @@ import {
   NO_EXIST_RECORD,
   RECORD_CREATED_FAIL,
 } from '../../shared/messages';
-import { ResidencyRepository } from '../residency/repository';
+import { UserRepository } from '../user/repository';
 
 export class VisitorService {
 
   constructor(
     private readonly _repo = new VisitorRepository(),
-    private readonly _repoResidency = new ResidencyRepository()
+    private readonly _repoUser = new UserRepository(),
   ) {}
 
   async getAll(cnx: EntityManager, payload: PaginationI) {
@@ -23,9 +23,14 @@ export class VisitorService {
       throw new ServiceException(ERR_401);
     }
 
-    const residencyId = global.user.mainResidencyId;
-    const data = await this._repo.getAll(cnx, payload, residencyId);
+    const userId = global.user.id;
+    const residency = await this._repoUser.getMainResidency(cnx, userId);
 
+    if (!residency) {
+      throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
+    }
+
+    const data = await this._repo.getAll(cnx, payload, residency.id);
     return data;
   }
 
@@ -36,8 +41,8 @@ export class VisitorService {
 
     const { names, surnames, docNumber } = payload;
 
-    const residencyId = global.user.mainResidencyId;
-    const residency = await this._repoResidency.getById(cnx, residencyId!);
+    const userId = global.user.id;
+    const residency = await this._repoUser.getMainResidency(cnx, userId);
 
     if (!residency) {
       throw new ServiceException(NO_EXIST_RECORD('residencia principal'));

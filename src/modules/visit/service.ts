@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 import { VisitDTO } from '../../interfaces/visit.interface';
 import { VisitRepository } from './repository';
-import { ResidencyRepository } from '../residency/repository';
+import { UserRepository } from '../user/repository';
 import { TypeVisitRepository } from '../type-visit/repository';
 import { VisitStatusRepository } from '../visit-status/repository';
 import { VisitVisitorRepository } from '../visit-visitor/repository';
@@ -20,17 +20,44 @@ import {
 } from '../../database';
 import { VisitStatusEnum } from '../../enums/visit.enum';
 import { VisitorRepository } from '../visitor/repository';
+import { PaginationI } from '../../interfaces/global.interface';
 
 export class VisitService {
 
   constructor(
     private readonly _repo = new VisitRepository(),
-    private readonly _repoResidency = new ResidencyRepository(),
+    private readonly _repoUser = new UserRepository(),
     private readonly _repoVisitStatus = new VisitStatusRepository(),
     private readonly _repoTypeVisit = new TypeVisitRepository(),
     private readonly _repoVisitor = new VisitorRepository(),
     private readonly _repoVisitVisitor = new VisitVisitorRepository(),
   ) {}
+
+  async getAll(cnx: EntityManager, payload: PaginationI) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+
+    const userId = global.user.id;
+    const residency = await this._repoUser.getMainResidency(cnx, userId);
+
+    if (!residency) {
+      throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
+    }
+
+    const data = await this._repo.getAll(cnx, payload, residency.id);
+    return data;
+  }
+
+  async getById(cnx: EntityManager, id: number) {
+    const visit = await this._repo.getById(cnx, id);
+
+    if (!visit) {
+      throw new ServiceException(NO_EXIST_RECORD('la visita'));
+    }
+
+    return visit;
+  }
 
   async create(cnx: EntityManager, payload: VisitDTO) {
     return cnx.transaction(async (cnxTran) => {
@@ -44,8 +71,8 @@ export class VisitService {
         throw new ServiceException(VALID_LIST_VISITORS);
       }
 
-      const residencyId = global.user.mainResidencyId;
-      const residency = await this._repoResidency.getById(cnxTran, residencyId!);
+      const userId = global.user.id;
+      const residency = await this._repoUser.getMainResidency(cnxTran, userId);
 
       if (!residency) {
         throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
@@ -109,15 +136,5 @@ export class VisitService {
 
       return visitCreated;
     });
-  }
-
-  async getById(cnx: EntityManager, id: number) {
-    const visit = await this._repo.getById(cnx, id);
-
-    if (!visit) {
-      throw new ServiceException(NO_EXIST_RECORD('la visita'));
-    }
-
-    return visit;
   }
 }

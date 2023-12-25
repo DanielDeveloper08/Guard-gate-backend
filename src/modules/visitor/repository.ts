@@ -9,7 +9,7 @@ import {
 
 export class VisitorRepository {
 
-  async getAll(cnx: EntityManager, payload: PaginationI, residencyId?: number) {
+  async getAll(cnx: EntityManager, payload: PaginationI, residencyId: number) {
     const {
       page = GlobalEnum.PAGE,
       limit = GlobalEnum.LIMIT,

@@ -6,7 +6,6 @@ export interface UserI {
   phone: string;
   role: string;
   password?: string;
-  mainResidencyId?: number;
 }
 
 export interface UserResidencesI {
@@ -15,11 +14,6 @@ export interface UserResidencesI {
   names: string;
   surnames: string;
   residences: Array<Residency>;
-}
-
-export interface UserMainResidencyI {
-  id: number;
-  mainResidencyId: number;
 }
 
 export interface Residency {
