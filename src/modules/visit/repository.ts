@@ -21,6 +21,26 @@ export class VisitRepository {
       search = '',
     } = payload;
 
+    const visitorQuery = cnx
+      .createQueryBuilder()
+      .select([
+        'visitor.id as id',
+        'visitor.nombres as names',
+        'visitor.apellidos as surnames',
+        'visitor.cedula as "docNumber"',
+        'visitor.id_residencia as "idResidency"',
+      ])
+      .from(VisitorEntity, 'visitor')
+      .leftJoin(
+        VisitVisitorEntity,
+        'visit_visitor',
+        'visitor.id = visit_visitor.id_visitante'
+      )
+      .where('visit.id = visit_visitor.id_visita')
+      .groupBy('visitor.id')
+      .orderBy('visitor.id', 'ASC')
+      .getQuery();
+
     const query = cnx
       .createQueryBuilder()
       .select([
@@ -30,6 +50,14 @@ export class VisitRepository {
         'visit.horas_validez as "validityHours"',
         'visit.motivo as reason',
         'type.name as type',
+      ])
+      .addSelect([
+        `
+        (
+          SELECT COALESCE(json_agg(row_to_json(item)), '[]'::json)
+          FROM (${visitorQuery}) item
+        ) AS "visitors"
+      `,
       ])
       .from(VisitEntity, 'visit')
       .leftJoin(TypeVisitEntity, 'type', 'visit.id_tipo_visita = type.id')
@@ -50,9 +78,9 @@ export class VisitRepository {
       .limit(limit)
       .offset(limit * page - limit)
       .orderBy('visit.id', 'ASC')
-      .getRawMany<Omit<VisitI, 'visitors'>>();
+      .getRawMany<VisitI>();
 
-    const response: ResponsePaginationI<Omit<VisitI, 'visitors'>> = {
+    const response: ResponsePaginationI<VisitI> = {
       records,
       meta: {
         page: Number(page),

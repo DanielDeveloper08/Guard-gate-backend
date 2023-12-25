@@ -58,9 +58,9 @@ export class VisitorRepository {
     return response;
   }
 
-  getById(cnx: EntityManager, id: number) {
+  getValidVisitor(cnx: EntityManager, id: number, residencyId: number) {
     return cnx.findOne(VisitorEntity, {
-      where: { id },
+      where: { id, residencyId },
     });
   }
 
