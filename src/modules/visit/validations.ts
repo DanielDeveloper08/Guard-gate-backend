@@ -40,6 +40,7 @@ export class VisitValidations {
       body: Joi.object({
         startDate: this._validations.validString('startDate', 255),
         validityHours: this._validations.validNumber('validityHours'),
+        reason: this._validations.validStringNoRequired('reason', 255),
         listVisitors: this._validations.validArrayNumber('listVisitors'),
         type: this._validations.validOptions(
           'type',

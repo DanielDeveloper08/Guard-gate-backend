@@ -65,7 +65,7 @@ export class VisitService {
         throw new ServiceException(ERR_401);
       }
 
-      const { startDate, validityHours, listVisitors, type } = payload;
+      const { startDate, validityHours, listVisitors, reason, type } = payload;
 
       if (!listVisitors.length) {
         throw new ServiceException(VALID_LIST_VISITORS);
@@ -99,6 +99,7 @@ export class VisitService {
       const visitData = {
         startDate,
         validityHours,
+        reason: reason ?? null,
         typeVisitId: typeVisit.id,
         residencyId: residency.id,
         statusId: statusVisit.id,

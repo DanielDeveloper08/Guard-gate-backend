@@ -13,6 +13,6 @@ export interface VisitI {
 }
 
 export interface VisitDTO
-  extends Omit<VisitI, 'id' | 'endDate' | 'reason' | 'status' | 'visitors'> {
+  extends Omit<VisitI, 'id' | 'endDate' | 'status' | 'visitors'> {
   listVisitors: Array<number>;
 }
