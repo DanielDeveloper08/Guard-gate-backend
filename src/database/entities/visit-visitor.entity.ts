@@ -20,6 +20,37 @@ export class VisitVisitorEntity {
   @Column('integer', { name: 'id_visitante' })
   visitorId!: number;
 
+  @Column('boolean', { name: 'ha_ingresado', default: false })
+  hasEntered!: boolean;
+
+  @Column('timestamp', {
+    name: 'fecha_ingreso',
+    nullable: true,
+    default: () => 'null',
+  })
+  entryDate!: Date | null;
+
+  @Column('varchar', {
+    name: 'placa_carro',
+    length: 255,
+    nullable: true,
+  })
+  carPlate!: string;
+
+  @Column('json', {
+    name: 'fotos',
+    nullable: true,
+    default: () => 'null',
+  })
+  photos!: Array<string>;
+
+  @Column('varchar', {
+    name: 'observacion',
+    length: 255,
+    nullable: true,
+  })
+  observation!: string;
+
   @ManyToOne(() => VisitEntity, visit => visit.visitVisitors)
   @JoinColumn([{ name: 'id_visita', referencedColumnName: 'id' }])
   visit!: VisitEntity;
