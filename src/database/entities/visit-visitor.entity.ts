@@ -42,7 +42,7 @@ export class VisitVisitorEntity {
     nullable: true,
     default: () => 'null',
   })
-  photos!: Array<string>;
+  photos!: string;
 
   @Column('varchar', {
     name: 'observacion',

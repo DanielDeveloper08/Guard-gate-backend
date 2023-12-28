@@ -49,6 +49,7 @@ export class VisitRepository {
         'visit.fecha_fin as "endDate"',
         'visit.horas_validez as "validityHours"',
         'visit.motivo as reason',
+        'visit.id_residencia as "idResidency"',
         'type.name as type',
       ])
       .addSelect([
@@ -121,6 +122,7 @@ export class VisitRepository {
         'visit.fecha_fin as "endDate"',
         'visit.horas_validez as "validityHours"',
         'visit.motivo as reason',
+        'visit.id_residencia as "idResidency"',
         'type.name as type',
       ])
       .addSelect([

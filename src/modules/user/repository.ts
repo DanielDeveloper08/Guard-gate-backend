@@ -5,7 +5,7 @@ import {
   RoleEntity,
   UserEntity,
 } from '../../database';
-import { UserI, UserResidencesI, UserRoleI } from '../../interfaces/user.interface';
+import { MainResidencyI, UserI, UserResidencesI, UserRoleI } from '../../interfaces/user.interface';
 import { RoleTypeEnum } from '../../enums/role.enum';
 
 export class UserRepository {
@@ -97,7 +97,10 @@ export class UserRepository {
   getMainResidency(cnx: EntityManager, id: number) {
     const query = cnx
       .createQueryBuilder()
-      .select('residency.id as id')
+      .select([
+        'residency.id as id',
+        'residency.urbanizacion as urbanization',
+      ])
       .from(UserEntity, 'user')
       .leftJoin(PersonEntity, 'person', 'user.id_persona = person.id')
       .leftJoin(
@@ -109,7 +112,7 @@ export class UserRepository {
       .andWhere('user.estado = true')
       .andWhere('residency.es_principal = true');
 
-    return query.getRawOne<Record<'id', number>>();
+    return query.getRawOne<MainResidencyI>();
   }
 
   async getByRole(cnx: EntityManager, role: RoleTypeEnum) {

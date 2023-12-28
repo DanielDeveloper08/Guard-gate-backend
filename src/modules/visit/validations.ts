@@ -52,4 +52,18 @@ export class VisitValidations {
 
     return validate(createSchema);
   };
+
+  saveDetail = () => {
+    const saveDetailSchema: schema = {
+      body: Joi.object({
+        visitId: this._validations.validNumber('visitId'),
+        visitorId: this._validations.validNumber('visitorId'),
+        observation: this._validations.validStringNoRequired('observation', 255),
+        carPlate: this._validations.validStringNoRequired('carPlate', 255),
+        photos: this._validations.validArrayStr('photos'),
+      }),
+    };
+
+    return validate(saveDetailSchema);
+  };
 }
