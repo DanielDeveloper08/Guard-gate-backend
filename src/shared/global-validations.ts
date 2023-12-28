@@ -98,6 +98,16 @@ export class GlobalValidations {
       });
   }
 
+  validArrayStr(prop: string) {
+    return Joi.array()
+      .required()
+      .items(Joi.string())
+      .messages({
+        'any.required': `"${prop}" es requerido`,
+        'array.base': `"${prop}" debe ser un array de string`,
+      });
+  }
+
   validArrayNumber(prop: string) {
     return Joi.array()
       .required()

@@ -13,10 +13,10 @@ export interface UserResidencesI {
   username: string;
   names: string;
   surnames: string;
-  residences: Array<Residency>;
+  residences: Array<ResidencyI>;
 }
 
-export interface Residency {
+export interface ResidencyI {
   residencyId: number;
   personId: number;
   block: string;
@@ -24,6 +24,10 @@ export interface Residency {
   urbanization: string;
   isMain: boolean;
 }
+
+export type MainResidencyI = Pick<ResidencyI, 'urbanization'> & {
+  id: number;
+};
 
 export interface UserRoleI {
   id: number;

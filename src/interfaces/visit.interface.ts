@@ -7,12 +7,24 @@ export interface VisitI {
   endDate?: Date;
   validityHours: number;
   reason?: string;
+  idResidency?: number;
   status?: string;
   type: VisitTypeEnum;
   visitors: Array<VisitorI>;
 }
 
 export interface VisitDTO
-  extends Omit<VisitI, 'id' | 'endDate' | 'status' | 'visitors'> {
+  extends Omit<
+    VisitI,
+    'id' | 'endDate' | 'idResidency' | 'status' | 'visitors'
+  > {
   listVisitors: Array<number>;
+}
+
+export interface SaveVisitDetailI {
+  visitId: number;
+  visitorId: number;
+  observation?: string;
+  carPlate?: string;
+  photos: Array<string>;
 }

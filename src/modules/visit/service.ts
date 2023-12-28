@@ -1,5 +1,5 @@
 import { EntityManager } from 'typeorm';
-import { VisitDTO } from '../../interfaces/visit.interface';
+import { SaveVisitDetailI, VisitDTO } from '../../interfaces/visit.interface';
 import { VisitRepository } from './repository';
 import { UserRepository } from '../user/repository';
 import { TypeVisitRepository } from '../type-visit/repository';
@@ -9,8 +9,12 @@ import { ServiceException } from '../../shared/service-exception';
 import {
   ERR_401,
   NO_EXIST_RECORD,
+  REASON_VISIT,
   RECORD_CREATED_FAIL,
+  RECORD_EDIT,
+  RECORD_EDIT_FAIL,
   VALID_LIST_VISITORS,
+  VISITOR_HAS_ENTERED,
 } from '../../shared/messages';
 import {
   TypeVisitEntity,
@@ -99,7 +103,7 @@ export class VisitService {
       const visitData = {
         startDate,
         validityHours,
-        reason: reason ?? null,
+        reason: reason ?? REASON_VISIT(residency.urbanization),
         typeVisitId: typeVisit.id,
         residencyId: residency.id,
         statusId: statusVisit.id,
@@ -128,7 +132,7 @@ export class VisitService {
         visitorId: id,
       } as VisitVisitorEntity));
 
-      const visitVisitorCreated = await this._repoVisitVisitor.create(
+      const visitVisitorCreated = await this._repoVisitVisitor.createMany(
         cnxTran,
         visitVisitorData
       );
@@ -138,6 +142,46 @@ export class VisitService {
       }
 
       return visitCreated;
+    });
+  }
+
+  async saveDetail(cnx: EntityManager, payload: SaveVisitDetailI) {
+    return cnx.transaction(async (cnxTran) => {
+      const { visitId, visitorId, observation, carPlate, photos } = payload;
+
+      const visitor = await this._repoVisitVisitor.getVisitVisitor(
+        cnxTran,
+        visitId,
+        visitorId
+      );
+
+      if (!visitor) {
+        throw new ServiceException(NO_EXIST_RECORD('visitante'));
+      }
+
+      if (visitor.hasEntered || visitor.entryDate !== null) {
+        throw new ServiceException(VISITOR_HAS_ENTERED);
+      }
+
+      const visitVisitorData = {
+        hasEntered: true,
+        entryDate: new Date(),
+        observation: observation ?? null,
+        carPlate: carPlate ?? null,
+        photos: photos.length ? JSON.stringify(photos) : null,
+      } as VisitVisitorEntity;
+
+      const visitVisitorUpdated = await this._repoVisitVisitor.update(
+        cnxTran,
+        visitor.id,
+        visitVisitorData
+      );
+
+      if (!visitVisitorUpdated) {
+        throw new ServiceException(RECORD_EDIT_FAIL('visitante'));
+      }
+
+      return RECORD_EDIT('Detalle del visitante');
     });
   }
 }
