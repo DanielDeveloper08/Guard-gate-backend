@@ -39,7 +39,7 @@ export class VisitorService {
       throw new ServiceException(ERR_401);
     }
 
-    const { names, surnames, docNumber } = payload;
+    const { names, surnames, docNumber, phone } = payload;
 
     const userId = global.user.id;
     const residency = await this._repoUser.getMainResidency(cnx, userId);
@@ -52,6 +52,7 @@ export class VisitorService {
       names,
       surnames,
       docNumber,
+      phone,
       residencyId: residency.id,
     } as VisitorEntity;
 

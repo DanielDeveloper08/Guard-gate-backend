@@ -3,6 +3,7 @@ export interface VisitorI {
   names: string;
   surnames: string;
   docNumber: string;
+  phone: string;
   idResidency: number;
 }
 
