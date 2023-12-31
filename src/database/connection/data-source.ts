@@ -54,6 +54,7 @@ export class AppDataSource extends Environments {
       migrations: [],
       poolSize: 10,
       useUTC: true,
+      ssl: this.getBoolEnv('DB_SSL')
     };
   }
 
