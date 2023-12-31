@@ -25,6 +25,7 @@ export class VisitorValidations {
         names: this._validations.validString('names', 255),
         surnames: this._validations.validString('surnames', 255),
         docNumber: this._validations.validString('docNumber', 255),
+        phone: this._validations.validString('phone', 255),
       }),
     };
 
