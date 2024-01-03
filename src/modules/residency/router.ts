@@ -3,8 +3,10 @@ import { BaseRouter } from '../../shared/base-router';
 import { ResidencyController } from './controller';
 import { ResidencyValidations } from './validations';
 
-export class ResidencyRouter extends BaseRouter<ResidencyController, ResidencyValidations> {
-
+export class ResidencyRouter extends BaseRouter<
+  ResidencyController,
+  ResidencyValidations
+> {
   constructor() {
     super(ResidencyController, ResidencyValidations);
   }
