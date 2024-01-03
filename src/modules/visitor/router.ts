@@ -21,6 +21,15 @@ export class VisitorRouter extends BaseRouter<
       this.controller.getAll
     );
 
+    this.router.get(
+      '/visitors/:id',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.getOne(),
+      ],
+      this.controller.getOne
+    );
+
     this.router.post(
       '/visitors',
       [
@@ -28,6 +37,24 @@ export class VisitorRouter extends BaseRouter<
         this.validation!.create(),
       ],
       this.controller.create
+    );
+
+    this.router.put(
+      '/visitors/:id',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.update(),
+      ],
+      this.controller.update
+    );
+
+    this.router.delete(
+      '/visitors/:id',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.disable(),
+      ],
+      this.controller.disable
     );
   }
 }

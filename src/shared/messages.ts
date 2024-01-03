@@ -55,3 +55,5 @@ export const REASON_VISIT = (residencyName: string) =>
 export const VISITOR_HAS_ENTERED = 'Visitante ya registra un ingreso previo';
 
 export const VISIT_OUT_RANGE = 'Visita fuera del tiempo establecido';
+
+export const VISITOR_DISABLE = 'Visitante ya se encuentra desactivado';

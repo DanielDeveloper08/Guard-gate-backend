@@ -5,6 +5,8 @@ export interface VisitorI {
   docNumber: string;
   phone: string;
   idResidency: number;
+  status: boolean;
 }
 
-export type VisitorDTO = Omit<VisitorI, 'id' | 'idResidency'>;
+export type VisitorDTO = Omit<VisitorI, 'id' | 'idResidency' | 'status'>;
+export type VisitorUpdateDTO = Omit<VisitorDTO, 'docNumber'>
