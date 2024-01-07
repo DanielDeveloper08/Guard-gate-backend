@@ -4,6 +4,7 @@ import { ServiceResponse } from '../../helpers';
 import { RoleService } from './service';
 import { PaginationI } from '../../interfaces/global.interface';
 import { UpdateRoleDTO } from '../../interfaces/role.interface';
+import { RoleTypeEnum } from '../../enums/role.enum';
 
 export class RoleController {
 
@@ -16,6 +17,23 @@ export class RoleController {
     try {
       const payload = req.query as PaginationI;
       const data = await this._roleSrv.getAll(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  getRoleByName = async (req: Request, res: Response) => {
+    try {
+      const payload = req.query.rolename as RoleTypeEnum;
+      const data = await this._roleSrv.getRoleByName(this._cnx, payload);
 
       return ServiceResponse.success({
         res,

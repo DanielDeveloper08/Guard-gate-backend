@@ -7,6 +7,7 @@ export interface RoleI {
 interface OperationI {
   id: number;
   name: string;
+  route: string;
 }
 
 export interface UpdateRoleDTO {
