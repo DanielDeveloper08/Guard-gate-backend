@@ -32,7 +32,7 @@ export class RoleController {
 
   getRoleByName = async (req: Request, res: Response) => {
     try {
-      const payload = req.query.rolename as RoleTypeEnum;
+      const payload = req.params.rolename as RoleTypeEnum;
       const data = await this._roleSrv.getRoleByName(this._cnx, payload);
 
       return ServiceResponse.success({

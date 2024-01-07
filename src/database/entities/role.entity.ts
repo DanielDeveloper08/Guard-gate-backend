@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, ManyToMany, JoinTable} from 'typeorm';
+import { Column, Entity, OneToMany, ManyToMany, JoinTable, PrimaryGeneratedColumn} from 'typeorm';
 import { BaseEntity } from '../../shared/base-entity';
 import { UserEntity } from './user.entity';
 import { RoleOperationEntity } from './role-operation.entity';
@@ -7,9 +7,8 @@ import { OperationEntity } from './operation.entity';
 
 @Entity({ name: 'rol' })
 export class RoleEntity extends BaseEntity {
-
   @Column('varchar', { name: 'nombre', length: 255 })
-  name!: RoleTypeEnum;
+  name!: RoleTypeEnum | string;
 
   @OneToMany(() => UserEntity, (user) => user.role)
   users!: UserEntity[];
@@ -17,11 +16,18 @@ export class RoleEntity extends BaseEntity {
   @OneToMany(() => RoleOperationEntity, (roleOperation) => roleOperation.rol)
   roleOperations!: RoleOperationEntity[];
 
+
   @ManyToMany(() => OperationEntity, operation=>operation.roles)
   @JoinTable({
-    name: 'rol_operacion',
-    joinColumn: { name: 'id_rol' },
-    inverseJoinColumn: { name: 'id_operacion' },
+    name:'rol_operacion',
+    joinColumn: {
+      name: 'id_rol',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'id_operacion',
+      referencedColumnName: 'id',
+    },
   })
   operations!: OperationEntity[];
 }
