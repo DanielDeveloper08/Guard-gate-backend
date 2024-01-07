@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 't
 import { OperationEntity } from './operation.entity';
 import { RoleEntity } from './role.entity';
 
-@Entity({ name: 'rol_operacion' })
+@Entity({ name: 'rol_operacion_aux' })
 export class RoleOperationEntity {
 
   @PrimaryGeneratedColumn('increment', { type: 'integer', name: 'id' })

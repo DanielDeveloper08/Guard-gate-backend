@@ -19,6 +19,16 @@ export class RoleValidations {
     return validate(getAllSchema);
   };
 
+  getRoleByName = () => {
+    const getAllSchema: schema = {
+      query: Joi.object({
+        page: this._validations.validNumberNoRequired('rolename')
+      }),
+    };
+
+    return validate(getAllSchema);
+  };
+
   update = () => {
     const updateSchema: schema = {
       params: Joi.object({
