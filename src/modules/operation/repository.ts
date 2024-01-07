@@ -8,4 +8,8 @@ export class OperationRepository {
       where: { id },
     });
   }
+
+  getAll(cnx: EntityManager) {
+    return cnx.find(OperationEntity);
+  }
 }

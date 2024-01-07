@@ -26,6 +26,20 @@ export class RoleService {
     return data;
   }
 
+  async getAllOperations(cnx: EntityManager) {
+    const data = await this._repoOperation.getAll(cnx);
+    return data.map(datum=>(
+      {
+        id:datum.id,
+        name:datum.name,
+        route:datum.route,
+        moduleId:datum.moduleId,
+        selected:false
+      }
+      )
+    );
+  }
+
   async getRoleByName(cnx: EntityManager, payload: RoleTypeEnum) {
     const data = await this._repo.getByRoleName(cnx, payload);
 

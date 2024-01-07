@@ -26,6 +26,14 @@ export class RoleRouter extends BaseRouter<RoleController, RoleValidations> {
       this.controller.getAll
     );
 
+    this.router.get(
+      '/operations',
+      [
+        GlobalMiddleware.validateJwtToken
+      ],
+      this.controller.getAllOperations
+    );
+
     this.router.put(
       '/roles/:id',
       [
