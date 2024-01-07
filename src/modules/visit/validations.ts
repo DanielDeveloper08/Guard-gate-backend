@@ -66,4 +66,15 @@ export class VisitValidations {
 
     return validate(saveDetailSchema);
   };
+
+  sendNotification = () => {
+    const sendNotificationSchema: schema = {
+      body: Joi.object({
+        visitId: this._validations.validNumber('visitId'),
+        base64Img: this._validations.validStringNoMaxLength('base64Img'),
+      }),
+    };
+
+    return validate(sendNotificationSchema);
+  };
 }

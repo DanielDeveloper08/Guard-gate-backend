@@ -1,5 +1,7 @@
 import { EntityManager } from 'typeorm';
 import {
+  PersonEntity,
+  ResidencyEntity,
   TypeVisitEntity,
   VisitEntity,
   VisitVisitorEntity,
@@ -28,6 +30,8 @@ export class VisitRepository {
         'visitor.nombres as names',
         'visitor.apellidos as surnames',
         'visitor.cedula as "docNumber"',
+        'visitor.telefono as phone',
+        'visitor.estado as status',
         'visitor.id_residencia as "idResidency"',
       ])
       .from(VisitorEntity, 'visitor')
@@ -37,6 +41,7 @@ export class VisitRepository {
         'visitor.id = visit_visitor.id_visitante'
       )
       .where('visit.id = visit_visitor.id_visita')
+      .andWhere('visitor.estado = true')
       .groupBy('visitor.id')
       .orderBy('visitor.id', 'ASC')
       .getQuery();
@@ -101,6 +106,8 @@ export class VisitRepository {
         'visitor.nombres as names',
         'visitor.apellidos as surnames',
         'visitor.cedula as "docNumber"',
+        'visitor.telefono as phone',
+        'visitor.estado as status',
         'visitor.id_residencia as "idResidency"',
       ])
       .from(VisitorEntity, 'visitor')
@@ -110,6 +117,7 @@ export class VisitRepository {
         'visitor.id = visit_visitor.id_visitante'
       )
       .where('visit.id = visit_visitor.id_visita')
+      .andWhere('visitor.estado = true')
       .groupBy('visitor.id')
       .orderBy('visitor.id', 'ASC')
       .getQuery();
@@ -122,6 +130,7 @@ export class VisitRepository {
         'visit.fecha_fin as "endDate"',
         'visit.horas_validez as "validityHours"',
         'visit.motivo as reason',
+        `CONCAT(person.names, ' ', person.surnames) as "generatedBy"`,
         'visit.id_residencia as "idResidency"',
         'type.name as type',
       ])
@@ -135,6 +144,8 @@ export class VisitRepository {
       ])
       .from(VisitEntity, 'visit')
       .leftJoin(TypeVisitEntity, 'type', 'visit.id_tipo_visita = type.id')
+      .leftJoin(ResidencyEntity, 'residency', 'visit.id_residencia = residency.id')
+      .leftJoin(PersonEntity, 'person', 'residency.id_persona = person.id')
       .where('visit.id = :id', { id })
       .orderBy('visit.id', 'ASC');
 
