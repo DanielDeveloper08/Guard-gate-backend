@@ -57,3 +57,6 @@ export const VISITOR_HAS_ENTERED = 'Visitante ya registra un ingreso previo';
 export const VISIT_OUT_RANGE = 'Visita fuera del tiempo establecido';
 
 export const VISITOR_DISABLE = 'Visitante ya se encuentra desactivado';
+
+export const QR_MESSAGE_SUCCESS =
+  '¡Mensaje enviado con éxito! El código QR ha sido enviado a los visitantes';

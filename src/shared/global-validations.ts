@@ -49,6 +49,7 @@ export class GlobalValidations {
 
   validStringNoMaxLength(prop: string) {
     return Joi.string()
+      .required()
       .min(1)
       .messages({
         'any.required': `"${prop}" es requerido`,

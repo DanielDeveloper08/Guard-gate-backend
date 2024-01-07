@@ -2,7 +2,11 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../../database';
 import { HttpCodes } from '../../enums/http-codes.enum';
 import { ServiceResponse } from '../../helpers';
-import { VisitDTO, SaveVisitDetailI } from '../../interfaces/visit.interface';
+import {
+  VisitDTO,
+  SaveVisitDetailI,
+  NotificationPayloadI,
+} from '../../interfaces/visit.interface';
 import { VisitService } from './service';
 import { PaginationI } from '../../interfaces/global.interface';
 
@@ -69,6 +73,23 @@ export class VisitController {
     try {
       const payload = req.body as SaveVisitDetailI;
       const data = await this._visitSrv.saveDetail(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  sendNotification = async (req: Request, res: Response) => {
+    try {
+      const payload = req.body as NotificationPayloadI;
+      const data = await this._visitSrv.sendNotification(this._cnx, payload);
 
       return ServiceResponse.success({
         res,

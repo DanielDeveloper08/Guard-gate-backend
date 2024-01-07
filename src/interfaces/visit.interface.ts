@@ -7,6 +7,7 @@ export interface VisitI {
   endDate?: Date;
   validityHours: number;
   reason?: string;
+  generatedBy: string;
   idResidency?: number;
   status?: string;
   type: VisitTypeEnum;
@@ -27,4 +28,9 @@ export interface SaveVisitDetailI {
   observation?: string;
   carPlate?: string;
   photos: Array<string>;
+}
+
+export interface NotificationPayloadI {
+  visitId: number;
+  base64Img: string;
 }

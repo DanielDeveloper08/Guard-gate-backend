@@ -4,8 +4,8 @@ export interface VisitorI {
   surnames: string;
   docNumber: string;
   phone: string;
-  idResidency: number;
   status: boolean;
+  idResidency: number;
 }
 
 export type VisitorDTO = Omit<VisitorI, 'id' | 'idResidency' | 'status'>;
