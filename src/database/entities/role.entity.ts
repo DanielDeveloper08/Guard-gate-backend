@@ -19,7 +19,7 @@ export class RoleEntity extends BaseEntity {
 
   @ManyToMany(() => OperationEntity, operation=>operation.roles)
   @JoinTable({
-    name:'rol_operacion',
+    name:'rol_operacion_aux',
     joinColumn: {
       name: 'id_rol',
       referencedColumnName: 'id',
