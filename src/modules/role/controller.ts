@@ -30,6 +30,22 @@ export class RoleController {
     }
   };
 
+  getAllOperations = async (req: Request, res: Response) => {
+    try {
+      const data = await this._roleSrv.getAllOperations(this._cnx);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
   getRoleByName = async (req: Request, res: Response) => {
     try {
       const payload = req.params.rolename as RoleTypeEnum;
