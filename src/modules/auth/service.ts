@@ -253,7 +253,7 @@ export class AuthService extends Environments {
   }
 
   private comparePassword(plainPass: string, encryptPass: string): boolean {
-    return this._encryptor.encrypt(plainPass) === encryptPass;
+    return this._encryptor.decrypt(encryptPass) === plainPass;
   }
 
   private validateDurationOTP(creationDate: Date): boolean {

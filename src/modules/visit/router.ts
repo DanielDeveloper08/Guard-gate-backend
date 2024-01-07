@@ -44,5 +44,14 @@ export class VisitRouter extends BaseRouter<VisitController, VisitValidations> {
       ],
       this.controller.saveDetail
     );
+
+    this.router.post(
+      '/visits/sendQR',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.sendNotification(),
+      ],
+      this.controller.sendNotification
+    );
   }
 }

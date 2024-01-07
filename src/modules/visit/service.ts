@@ -1,5 +1,5 @@
 import { EntityManager } from 'typeorm';
-import { SaveVisitDetailI, VisitDTO } from '../../interfaces/visit.interface';
+import { NotificationPayloadI, SaveVisitDetailI, VisitDTO } from '../../interfaces/visit.interface';
 import { VisitRepository } from './repository';
 import { UserRepository } from '../user/repository';
 import { TypeVisitRepository } from '../type-visit/repository';
@@ -9,6 +9,7 @@ import { ServiceException } from '../../shared/service-exception';
 import {
   ERR_401,
   NO_EXIST_RECORD,
+  QR_MESSAGE_SUCCESS,
   REASON_VISIT,
   RECORD_CREATED_FAIL,
   RECORD_EDIT,
@@ -25,6 +26,8 @@ import {
 import { VisitStatusEnum } from '../../enums/visit.enum';
 import { VisitorRepository } from '../visitor/repository';
 import { PaginationI } from '../../interfaces/global.interface';
+import { EncryptorHelper, WsHelper } from '../../helpers';
+import { SendMessageI } from '../../interfaces/ws.interface';
 
 export class VisitService {
 
@@ -35,6 +38,8 @@ export class VisitService {
     private readonly _repoTypeVisit = new TypeVisitRepository(),
     private readonly _repoVisitor = new VisitorRepository(),
     private readonly _repoVisitVisitor = new VisitVisitorRepository(),
+    private readonly _wsHelper = new WsHelper(),
+    private readonly _encryptor = new EncryptorHelper(),
   ) {}
 
   async getAll(cnx: EntityManager, payload: PaginationI) {
@@ -182,6 +187,48 @@ export class VisitService {
       }
 
       return RECORD_EDIT('Detalle del visitante');
+    });
+  }
+
+  async sendNotification(cnx: EntityManager, payload: NotificationPayloadI) {
+    return cnx.transaction(async (cnxTran) => {
+
+      const {
+        visitId,
+        base64Img,
+      } = payload;
+
+      const visit = await this._repo.getById(cnxTran, visitId);
+
+      if (!visit) {
+        throw new ServiceException(NO_EXIST_RECORD('la visita'));
+      }
+
+      const visitors = visit.visitors.filter(visitor => visitor.phone);
+
+      if (!visitors.length) return null;
+
+      const messagePayload = {
+        residentName: visit.generatedBy,
+      } as SendMessageI;
+
+      await Promise.all(
+        visitors.map(async (visitor) => {
+
+          const [data, error] = await this._wsHelper.sendMessage({
+            ...messagePayload,
+            visitorName: `${visitor.names} ${visitor.surnames}`,
+            visitorPhone: visitor.phone,
+          });
+
+          console.info({ data, error });
+
+          if (data && !error) return visit.id;
+        })
+      );
+
+
+      return QR_MESSAGE_SUCCESS;
     });
   }
 }

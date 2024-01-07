@@ -15,6 +15,12 @@ export class VisitorEntity extends BaseEntity {
   @Column('varchar', { name: 'cedula', length: 255 })
   docNumber!: string;
 
+  @Column('varchar', { name: 'telefono', length: 15, nullable: true })
+  phone!: string | null;
+
+  @Column('boolean', { name: 'estado', default: true })
+  status!: boolean;
+
   @Column('integer', { name: 'id_residencia' })
   residencyId!: number;
 

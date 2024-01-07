@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { Admin, EntityManager } from 'typeorm';
 import { OperationEntity, RoleEntity, RoleOperationEntity } from '../../database';
 import { RoleTypeEnum } from '../../enums/role.enum';
 import { PaginationI, ResponsePaginationI } from '../../interfaces/global.interface';
@@ -81,7 +81,9 @@ export class RoleRepository {
   getByRoleName(cnx: EntityManager, role: RoleTypeEnum) {
     return cnx.findOne(
       RoleEntity,
-      { where: { name: role } },
+      { where: { name: role},
+        relations: ['operations']
+      },
     );
   }
 

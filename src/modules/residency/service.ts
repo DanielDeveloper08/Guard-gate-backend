@@ -37,61 +37,65 @@ export class ResidencyService {
   }
 
   async create(cnx: EntityManager, payload: ResidencyDTO) {
-    const { block, town, urbanization, personId } = payload;
+    return cnx.transaction(async (cnxTran) => {
+      const { block, town, urbanization, personId } = payload;
 
-    const person = await this._repoPerson.getById(cnx, personId);
+      const person = await this._repoPerson.getById(cnxTran, personId);
 
-    if (!person) {
-      throw new ServiceException(NO_EXIST_RECORD('persona'));
-    }
+      if (!person) {
+        throw new ServiceException(NO_EXIST_RECORD('persona'));
+      }
 
-    const existsResidency = await this._repo.getByPersonId(cnx, personId);
+      const existsResidency = await this._repo.getByPersonId(cnxTran, personId);
 
-    const residencyData = {
-      block,
-      town,
-      urbanization,
-      personId,
-      isMain: !existsResidency,
-    } as ResidencyEntity;
+      const residencyData = {
+        block,
+        town,
+        urbanization,
+        personId,
+        isMain: !existsResidency,
+      } as ResidencyEntity;
 
-    const residencyCreated = await this._repo.create(cnx, residencyData);
+      const residencyCreated = await this._repo.create(cnxTran, residencyData);
 
-    if (!residencyCreated) {
-      throw new ServiceException(RECORD_CREATED_FAIL('la residencia'));
-    }
+      if (!residencyCreated) {
+        throw new ServiceException(RECORD_CREATED_FAIL('la residencia'));
+      }
 
-    return residencyCreated;
+      return residencyCreated;
+    });
   }
 
   async update(cnx: EntityManager, id: number, payload: ResidencyDTO) {
-    const { block, town, urbanization, personId } = payload;
+    return cnx.transaction(async (cnxTran) => {
+      const { block, town, urbanization, personId } = payload;
 
-    const residency = await this._repo.getById(cnx, id);
-    const person = await this._repoPerson.getById(cnx, personId);
+      const residency = await this._repo.getById(cnxTran, id);
+      const person = await this._repoPerson.getById(cnxTran, personId);
 
-    if (!residency) {
-      throw new ServiceException(NO_EXIST_RECORD('la residencia'));
-    }
+      if (!residency) {
+        throw new ServiceException(NO_EXIST_RECORD('la residencia'));
+      }
 
-    if (!person) {
-      throw new ServiceException(NO_EXIST_RECORD('persona'));
-    }
+      if (!person) {
+        throw new ServiceException(NO_EXIST_RECORD('persona'));
+      }
 
-    const residencyData = {
-      block,
-      town,
-      urbanization,
-      personId,
-    } as ResidencyEntity;
+      const residencyData = {
+        block,
+        town,
+        urbanization,
+        personId,
+      } as ResidencyEntity;
 
-    const residencyUpdated = await this._repo.update(cnx, id, residencyData);
+      const residencyUpdated = await this._repo.update(cnxTran, id, residencyData);
 
-    if (!residencyUpdated) {
-      throw new ServiceException(RECORD_EDIT_FAIL('la residencia'));
-    }
+      if (!residencyUpdated) {
+        throw new ServiceException(RECORD_EDIT_FAIL('la residencia'));
+      }
 
-    return RECORD_EDIT('Residencia');
+      return RECORD_EDIT('Residencia');
+    });
   }
 
   async remove(cnx: EntityManager, id: number) {

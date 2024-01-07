@@ -3,7 +3,10 @@ export interface VisitorI {
   names: string;
   surnames: string;
   docNumber: string;
+  phone: string;
+  status: boolean;
   idResidency: number;
 }
 
-export type VisitorDTO = Omit<VisitorI, 'id' | 'idResidency'>;
+export type VisitorDTO = Omit<VisitorI, 'id' | 'idResidency' | 'status'>;
+export type VisitorUpdateDTO = Omit<VisitorDTO, 'docNumber'>

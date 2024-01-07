@@ -11,6 +11,7 @@ import {
   RECORD_EDIT_FAIL,
 } from '../../shared/messages';
 import { RoleOperationRepository } from '../role-operation/repository';
+import { RoleTypeEnum } from '../../enums/role.enum';
 
 export class RoleService {
 
@@ -23,6 +24,39 @@ export class RoleService {
   async getAll(cnx: EntityManager, payload: PaginationI) {
     const data = await this._repo.getAll(cnx, payload);
     return data;
+  }
+
+  async getAllOperations(cnx: EntityManager) {
+    const data = await this._repoOperation.getAll(cnx);
+    return data.map(datum=>(
+      {
+        id:datum.id,
+        name:datum.name,
+        route:datum.route,
+        moduleId:datum.moduleId,
+        selected:false
+      }
+      )
+    );
+  }
+
+  async getRoleByName(cnx: EntityManager, payload: RoleTypeEnum) {
+    const data = await this._repo.getByRoleName(cnx, payload);
+
+    if(!data){
+      return null;
+    }
+
+    return  {
+      id:data.id,
+      name:data.name,
+      operations: data.operations!.map(operation=> ({
+        id:operation.id,
+        name:operation.name,
+        moduleId:operation.moduleId,
+        route:operation.route
+      }))
+    };
   }
 
   async update(cnx: EntityManager, id: number, payload: UpdateRoleDTO) {

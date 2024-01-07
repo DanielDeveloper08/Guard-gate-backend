@@ -1,4 +1,4 @@
-import crypto from 'crypto-js';
+import CryptoJS from 'crypto-js';
 import { Environments } from '../config/environments';
 
 export class EncryptorHelper extends Environments {
@@ -11,22 +11,29 @@ export class EncryptorHelper extends Environments {
     this._iv = this.getEnv('IV_CRYPTO')!;
   }
 
-  public encrypt(text: string): string {
-    const key = crypto.enc.Utf8.parse(this._key);
-    const iv = crypto.enc.Utf8.parse(this._iv);
-    const encryptedCP = crypto.AES.encrypt(text, key, { iv });
+  private getKey(): CryptoJS.lib.WordArray {
+    const bytes = CryptoJS.enc.Utf8.parse(this._key.padEnd(32, '0'));
+    return CryptoJS.lib.WordArray.create(bytes.words, 16);
+  }
 
-    return encryptedCP.toString();
+  private getIV(): CryptoJS.lib.WordArray {
+    const bytes = CryptoJS.enc.Utf8.parse(this._iv.padEnd(32, '0'));
+    return CryptoJS.lib.WordArray.create(bytes.words, 16);
+  }
+
+  public encrypt(text: string): string {
+    const key = this.getKey();
+    const iv = this.getIV();
+
+    const cipherText = CryptoJS.AES.encrypt(text, key, { iv });
+    return cipherText.toString();
   }
 
   public decrypt(cryptText: string): string {
-    const key = crypto.enc.Utf8.parse(this._key);
-    const iv = crypto.enc.Utf8.parse(this._iv);
-    const cipherParams = crypto.lib.CipherParams.create({
-      ciphertext: crypto.enc.Base64.parse(cryptText),
-    });
+    const key = this.getKey();
+    const iv = this.getIV();
 
-    const decryptedFromText = crypto.AES.decrypt(cipherParams, key, { iv });
-    return decryptedFromText.toString(crypto.enc.Utf8);
+    const bytesDecrypted = CryptoJS.AES.decrypt(cryptText, key, { iv });
+    return bytesDecrypted.toString(CryptoJS.enc.Utf8);
   }
 }

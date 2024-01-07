@@ -24,9 +24,11 @@ export class VisitorRepository {
         'visitor.apellidos as surnames',
         'visitor.cedula as "docNumber"',
         'visitor.id_residencia as "idResidency"',
+        'visitor.estado as status',
       ])
       .from(VisitorEntity, 'visitor')
-      .where('visitor.id_residencia = :residencyId', { residencyId });
+      .where('visitor.id_residencia = :residencyId', { residencyId })
+      .andWhere('visitor.estado = true');
 
     if (search.trim()) {
       query.andWhere(
@@ -58,14 +60,34 @@ export class VisitorRepository {
     return response;
   }
 
+  getByDocNumber(cnx: EntityManager, docNumber: string) {
+    return cnx.findOne(VisitorEntity, {
+      where: { docNumber, status: true },
+    });
+  }
+
   getValidVisitor(cnx: EntityManager, id: number, residencyId: number) {
     return cnx.findOne(VisitorEntity, {
-      where: { id, residencyId },
+      where: { id, residencyId, status: true },
     });
   }
 
   create(cnx: EntityManager, payload: VisitorEntity) {
     const insert = cnx.create(VisitorEntity, payload);
     return cnx.save(insert);
+  }
+
+  async update(
+    cnx: EntityManager,
+    id: number,
+    payload: VisitorEntity
+  ) {
+    const update = await cnx.update(
+      VisitorEntity,
+      { id },
+      payload
+    );
+
+    return update.affected;
   }
 }
