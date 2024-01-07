@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 't
 import { OperationEntity } from './operation.entity';
 import { RoleEntity } from './role.entity';
 
-@Entity({ name: 'rol_operacion_aux' })
+@Entity({ name: 'rol_operacion' })
 export class RoleOperationEntity {
 
   @PrimaryGeneratedColumn('increment', { type: 'integer', name: 'id' })
@@ -14,11 +14,11 @@ export class RoleOperationEntity {
   @Column('integer', { name: 'id_operacion' })
   operationId!: number;
 
-  @ManyToOne(() => RoleEntity, (role) => role.roleOperations)
-  @JoinColumn([{ name: 'id_rol', referencedColumnName: 'id' }])
+  @ManyToOne(() => RoleEntity, (role) => role.operations)
+  @JoinColumn({ name: 'id_rol', referencedColumnName: 'id' })
   rol!: RoleEntity;
 
-  @ManyToOne(() => OperationEntity, (operation) => operation.roleOperations)
-  @JoinColumn([{ name: 'id_operacion', referencedColumnName: 'id' }])
+  @ManyToOne(() => OperationEntity, (operation) => operation.roles)
+  @JoinColumn({ name: 'id_operacion', referencedColumnName: 'id' })
   operation!: OperationEntity;
 }

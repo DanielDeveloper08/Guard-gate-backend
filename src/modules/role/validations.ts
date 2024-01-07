@@ -21,8 +21,8 @@ export class RoleValidations {
 
   getRoleByName = () => {
     const getAllSchema: schema = {
-      query: Joi.object({
-        page: this._validations.validNumberNoRequired('rolename')
+      params: Joi.object({
+        rolename: this._validations.validString('rolename',255)
       }),
     };
 
