@@ -3,6 +3,9 @@ export interface ResidencyI {
   block: string;
   town: string;
   urbanization: string;
+  residentName: string;
+  residentEmail: string;
+  residentPhone: string;
   personId: number;
 }
 
