@@ -23,7 +23,7 @@ import {
   VisitEntity,
   VisitVisitorEntity,
 } from '../../database';
-import { VisitTypeEnum } from '../../enums/visit.enum';
+import { VisitStatusEnum, VisitTypeEnum } from '../../enums/visit.enum';
 import { VisitorRepository } from '../visitor/repository';
 import { PaginationI } from '../../interfaces/global.interface';
 import { DateFormatHelper, EncryptorHelper, WsHelper } from '../../helpers';
@@ -69,20 +69,26 @@ export class VisitService {
 
     const diff = this._dateFormat.getDiffInHours(visit.startDate);
 
-    if (diff > visit.validityHours) {
-      // Update a caducada
+    const visitData = {
+      status: VisitStatusEnum.EXPIRED,
+    } as VisitEntity;
 
+    if (diff > visit.validityHours) {
+      await this._repo.update(cnx, visit.id, visitData);
+
+      return {
+        ...visit,
+        ...visitData,
+        message: VISIT_OUT_RANGE,
+      };
+    }
+
+    if (diff < visit.validityHours) {
       return {
         ...visit,
         message: VISIT_OUT_RANGE,
       };
     }
-
-    console.log({
-      diff,
-      hours: visit.validityHours,
-      startDate: this._dateFormat.getDateFormat(visit.startDate)
-    });
 
     return visit;
   }
