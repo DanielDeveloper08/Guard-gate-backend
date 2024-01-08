@@ -8,6 +8,7 @@ import { ServiceException } from '../../shared/service-exception';
 import {
   ERR_401,
   NO_EXIST_RECORD,
+  QR_MESSAGE_FAIL,
   QR_MESSAGE_SUCCESS,
   REASON_VISIT,
   RECORD_CREATED_FAIL,
@@ -215,7 +216,7 @@ export class VisitService {
         residentName: visit.generatedBy,
       } as SendMessageI;
 
-      await Promise.all(
+      const visitorsIdxs = await Promise.all(
         visitors.map(async (visitor) => {
 
           const [data, error] = await this._wsHelper.sendMessage({
@@ -230,6 +231,9 @@ export class VisitService {
         })
       );
 
+      if (!visitorsIdxs.some(v => v)) {
+        throw new ServiceException(QR_MESSAGE_FAIL);
+      }
 
       return QR_MESSAGE_SUCCESS;
     });
