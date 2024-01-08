@@ -4,8 +4,10 @@ export enum VisitTypeEnum {
 }
 
 export enum VisitStatusEnum {
-  PENDING = 'PENDIENTE',
-  FULFILLED = 'COMPLETADA',
-  CANCELLED = 'CANCELADA',
-  EXPIRED = 'CADUCADA',
+  PENDING = 'PENDIENTE',      // Initial State
+  FULFILLED = 'COMPLETADA',   // Sensor
+  CANCELLED = 'CANCELADA',    // Resident
+  APPROVED = 'APROBADA',      // Guard
+  REJECTED = 'RECHAZADA',     // Guard
+  EXPIRED = 'CADUCADA',       // Sensor or Service
 }
