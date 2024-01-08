@@ -20,9 +20,13 @@ export class ResidencyRepository {
         'residency.manzana as block',
         'residency.villa as town',
         'residency.urbanizacion as urbanization',
+        `CONCAT(person.names, ' ', person.surnames) as "residentName"`,
+        'person.correo as "residentEmail"',
+        'person.phone as "residentPhone"',
         'residency.id_persona as "personId"',
       ])
-      .from(ResidencyEntity, 'residency');
+      .from(ResidencyEntity, 'residency')
+      .leftJoin(PersonEntity, 'person', 'residency.id_persona = person.id');
 
     if (search.trim()) {
       query.where(

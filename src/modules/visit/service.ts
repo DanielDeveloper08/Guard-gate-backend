@@ -3,7 +3,6 @@ import { NotificationPayloadI, SaveVisitDetailI, VisitDTO } from '../../interfac
 import { VisitRepository } from './repository';
 import { UserRepository } from '../user/repository';
 import { TypeVisitRepository } from '../type-visit/repository';
-import { VisitStatusRepository } from '../visit-status/repository';
 import { VisitVisitorRepository } from '../visit-visitor/repository';
 import { ServiceException } from '../../shared/service-exception';
 import {
@@ -16,17 +15,17 @@ import {
   RECORD_EDIT_FAIL,
   VALID_LIST_VISITORS,
   VISITOR_HAS_ENTERED,
+  VISIT_OUT_RANGE,
 } from '../../shared/messages';
 import {
   TypeVisitEntity,
   VisitEntity,
-  VisitStatusEntity,
   VisitVisitorEntity,
 } from '../../database';
-import { VisitStatusEnum } from '../../enums/visit.enum';
+import { VisitTypeEnum } from '../../enums/visit.enum';
 import { VisitorRepository } from '../visitor/repository';
 import { PaginationI } from '../../interfaces/global.interface';
-import { EncryptorHelper, WsHelper } from '../../helpers';
+import { DateFormatHelper, EncryptorHelper, WsHelper } from '../../helpers';
 import { SendMessageI } from '../../interfaces/ws.interface';
 
 export class VisitService {
@@ -34,11 +33,11 @@ export class VisitService {
   constructor(
     private readonly _repo = new VisitRepository(),
     private readonly _repoUser = new UserRepository(),
-    private readonly _repoVisitStatus = new VisitStatusRepository(),
     private readonly _repoTypeVisit = new TypeVisitRepository(),
     private readonly _repoVisitor = new VisitorRepository(),
     private readonly _repoVisitVisitor = new VisitVisitorRepository(),
     private readonly _wsHelper = new WsHelper(),
+    private readonly _dateFormat = new DateFormatHelper(),
     private readonly _encryptor = new EncryptorHelper(),
   ) {}
 
@@ -65,6 +64,25 @@ export class VisitService {
       throw new ServiceException(NO_EXIST_RECORD('la visita'));
     }
 
+    if (visit.type !== VisitTypeEnum.QR) return visit;
+
+    const diff = this._dateFormat.getDiffInHours(visit.startDate);
+
+    if (diff > visit.validityHours) {
+      // Update a caducada
+
+      return {
+        ...visit,
+        message: VISIT_OUT_RANGE,
+      };
+    }
+
+    console.log({
+      diff,
+      hours: visit.validityHours,
+      startDate: this._dateFormat.getDateFormat(visit.startDate)
+    });
+
     return visit;
   }
 
@@ -87,22 +105,12 @@ export class VisitService {
         throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
       }
 
-      const existsStatus = await this._repoVisitStatus.getByName(
-        cnxTran,
-        VisitStatusEnum.PENDING
-      );
-
       const existsType = await this._repoTypeVisit.getByName(cnxTran, type);
 
-      const statusData = { name: VisitStatusEnum.PENDING } as VisitStatusEntity;
       const typeVisitData = { name: type } as TypeVisitEntity;
 
       const typeVisit = existsType ?? (
         await this._repoTypeVisit.create(cnxTran, typeVisitData)
-      );
-
-      const statusVisit = existsStatus ?? (
-        await this._repoVisitStatus.create(cnxTran, statusData)
       );
 
       const visitData = {
@@ -111,7 +119,6 @@ export class VisitService {
         reason: reason ?? REASON_VISIT(residency.urbanization),
         typeVisitId: typeVisit.id,
         residencyId: residency.id,
-        statusId: statusVisit.id,
       } as VisitEntity;
 
       const visitCreated = await this._repo.create(cnxTran, visitData);
@@ -192,11 +199,7 @@ export class VisitService {
 
   async sendNotification(cnx: EntityManager, payload: NotificationPayloadI) {
     return cnx.transaction(async (cnxTran) => {
-
-      const {
-        visitId,
-        base64Img,
-      } = payload;
+      const { visitId, base64Img } = payload;
 
       const visit = await this._repo.getById(cnxTran, visitId);
 
