@@ -60,3 +60,6 @@ export const VISITOR_DISABLE = 'Visitante ya se encuentra desactivado';
 
 export const QR_MESSAGE_SUCCESS =
   '¡Mensaje enviado con éxito! El código QR ha sido enviado a los visitantes';
+
+export const QR_MESSAGE_FAIL =
+  '¡Error al enviar mensaje con código QR a los visitantes! Por favor, inténtalo de nuevo.';
