@@ -5,9 +5,7 @@ export enum VisitTypeEnum {
 
 export enum VisitStatusEnum {
   PENDING = 'PENDIENTE',
-  UNFILLED = 'SIN COMPLETAR',
   FULFILLED = 'COMPLETADA',
   CANCELLED = 'CANCELADA',
-  APPROVED = 'APROBADA',
-  REJECTED = 'RECHAZADA',
+  EXPIRED = 'CADUCADA',
 }

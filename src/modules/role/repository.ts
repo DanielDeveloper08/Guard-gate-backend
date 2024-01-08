@@ -81,8 +81,8 @@ export class RoleRepository {
   getByRoleName(cnx: EntityManager, role: RoleTypeEnum) {
     return cnx.findOne(
       RoleEntity,
-      { where: { name: role},
-        relations: ['operations']
+      { where: { name: role },
+        relations: ['operations'],
       },
     );
   }

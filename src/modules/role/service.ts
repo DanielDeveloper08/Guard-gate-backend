@@ -18,7 +18,7 @@ export class RoleService {
   constructor(
     private readonly _repo = new RoleRepository(),
     private readonly _repoOperation = new OperationRepository(),
-    private readonly _repoRoleOp = new RoleOperationRepository(),
+    private readonly _repoRoleOp = new RoleOperationRepository()
   ) {}
 
   async getAll(cnx: EntityManager, payload: PaginationI) {
@@ -28,34 +28,30 @@ export class RoleService {
 
   async getAllOperations(cnx: EntityManager) {
     const data = await this._repoOperation.getAll(cnx);
-    return data.map(datum=>(
-      {
-        id:datum.id,
-        name:datum.name,
-        route:datum.route,
-        moduleId:datum.moduleId,
-        selected:false
-      }
-      )
-    );
+
+    return data.map((datum) => ({
+      id: datum.id,
+      name: datum.name,
+      route: datum.route,
+      moduleId: datum.moduleId,
+      selected: false,
+    }));
   }
 
   async getRoleByName(cnx: EntityManager, payload: RoleTypeEnum) {
     const data = await this._repo.getByRoleName(cnx, payload);
 
-    if(!data){
-      return null;
-    }
+    if (!data) return null;
 
-    return  {
-      id:data.id,
-      name:data.name,
-      operations: data.operations!.map(operation=> ({
-        id:operation.id,
-        name:operation.name,
-        moduleId:operation.moduleId,
-        route:operation.route
-      }))
+    return {
+      id: data.id,
+      name: data.name,
+      operations: data.operations!.map((operation) => ({
+        id: operation.id,
+        name: operation.name,
+        moduleId: operation.moduleId,
+        route: operation.route,
+      })),
     };
   }
 

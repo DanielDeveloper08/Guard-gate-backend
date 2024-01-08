@@ -51,11 +51,11 @@ export class VisitVisitorEntity {
   })
   observation!: string;
 
-  @ManyToOne(() => VisitEntity, visit => visit.visitVisitors)
+  @ManyToOne(() => VisitEntity, (visit) => visit.visitVisitors)
   @JoinColumn([{ name: 'id_visita', referencedColumnName: 'id' }])
   visit!: VisitEntity;
 
-  @ManyToOne(() => VisitorEntity, visitor => visitor.visitVisitors)
+  @ManyToOne(() => VisitorEntity, (visitor) => visitor.visitVisitors)
   @JoinColumn([{ name: 'id_visitante', referencedColumnName: 'id' }])
   visitor!: VisitorEntity;
 }
