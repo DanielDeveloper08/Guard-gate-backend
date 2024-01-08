@@ -131,6 +131,7 @@ export class VisitRepository {
         'visit.horas_validez as "validityHours"',
         'visit.motivo as reason',
         `CONCAT(person.names, ' ', person.surnames) as "generatedBy"`,
+        'visit.estado as status',
         'visit.id_residencia as "idResidency"',
         'type.name as type',
       ])
@@ -155,5 +156,19 @@ export class VisitRepository {
   create(cnx: EntityManager, payload: VisitEntity) {
     const insert = cnx.create(VisitEntity, payload);
     return cnx.save(insert);
+  }
+
+  async update(
+    cnx: EntityManager,
+    id: number,
+    payload: VisitEntity
+  ) {
+    const update = await cnx.update(
+      VisitEntity,
+      { id },
+      payload
+    );
+
+    return update.affected;
   }
 }
