@@ -11,7 +11,6 @@ import {
   ResidencyEntity,
   TypeVisitEntity,
   VisitEntity,
-  VisitStatusEntity,
   VisitVisitorEntity,
   VisitorEntity,
 } from '..';
@@ -36,6 +35,7 @@ export class AppDataSource extends Environments {
       database: this.getEnv('DB_NAME')!,
       synchronize: this.getBoolEnv('DB_SYNC'),
       logging: this.getBoolEnv('DB_SYNC'),
+      ssl: this.getBoolEnv('DB_SSL'),
       entities: [
         ModuleEntity,
         OperationEntity,
@@ -46,7 +46,6 @@ export class AppDataSource extends Environments {
         TokenOtpEntity,
         TypeVisitEntity,
         UserEntity,
-        VisitStatusEntity,
         VisitVisitorEntity,
         VisitEntity,
         VisitorEntity,
@@ -54,7 +53,6 @@ export class AppDataSource extends Environments {
       migrations: [],
       poolSize: 10,
       useUTC: true,
-      ssl: this.getBoolEnv('DB_SSL')
     };
   }
 

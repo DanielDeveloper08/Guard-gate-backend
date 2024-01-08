@@ -17,6 +17,7 @@ export class RoleRouter extends BaseRouter<RoleController, RoleValidations> {
       ],
       this.controller.getRoleByName
     );
+
     this.router.get(
       '/roles',
       [

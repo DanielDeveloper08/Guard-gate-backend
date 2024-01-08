@@ -8,7 +8,6 @@ export * from './entities/role.entity';
 export * from './entities/token-otp.entity';
 export * from './entities/type-visit.entity';
 export * from './entities/user.entity';
-export * from './entities/visit-status.entity';
 export * from './entities/visit-visitor.entity';
 export * from './entities/visit.entity';
 export * from './entities/visitor.entity';

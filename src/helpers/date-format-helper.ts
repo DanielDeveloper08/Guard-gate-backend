@@ -21,4 +21,11 @@ export class DateFormatHelper {
 
     return dateEnd.diff(dateStart, 'minutes');
   }
+
+  getDiffInHours(date: Date) {
+    const dateStart = moment(date);
+    const dateEnd = moment(this.getCurrentDateTime());
+
+    return dateEnd.diff(dateStart, 'hours');
+  }
 }

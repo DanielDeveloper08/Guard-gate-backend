@@ -2,8 +2,8 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../shared/base-entity';
 import { TypeVisitEntity } from './type-visit.entity';
 import { ResidencyEntity } from './residency.entity';
-import { VisitStatusEntity } from './visit-status.entity';
 import { VisitVisitorEntity } from './visit-visitor.entity';
+import { VisitStatusEnum } from '../../enums/visit.enum';
 
 @Entity({ name: 'visita' })
 export class VisitEntity extends BaseEntity {
@@ -33,27 +33,28 @@ export class VisitEntity extends BaseEntity {
   })
   reason!: string;
 
+  @Column('varchar', {
+    name: 'estado',
+    length: 255,
+    default: VisitStatusEnum.PENDING,
+    nullable: true,
+  })
+  status!: VisitStatusEnum;
+
   @Column('integer', { name: 'id_tipo_visita' })
   typeVisitId!: number;
 
   @Column('integer', { name: 'id_residencia' })
   residencyId!: number;
 
-  @Column('integer', { name: 'id_estado' })
-  statusId!: number;
-
-  @ManyToOne(() => TypeVisitEntity, typeVisit => typeVisit.visits)
+  @ManyToOne(() => TypeVisitEntity, (typeVisit) => typeVisit.visits)
   @JoinColumn([{ name: 'id_tipo_visita', referencedColumnName: 'id' }])
   typeVisit!: TypeVisitEntity;
 
-  @ManyToOne(() => ResidencyEntity, residence => residence.visits)
+  @ManyToOne(() => ResidencyEntity, (residence) => residence.visits)
   @JoinColumn([{ name: 'id_residencia', referencedColumnName: 'id' }])
   residency!: ResidencyEntity;
 
-  @ManyToOne(() => VisitStatusEntity, status => status.visits)
-  @JoinColumn([{ name: 'id_estado', referencedColumnName: 'id' }])
-  status!: VisitStatusEntity;
-
-  @OneToMany(() => VisitVisitorEntity, visitVisitor => visitVisitor.visit)
+  @OneToMany(() => VisitVisitorEntity, (visitVisitor) => visitVisitor.visit)
   visitVisitors!: VisitVisitorEntity[];
 }
