@@ -206,7 +206,7 @@ export class VisitService {
 
   async sendNotification(cnx: EntityManager, payload: NotificationPayloadI) {
     return cnx.transaction(async (cnxTran) => {
-      const { visitId, base64Img } = payload;
+      const { visitId, imgUrl } = payload;
 
       const visit = await this._repo.getById(cnxTran, visitId);
 
@@ -219,6 +219,7 @@ export class VisitService {
       if (!visitors.length) return null;
 
       const messagePayload = {
+        imgUrl,
         residentName: visit.generatedBy,
       } as SendMessageI;
 
