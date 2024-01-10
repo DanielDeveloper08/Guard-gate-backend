@@ -32,5 +32,5 @@ export interface SaveVisitDetailI {
 
 export interface NotificationPayloadI {
   visitId: number;
-  base64Img: string;
+  imgUrl: string;
 }

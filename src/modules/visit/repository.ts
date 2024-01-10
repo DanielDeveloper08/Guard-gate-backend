@@ -41,7 +41,6 @@ export class VisitRepository {
         'visitor.id = visit_visitor.id_visitante'
       )
       .where('visit.id = visit_visitor.id_visita')
-      .andWhere('visitor.estado = true')
       .groupBy('visitor.id')
       .orderBy('visitor.id', 'ASC')
       .getQuery();

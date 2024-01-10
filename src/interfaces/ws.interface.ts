@@ -18,4 +18,5 @@ export interface SendMessageI {
     visitorPhone:   string;
     visitorName:    string;
     residentName:   string;
+    imgUrl:      string;
 }
