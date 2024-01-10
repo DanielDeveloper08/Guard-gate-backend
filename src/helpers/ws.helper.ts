@@ -23,14 +23,14 @@ export class WsHelper extends Environments {
   }
 
   private parseBody(payload: SendMessageI) {
-    const { visitorName, visitorPhone, residentName } = payload;
+    const { visitorName, visitorPhone, residentName, imgUrl } = payload;
 
     return {
       messaging_product: 'whatsapp',
       to: this.formatPhoneNumber(visitorPhone),
       type: 'template',
       template: {
-        name: 'guard_gate_qr',
+        name: 'guard_gate_app_qr',
         language: {
           code: 'es',
         },
@@ -39,8 +39,10 @@ export class WsHelper extends Environments {
             type: 'header',
             parameters: [
               {
-                type: 'text',
-                text: visitorName,
+                type: 'image',
+                image: {
+                  link: 'https://firebasestorage.googleapis.com/v0/b/proyectoinstrumentos-55c5b.appspot.com/o/Instrumentos%2Fpexels-pixabay-164743.jpg?alt=media&token=5dd89e79-62ff-45cb-b49b-51f034e2dea5',
+                },
               },
             ],
           },
@@ -49,11 +51,11 @@ export class WsHelper extends Environments {
             parameters: [
               {
                 type: 'text',
-                text: residentName,
+                text: visitorName,
               },
               {
                 type: 'text',
-                text: 'Remitente:',
+                text: residentName,
               },
             ],
           },

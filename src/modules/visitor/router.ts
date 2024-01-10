@@ -48,7 +48,7 @@ export class VisitorRouter extends BaseRouter<
       this.controller.update
     );
 
-    this.router.delete(
+    this.router.patch(
       '/visitors/:id',
       [
         GlobalMiddleware.validateJwtToken,
