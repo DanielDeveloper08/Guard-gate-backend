@@ -26,7 +26,7 @@ import {
 import { VisitStatusEnum, VisitTypeEnum } from '../../enums/visit.enum';
 import { VisitorRepository } from '../visitor/repository';
 import { PaginationI } from '../../interfaces/global.interface';
-import { DateFormatHelper, EncryptorHelper, WsHelper } from '../../helpers';
+import { DateFormatHelper, WsHelper } from '../../helpers';
 import { SendMessageI } from '../../interfaces/ws.interface';
 
 export class VisitService {
@@ -39,7 +39,6 @@ export class VisitService {
     private readonly _repoVisitVisitor = new VisitVisitorRepository(),
     private readonly _wsHelper = new WsHelper(),
     private readonly _dateFormat = new DateFormatHelper(),
-    private readonly _encryptor = new EncryptorHelper(),
   ) {}
 
   async getAll(cnx: EntityManager, payload: PaginationI) {
@@ -48,13 +47,13 @@ export class VisitService {
     }
 
     const userId = global.user.id;
-    const residency = await this._repoUser.getMainResidency(cnx, userId);
+    const mainResidency = await this._repoUser.getMainResidency(cnx, userId);
 
-    if (!residency) {
+    if (!mainResidency) {
       throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
     }
 
-    const data = await this._repo.getAll(cnx, payload, residency.id);
+    const data = await this._repo.getAll(cnx, payload, mainResidency.id);
     return data;
   }
 
@@ -106,9 +105,9 @@ export class VisitService {
       }
 
       const userId = global.user.id;
-      const residency = await this._repoUser.getMainResidency(cnxTran, userId);
+      const mainResidency = await this._repoUser.getMainResidency(cnxTran, userId);
 
-      if (!residency) {
+      if (!mainResidency) {
         throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
       }
 
@@ -123,9 +122,9 @@ export class VisitService {
       const visitData = {
         startDate,
         validityHours,
-        reason: reason ?? REASON_VISIT(residency.urbanization),
+        reason: reason ?? REASON_VISIT(mainResidency.urbanization),
         typeVisitId: typeVisit.id,
-        residencyId: residency.id,
+        residencyId: mainResidency.id,
       } as VisitEntity;
 
       const visitCreated = await this._repo.create(cnxTran, visitData);
@@ -138,7 +137,7 @@ export class VisitService {
         const visitor = await this._repoVisitor.getValidVisitor(
           cnxTran,
           visitorId,
-          residency.id
+          mainResidency.id
         );
 
         if (!visitor) {

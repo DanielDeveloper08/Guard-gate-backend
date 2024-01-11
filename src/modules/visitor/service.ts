@@ -28,13 +28,13 @@ export class VisitorService {
     }
 
     const userId = global.user.id;
-    const residency = await this._repoUser.getMainResidency(cnx, userId);
+    const mainResidency = await this._repoUser.getMainResidency(cnx, userId);
 
-    if (!residency) {
+    if (!mainResidency) {
       throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
     }
 
-    const data = await this._repo.getAll(cnx, payload, residency.id);
+    const data = await this._repo.getAll(cnx, payload, mainResidency.id);
     return data;
   }
 
@@ -44,13 +44,13 @@ export class VisitorService {
     }
 
     const userId = global.user.id;
-    const residency = await this._repoUser.getMainResidency(cnx, userId);
+    const mainResidency = await this._repoUser.getMainResidency(cnx, userId);
 
-    if (!residency) {
+    if (!mainResidency) {
       throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
     }
 
-    const visitor = await this._repo.getValidVisitor(cnx, id, residency.id);
+    const visitor = await this._repo.getValidVisitor(cnx, id, mainResidency.id);
 
     if (!visitor) {
       throw new ServiceException(NO_EXIST_RECORD('visitante'));
@@ -68,9 +68,9 @@ export class VisitorService {
       const { names, surnames, docNumber, phone } = payload;
 
       const userId = global.user.id;
-      const residency = await this._repoUser.getMainResidency(cnxTran, userId);
+      const mainResidency = await this._repoUser.getMainResidency(cnxTran, userId);
 
-      if (!residency) {
+      if (!mainResidency) {
         throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
       }
 
@@ -85,7 +85,7 @@ export class VisitorService {
         surnames,
         docNumber,
         phone,
-        residencyId: residency.id,
+        residencyId: mainResidency.id,
       } as VisitorEntity;
 
       const visitorCreated = await this._repo.create(cnxTran, visitorData);
@@ -105,15 +105,15 @@ export class VisitorService {
       }
 
       const userId = global.user.id;
-      const residency = await this._repoUser.getMainResidency(cnx, userId);
+      const mainResidency = await this._repoUser.getMainResidency(cnx, userId);
 
-      if (!residency) {
+      if (!mainResidency) {
         throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
       }
 
       const { names, surnames, phone } = payload;
 
-      const visitor = await this._repo.getValidVisitor(cnxTran, id, residency.id);
+      const visitor = await this._repo.getValidVisitor(cnxTran, id, mainResidency.id);
 
       if (!visitor) {
         throw new ServiceException(NO_EXIST_RECORD('visitante'));
@@ -141,13 +141,13 @@ export class VisitorService {
     }
 
     const userId = global.user.id;
-    const residency = await this._repoUser.getMainResidency(cnx, userId);
+    const mainResidency = await this._repoUser.getMainResidency(cnx, userId);
 
-    if (!residency) {
+    if (!mainResidency) {
       throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
     }
 
-    const visitor = await this._repo.getValidVisitor(cnx, id, residency.id);
+    const visitor = await this._repo.getValidVisitor(cnx, id, mainResidency.id);
 
     if (!visitor) {
       throw new ServiceException(NO_EXIST_RECORD('visitante'));

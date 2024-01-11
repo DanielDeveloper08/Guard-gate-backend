@@ -7,6 +7,7 @@ import { GlobalMiddleware } from './middlewares/global-middleware';
 import { PanicAlertEvent } from './events/panic-alert/event';
 import {
   AuthRouter,
+  HomeRouter,
   UserRouter,
   ResidencyRouter,
   RoleRouter,
@@ -42,6 +43,7 @@ class AppServer extends ConfigServer {
   private routers(): Array<express.Router> {
     return [
       new AuthRouter().router,
+      new HomeRouter().router,
       new UserRouter().router,
       new ResidencyRouter().router,
       new RoleRouter().router,

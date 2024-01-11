@@ -16,7 +16,7 @@ import { GlobalEnum } from '../../enums/global.enum';
 
 export class VisitRepository {
 
-  async getAll(cnx: EntityManager, payload: PaginationI, residencyId: number) {
+  async getAll(cnx: EntityManager, payload: PaginationI, mainResidencyId: number) {
     const {
       page = GlobalEnum.PAGE,
       limit = GlobalEnum.LIMIT,
@@ -33,6 +33,11 @@ export class VisitRepository {
         'visitor.telefono as phone',
         'visitor.estado as status',
         'visitor.id_residencia as "idResidency"',
+        'visit_visitor.ha_ingresado as "hasEntered"',
+        'visit_visitor.fecha_ingreso as "entryDate"',
+        'visit_visitor.placa_carro as "carPlate"',
+        'visit_visitor.observacion as observation',
+        `COALESCE(visit_visitor.fotos, '[]'::json) as photos`,
       ])
       .from(VisitorEntity, 'visitor')
       .leftJoin(
@@ -42,6 +47,7 @@ export class VisitRepository {
       )
       .where('visit.id = visit_visitor.id_visita')
       .groupBy('visitor.id')
+      .addGroupBy('visit_visitor.id')
       .orderBy('visitor.id', 'ASC')
       .getQuery();
 
@@ -53,6 +59,8 @@ export class VisitRepository {
         'visit.fecha_fin as "endDate"',
         'visit.horas_validez as "validityHours"',
         'visit.motivo as reason',
+        `CONCAT(person.names, ' ', person.surnames) as "generatedBy"`,
+        'visit.estado as status',
         'visit.id_residencia as "idResidency"',
         'type.name as type',
       ])
@@ -66,7 +74,9 @@ export class VisitRepository {
       ])
       .from(VisitEntity, 'visit')
       .leftJoin(TypeVisitEntity, 'type', 'visit.id_tipo_visita = type.id')
-      .where('visit.id_residencia = :residencyId', { residencyId });
+      .leftJoin(ResidencyEntity, 'residency', 'visit.id_residencia = residency.id')
+      .leftJoin(PersonEntity, 'person', 'residency.id_persona = person.id')
+      .where('visit.id_residencia = :mainResidencyId', { mainResidencyId });
 
     if (search.trim()) {
       query.andWhere(
@@ -108,6 +118,11 @@ export class VisitRepository {
         'visitor.telefono as phone',
         'visitor.estado as status',
         'visitor.id_residencia as "idResidency"',
+        'visit_visitor.ha_ingresado as "hasEntered"',
+        'visit_visitor.fecha_ingreso as "entryDate"',
+        'visit_visitor.placa_carro as "carPlate"',
+        'visit_visitor.observacion as observation',
+        `COALESCE(visit_visitor.fotos, '[]'::json) as photos`,
       ])
       .from(VisitorEntity, 'visitor')
       .leftJoin(
@@ -118,6 +133,7 @@ export class VisitRepository {
       .where('visit.id = visit_visitor.id_visita')
       .andWhere('visitor.estado = true')
       .groupBy('visitor.id')
+      .addGroupBy('visit_visitor.id')
       .orderBy('visitor.id', 'ASC')
       .getQuery();
 
