@@ -3,7 +3,6 @@ import {
   VisitorEntity,
   VisitVisitorEntity,
   VisitEntity,
-  TypeVisitEntity,
   ResidencyEntity,
   PersonEntity,
 } from '../../database';
@@ -14,6 +13,7 @@ export class HomeRepository {
   getLastVisits(
     cnx: EntityManager,
     mainResidencyId: number,
+    pending: boolean = false,
     limit: number = 5
   ) {
     const visitorQuery = cnx
@@ -55,7 +55,7 @@ export class HomeRepository {
         `CONCAT(person.names, ' ', person.surnames) as "generatedBy"`,
         'visit.estado as status',
         'visit.id_residencia as "idResidency"',
-        'type.name as type',
+        'visit.tipo as type',
       ])
       .addSelect([
         `
@@ -66,7 +66,6 @@ export class HomeRepository {
         `,
       ])
       .from(VisitEntity, 'visit')
-      .leftJoin(TypeVisitEntity, 'type', 'visit.id_tipo_visita = type.id')
       .leftJoin(
         ResidencyEntity,
         'residency',

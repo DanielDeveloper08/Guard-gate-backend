@@ -2,7 +2,6 @@ import { EntityManager } from 'typeorm';
 import { NotificationPayloadI, SaveVisitDetailI, VisitDTO } from '../../interfaces/visit.interface';
 import { VisitRepository } from './repository';
 import { UserRepository } from '../user/repository';
-import { TypeVisitRepository } from '../type-visit/repository';
 import { VisitVisitorRepository } from '../visit-visitor/repository';
 import { ServiceException } from '../../shared/service-exception';
 import {
@@ -19,7 +18,6 @@ import {
   VISIT_OUT_RANGE,
 } from '../../shared/messages';
 import {
-  TypeVisitEntity,
   VisitEntity,
   VisitVisitorEntity,
 } from '../../database';
@@ -34,7 +32,6 @@ export class VisitService {
   constructor(
     private readonly _repo = new VisitRepository(),
     private readonly _repoUser = new UserRepository(),
-    private readonly _repoTypeVisit = new TypeVisitRepository(),
     private readonly _repoVisitor = new VisitorRepository(),
     private readonly _repoVisitVisitor = new VisitVisitorRepository(),
     private readonly _wsHelper = new WsHelper(),
@@ -111,19 +108,11 @@ export class VisitService {
         throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
       }
 
-      const existsType = await this._repoTypeVisit.getByName(cnxTran, type);
-
-      const typeVisitData = { name: type } as TypeVisitEntity;
-
-      const typeVisit = existsType ?? (
-        await this._repoTypeVisit.create(cnxTran, typeVisitData)
-      );
-
       const visitData = {
         startDate,
         validityHours,
+        type,
         reason: reason ?? REASON_VISIT(mainResidency.urbanization),
-        typeVisitId: typeVisit.id,
         residencyId: mainResidency.id,
       } as VisitEntity;
 
