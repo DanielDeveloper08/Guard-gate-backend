@@ -41,7 +41,7 @@ export class WsHelper extends Environments {
               {
                 type: 'image',
                 image: {
-                  link: 'https://firebasestorage.googleapis.com/v0/b/proyectoinstrumentos-55c5b.appspot.com/o/Instrumentos%2Fpexels-pixabay-164743.jpg?alt=media&token=5dd89e79-62ff-45cb-b49b-51f034e2dea5',
+                  link: imgUrl,
                 },
               },
             ],
