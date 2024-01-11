@@ -24,7 +24,7 @@ export class HomeService {
       throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
     }
 
-    const lastVisits = await this._repo.getLastVisits(cnx, mainResidency.id, 3);
+    const lastVisits = await this._repo.getLastVisits(cnx, mainResidency.id);
 
     const data: VisitDataI = {
       lastVisits,
