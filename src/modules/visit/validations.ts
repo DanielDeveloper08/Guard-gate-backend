@@ -71,7 +71,7 @@ export class VisitValidations {
     const sendNotificationSchema: schema = {
       body: Joi.object({
         visitId: this._validations.validNumber('visitId'),
-        base64Img: this._validations.validStringNoMaxLength('base64Img'),
+        imgUrl: this._validations.validStringNoMaxLength('imgUrl'),
       }),
     };
 
