@@ -60,6 +60,7 @@ export class VisitValidations {
         visitorId: this._validations.validNumber('visitorId'),
         observation: this._validations.validStringNoRequired('observation', 255),
         carPlate: this._validations.validStringNoRequired('carPlate', 255),
+        hasEntered: this._validations.validBoolean('hasEntered'),
         photos: this._validations.validArrayStr('photos'),
       }),
     };

@@ -20,7 +20,10 @@ export class VisitVisitorEntity {
   @Column('integer', { name: 'id_visitante' })
   visitorId!: number;
 
-  @Column('boolean', { name: 'ha_ingresado', default: false })
+  @Column('boolean', {
+    name: 'ha_ingresado',
+    default: () => 'null',
+  })
   hasEntered!: boolean;
 
   @Column('timestamp', {
