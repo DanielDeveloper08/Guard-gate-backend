@@ -28,6 +28,7 @@ export interface SaveVisitDetailI {
   visitorId: number;
   observation?: string;
   carPlate?: string;
+  hasEntered: boolean;
   photos: Array<string>;
 }
 

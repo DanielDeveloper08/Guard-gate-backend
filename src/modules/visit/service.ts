@@ -65,21 +65,7 @@ export class VisitService {
 
     const diff = this._dateFormat.getDiffInHours(visit.startDate);
 
-    const visitData = {
-      status: VisitStatusEnum.EXPIRED,
-    } as VisitEntity;
-
-    if (diff > visit.validityHours) {
-      await this._repo.update(cnx, visit.id, visitData);
-
-      return {
-        ...visit,
-        ...visitData,
-        message: VISIT_OUT_RANGE,
-      };
-    }
-
-    if (diff < visit.validityHours) {
+    if (diff > visit.validityHours || diff < visit.validityHours) {
       return {
         ...visit,
         message: VISIT_OUT_RANGE,
@@ -154,7 +140,7 @@ export class VisitService {
 
   async saveDetail(cnx: EntityManager, payload: SaveVisitDetailI) {
     return cnx.transaction(async (cnxTran) => {
-      const { visitId, visitorId, observation, carPlate, photos } = payload;
+      const { visitId, visitorId, observation, carPlate, hasEntered, photos } = payload;
 
       const visitor = await this._repoVisitVisitor.getVisitVisitor(
         cnxTran,
@@ -171,7 +157,7 @@ export class VisitService {
       }
 
       const visitVisitorData = {
-        hasEntered: true,
+        hasEntered,
         entryDate: new Date(),
         observation: observation ?? null,
         carPlate: carPlate ?? null,
