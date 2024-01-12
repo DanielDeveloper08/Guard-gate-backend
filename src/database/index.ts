@@ -6,7 +6,6 @@ export * from './entities/residency.entity';
 export * from './entities/role-operation.entity';
 export * from './entities/role.entity';
 export * from './entities/token-otp.entity';
-export * from './entities/type-visit.entity';
 export * from './entities/user.entity';
 export * from './entities/visit-visitor.entity';
 export * from './entities/visit.entity';

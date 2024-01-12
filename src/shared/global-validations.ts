@@ -128,4 +128,20 @@ export class GlobalValidations {
         'any.only': `"${prop}" debe estar entre: ${label}`,
       });
   }
+
+  validBoolean(prop: string) {
+    return Joi.boolean()
+      .required()
+      .messages({
+        'any.required': `"${prop}" es requerido`,
+        'boolean.base': `"${prop}" debe ser true o false`,
+      });
+  }
+
+  validBooleanNoRequired(prop: string) {
+    return Joi.boolean().messages({
+      'any.required': `"${prop}" es requerido`,
+      'boolean.base': `"${prop}" debe ser true o false`,
+    });
+  }
 }

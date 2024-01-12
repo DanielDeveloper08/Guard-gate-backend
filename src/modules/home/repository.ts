@@ -3,19 +3,22 @@ import {
   VisitorEntity,
   VisitVisitorEntity,
   VisitEntity,
-  TypeVisitEntity,
   ResidencyEntity,
   PersonEntity,
 } from '../../database';
 import { VisitI } from '../../interfaces/visit.interface';
+import { VisitStatusEnum } from '../../enums/visit.enum';
 
 export class HomeRepository {
 
   getLastVisits(
     cnx: EntityManager,
     mainResidencyId: number,
-    limit: number = 5
+    limit?: string,
+    pending?: boolean
   ) {
+    const limitVisit = Number(limit ?? 5);
+
     const visitorQuery = cnx
       .createQueryBuilder()
       .select([
@@ -55,7 +58,7 @@ export class HomeRepository {
         `CONCAT(person.names, ' ', person.surnames) as "generatedBy"`,
         'visit.estado as status',
         'visit.id_residencia as "idResidency"',
-        'type.name as type',
+        'visit.tipo as type',
       ])
       .addSelect([
         `
@@ -66,7 +69,6 @@ export class HomeRepository {
         `,
       ])
       .from(VisitEntity, 'visit')
-      .leftJoin(TypeVisitEntity, 'type', 'visit.id_tipo_visita = type.id')
       .leftJoin(
         ResidencyEntity,
         'residency',
@@ -76,8 +78,11 @@ export class HomeRepository {
       .where('visit.id_residencia = :mainResidencyId', {
         mainResidencyId,
       })
+      .andWhere('visit.estado = :status', {
+        status: pending ? VisitStatusEnum.PENDING : VisitStatusEnum.FULFILLED,
+      })
       .orderBy('visit.id', 'DESC')
-      .limit(limit);
+      .limit(limitVisit);
 
     return query.getRawMany<VisitI>();
   }
