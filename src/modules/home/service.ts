@@ -1,4 +1,4 @@
-import { CommandStartedEvent, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { HomeRepository } from './repository';
 import { UserRepository } from '../user/repository';
 import { ERR_401, NO_EXIST_RECORD } from '../../shared/messages';
@@ -12,7 +12,7 @@ export class HomeService {
     private readonly _repoUser = new UserRepository()
   ) {}
 
-  async getVisitData(cnx: EntityManager): Promise<VisitDataI> {
+  async getVisitData(cnx: EntityManager, limit?: string): Promise<VisitDataI> {
     if (!global.user) {
       throw new ServiceException(ERR_401);
     }
@@ -24,10 +24,13 @@ export class HomeService {
       throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
     }
 
-    const lastVisits = await this._repo.getLastVisits(cnx, mainResidency.id);
+    const lastVisits = await this._repo.getLastVisits(cnx, mainResidency.id, limit);
+    const pendingVisits = await this._repo.getLastVisits(cnx, mainResidency.id, limit, true);
 
     const data: VisitDataI = {
       lastVisits,
+      pendingVisits,
+      frequentVisits: [],
     };
 
     return data;

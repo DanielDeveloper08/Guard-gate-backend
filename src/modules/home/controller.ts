@@ -12,7 +12,8 @@ export class HomeController {
 
   getVisitData = async (req: Request, res: Response) => {
     try {
-      const data = await this._homeSrv.getVisitData(this._cnx);
+      const limit = req.query.limit as string;
+      const data = await this._homeSrv.getVisitData(this._cnx, limit);
 
       return ServiceResponse.success({
         res,

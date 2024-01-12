@@ -7,15 +7,18 @@ import {
   PersonEntity,
 } from '../../database';
 import { VisitI } from '../../interfaces/visit.interface';
+import { VisitStatusEnum } from '../../enums/visit.enum';
 
 export class HomeRepository {
 
   getLastVisits(
     cnx: EntityManager,
     mainResidencyId: number,
-    pending: boolean = false,
-    limit: number = 5
+    limit?: string,
+    pending?: boolean
   ) {
+    const limitVisit = Number(limit ?? 5);
+
     const visitorQuery = cnx
       .createQueryBuilder()
       .select([
@@ -75,8 +78,11 @@ export class HomeRepository {
       .where('visit.id_residencia = :mainResidencyId', {
         mainResidencyId,
       })
+      .andWhere('visit.estado = :status', {
+        status: pending ? VisitStatusEnum.PENDING : VisitStatusEnum.FULFILLED,
+      })
       .orderBy('visit.id', 'DESC')
-      .limit(limit);
+      .limit(limitVisit);
 
     return query.getRawMany<VisitI>();
   }
