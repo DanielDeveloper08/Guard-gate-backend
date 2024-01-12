@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../../database';
 import { HomeService } from './service';
 import { ServiceResponse } from '../../helpers';
+import { VisitDataPayloadI } from '../../interfaces/home.interface';
 
 export class HomeController {
 
@@ -12,8 +13,8 @@ export class HomeController {
 
   getVisitData = async (req: Request, res: Response) => {
     try {
-      const limit = req.query.limit as string;
-      const data = await this._homeSrv.getVisitData(this._cnx, limit);
+      const payload = req.query as VisitDataPayloadI;
+      const data = await this._homeSrv.getVisitData(this._cnx, payload);
 
       return ServiceResponse.success({
         res,

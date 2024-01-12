@@ -3,16 +3,19 @@ import { HomeRepository } from './repository';
 import { UserRepository } from '../user/repository';
 import { ERR_401, NO_EXIST_RECORD } from '../../shared/messages';
 import { ServiceException } from '../../shared/service-exception';
-import { VisitDataI } from '../../interfaces/home.interface';
+import { VisitDataI, VisitDataPayloadI } from '../../interfaces/home.interface';
 
 export class HomeService {
 
   constructor(
     private readonly _repo = new HomeRepository(),
-    private readonly _repoUser = new UserRepository()
+    private readonly _repoUser = new UserRepository(),
   ) {}
 
-  async getVisitData(cnx: EntityManager, limit?: string): Promise<VisitDataI> {
+  async getVisitData(
+    cnx: EntityManager,
+    payload: VisitDataPayloadI
+  ): Promise<VisitDataI> {
     if (!global.user) {
       throw new ServiceException(ERR_401);
     }
@@ -24,13 +27,29 @@ export class HomeService {
       throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
     }
 
-    const lastVisits = await this._repo.getLastVisits(cnx, mainResidency.id, limit);
-    const pendingVisits = await this._repo.getLastVisits(cnx, mainResidency.id, limit, true);
+    const { limit, frequency } = payload;
+
+    const lastVisits = await this._repo.getLastVisits(
+      cnx,
+      mainResidency.id,
+      limit
+    );
+
+    const pendingVisits = await this._repo.getLastVisits(
+      cnx,
+      mainResidency.id,
+      limit,
+      true
+    );
+
+    const frequentVisits = pendingVisits.filter(
+      (visit) => visit.frequency >= Number(frequency ?? 5)
+    );
 
     const data: VisitDataI = {
       lastVisits,
       pendingVisits,
-      frequentVisits: [],
+      frequentVisits,
     };
 
     return data;

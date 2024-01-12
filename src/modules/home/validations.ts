@@ -11,6 +11,7 @@ export class HomeValidations {
     const getVisitDataSchema: schema = {
       query: Joi.object({
         limit: this._validations.validNumberNoRequired('limit'),
+        frequency: this._validations.validNumberNoRequired('frequency'),
       }),
     };
 
