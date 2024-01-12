@@ -59,6 +59,7 @@ export class HomeRepository {
         'visit.estado as status',
         'visit.id_residencia as "idResidency"',
         'visit.tipo as type',
+        `COUNT(visit.id_residencia) OVER (PARTITION BY visit.id_residencia)::INTEGER as frequency`,
       ])
       .addSelect([
         `
