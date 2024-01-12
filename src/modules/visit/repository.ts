@@ -2,7 +2,6 @@ import { EntityManager } from 'typeorm';
 import {
   PersonEntity,
   ResidencyEntity,
-  TypeVisitEntity,
   VisitEntity,
   VisitVisitorEntity,
   VisitorEntity,
@@ -62,7 +61,7 @@ export class VisitRepository {
         `CONCAT(person.names, ' ', person.surnames) as "generatedBy"`,
         'visit.estado as status',
         'visit.id_residencia as "idResidency"',
-        'type.name as type',
+        'visit.tipo as type',
       ])
       .addSelect([
         `
@@ -73,7 +72,6 @@ export class VisitRepository {
       `,
       ])
       .from(VisitEntity, 'visit')
-      .leftJoin(TypeVisitEntity, 'type', 'visit.id_tipo_visita = type.id')
       .leftJoin(ResidencyEntity, 'residency', 'visit.id_residencia = residency.id')
       .leftJoin(PersonEntity, 'person', 'residency.id_persona = person.id')
       .where('visit.id_residencia = :mainResidencyId', { mainResidencyId });
@@ -148,7 +146,7 @@ export class VisitRepository {
         `CONCAT(person.names, ' ', person.surnames) as "generatedBy"`,
         'visit.estado as status',
         'visit.id_residencia as "idResidency"',
-        'type.name as type',
+        'visit.tipo as type',
       ])
       .addSelect([
         `
@@ -159,7 +157,6 @@ export class VisitRepository {
       `,
       ])
       .from(VisitEntity, 'visit')
-      .leftJoin(TypeVisitEntity, 'type', 'visit.id_tipo_visita = type.id')
       .leftJoin(ResidencyEntity, 'residency', 'visit.id_residencia = residency.id')
       .leftJoin(PersonEntity, 'person', 'residency.id_persona = person.id')
       .where('visit.id = :id', { id })
