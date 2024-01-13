@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 import { ResidencyRepository } from './repository';
 import { PaginationI } from '../../interfaces/global.interface';
-import { ResidencyDTO } from '../../interfaces/residency.interface';
+import { ResidencyDTO, ResidencyMassiveDTO, ResidencyMassiveRequest } from '../../interfaces/residency.interface';
 import { ResidencyEntity } from '../../database';
 import { ServiceException } from '../../shared/service-exception';
 import {
@@ -11,6 +11,7 @@ import {
   RECORD_DELETE_FAIL,
   RECORD_EDIT,
   RECORD_EDIT_FAIL,
+  RECORD_UPSERT_FAIL,
 } from '../../shared/messages';
 import { PersonRespository } from '../person/repository';
 
@@ -63,6 +64,54 @@ export class ResidencyService {
       }
 
       return residencyCreated;
+    });
+  }
+
+  async upsertMany(cnx: EntityManager, payload: ResidencyMassiveRequest) {
+    return cnx.transaction(async (cnxTran) => {
+      const {personId,residences} = payload;
+      
+      const person = await this._repoPerson.getById(cnxTran, personId);
+
+      var residencesUpserted:ResidencyMassiveDTO[]=[];
+
+      if (!person) {
+        throw new ServiceException(NO_EXIST_RECORD('persona'));
+      }
+
+      for(const residency of residences){
+        const {id, block, town, urbanization, isMain} = residency;
+        const existsResidency = await this._repo.getByPersonId(cnxTran, personId);
+        const residencyData = {
+          block,
+          town,
+          urbanization,
+          personId,
+          isMain,
+        } as ResidencyEntity;
+
+        var residencyUpserted:ResidencyMassiveDTO;
+
+        if(id===0){
+          const insertResult = await this._repo.create(cnxTran, residencyData);
+          if (!insertResult) {
+            throw new ServiceException(RECORD_UPSERT_FAIL('una de las residencias.'));
+          }
+          residencyUpserted = (await this._repo.getById(cnxTran,insertResult.id)) as ResidencyMassiveDTO;
+        }
+        else{
+          const updateResult = await this._repo.update(cnxTran, id,residencyData);
+          if (updateResult==0) {
+            throw new ServiceException(RECORD_UPSERT_FAIL('una de las residencias.'));
+          }
+          residencyUpserted = await this._repo.getById(cnxTran,id) as ResidencyMassiveDTO;
+        }
+
+        residencesUpserted.push(residencyUpserted);
+      };
+      
+
+      return residencesUpserted;
     });
   }
 

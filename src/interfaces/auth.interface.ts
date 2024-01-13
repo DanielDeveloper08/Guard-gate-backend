@@ -8,6 +8,12 @@ export interface RegisterPayloadI extends LoginPayloadI {
   surnames: string;
   email: string;
   phone?: string;
+  roleId: number;
+}
+
+export interface UpdatePayloadI extends Omit<RegisterPayloadI, 'password' > {
+  id: number;
+  personId:number;
 }
 
 export interface ValidateLoginI {

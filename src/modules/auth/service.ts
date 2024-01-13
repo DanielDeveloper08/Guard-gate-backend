@@ -13,6 +13,7 @@ import {
   RecoverPasswordI,
   RegisterPayloadI,
   ResetPasswordI,
+  UpdatePayloadI,
   UserTokenPayloadI,
   ValidateLoginI,
 } from '../../interfaces/auth.interface';
@@ -23,9 +24,13 @@ import {
   OTP_USED,
   RECORD_CREATED_FAIL,
   RECORD_EDIT_FAIL,
+  RECORD_UPDATED_FAIL,
   RECOVER_PASSWORD,
   RESET_PASSWORD,
   SEND_EMAIL_FAIL,
+  UNREGISTERED_USER,
+  USERNAME_REGISTERED,
+  USER_EMAIL_REGISTERED,
   USER_REGISTERED,
 } from '../../shared/messages';
 import { PersonRespository } from '../person/repository';
@@ -106,6 +111,7 @@ export class AuthService extends Environments {
       surnames,
       email,
       phone,
+      roleId
     } = payload;
 
     const existsUser = await this._repo.getByUsername(cnx, username);
@@ -145,7 +151,7 @@ export class AuthService extends Environments {
       user: username,
       password: passwordHashed,
       personId: personCreated.id,
-      roleId: role.id,
+      roleId: roleId,
     } as UserEntity;
 
     const userCreated = await this._repo.create(cnx, userPayload);
@@ -164,6 +170,78 @@ export class AuthService extends Environments {
     };
 
     return user;
+  }
+
+  async updateUser(cnx: EntityManager, payload: UpdatePayloadI) {
+    const {
+      id,
+      username,
+      names,
+      surnames,
+      email,
+      phone,
+      roleId,
+      personId
+    } = payload;
+
+    const userCurrentData = await this._repo.getUserById(cnx,id);
+    if (!userCurrentData) {
+      throw new ServiceException(UNREGISTERED_USER);
+    }
+
+    const existsUser = await this._repo.getByUsername(cnx, username);
+    const existsEmail = await this._repoPerson.getByEmail(cnx, email);
+
+    if (existsUser && userCurrentData.user.trim()!=username.trim()) {
+      throw new ServiceException(USERNAME_REGISTERED);
+    }
+
+    if (existsEmail && userCurrentData.person.email.trim()!=email.trim()) {
+      throw new ServiceException(USER_EMAIL_REGISTERED);
+    }
+
+    const personPayload = {
+      names,
+      surnames,
+      email,
+      phone: phone ?? null,
+    } as PersonEntity;
+
+    const personUpdated = await this._repoPerson.update(cnx, personId, personPayload);
+
+    if (personUpdated==0) {
+      throw new ServiceException(RECORD_UPDATED_FAIL(`persona: ${names} ${surnames}`));
+    }
+
+    const userPayload = {
+      user: username,
+      personId: id,
+      roleId: roleId,
+    } as UserEntity;
+
+    const userUpdated = await this._repo.update(cnx, id, userPayload);
+
+    if (!userUpdated) {
+      throw new ServiceException(RECORD_UPDATED_FAIL(`usuario: ${username}`));
+    }
+
+    const user = await this._repo.getUserById(cnx,id);
+
+    if (!user) {
+      throw new ServiceException(RECORD_UPDATED_FAIL(`usuario: ${username}`));
+    }
+
+    return {
+      id:user.id,
+      username:user.user,
+      roleId:user.roleId,
+      personId: user.person.id,
+      names: user.person.names,
+      surnames: user.person.surnames,
+      email: user.person.email,
+      phone: user.person.phone,
+      role:user.role.name
+    };
   }
 
   async recoverPassword(cnx: EntityManager, payload: RecoverPasswordI) {

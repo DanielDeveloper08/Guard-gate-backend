@@ -38,6 +38,24 @@ export class AuthValidations {
         surnames: this._validations.validString('surnames', 255),
         email: this._validations.validString('email', 255),
         phone: this._validations.validStringNoRequired('phone', 255),
+        roleId: Joi.number().required(),
+      }),
+    };
+
+    return validate(registerSchema);
+  };
+
+  updateUser = () => {
+    const registerSchema: schema = {
+      body: Joi.object({
+        id: Joi.number().required(),
+        username: this._validations.validString('username', 255),
+        names: this._validations.validString('names', 255),
+        surnames: this._validations.validString('surnames', 255),
+        email: this._validations.validString('email', 255),
+        phone: this._validations.validStringNoRequired('phone', 255),
+        roleId: Joi.number().required(),
+        personId: Joi.number().required(),
       }),
     };
 

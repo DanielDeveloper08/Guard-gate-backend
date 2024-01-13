@@ -46,6 +46,23 @@ export class UserService {
     return userInfo;
   }
 
+  async getAllUsers(cnx: EntityManager) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+    
+    return (await this._repo.getAllUsers(cnx)).map(user=>({
+      id:user.id,
+      username:user.user,
+      roleId:user.roleId,
+      names: user.person.names,
+      surnames: user.person.surnames,
+      email: user.person.email,
+      phone: user.person.phone,
+      role:user.role.name
+    }));
+  }
+
   async setMainResidency(
     cnx: EntityManager,
     residencyId: number
