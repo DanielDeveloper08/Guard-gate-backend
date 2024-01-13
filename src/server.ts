@@ -3,6 +3,7 @@ import express from 'express';
 import io from 'socket.io';
 import cors from 'cors';
 import { ConfigServer } from './config/config-server';
+import { CronJob } from './jobs/cron.job';
 import { GlobalMiddleware } from './middlewares/global-middleware';
 import { PanicAlertEvent } from './events/panic-alert/event';
 import {
@@ -78,3 +79,6 @@ class AppServer extends ConfigServer {
 
 const server = new AppServer();
 server.listen();
+
+const cronJob = CronJob.getInstance();
+cronJob.start();
