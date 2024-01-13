@@ -15,7 +15,11 @@ import { GlobalEnum } from '../../enums/global.enum';
 
 export class VisitRepository {
 
-  async getAll(cnx: EntityManager, payload: PaginationI, mainResidencyId: number) {
+  async getAll(
+    cnx: EntityManager,
+    payload: PaginationI,
+    mainResidencyId: number
+  ) {
     const {
       page = GlobalEnum.PAGE,
       limit = GlobalEnum.LIMIT,

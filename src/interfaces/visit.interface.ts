@@ -11,7 +11,6 @@ export interface VisitI {
   idResidency?: number;
   status?: string;
   type: VisitTypeEnum;
-  frequency: number;
   visitors: Array<VisitorI>;
 }
 

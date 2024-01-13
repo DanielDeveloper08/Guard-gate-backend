@@ -9,7 +9,11 @@ import {
 
 export class VisitorRepository {
 
-  async getAll(cnx: EntityManager, payload: PaginationI, residencyId: number) {
+  async getAll(
+    cnx: EntityManager,
+    payload: PaginationI,
+    mainResidencyId: number
+  ) {
     const {
       page = GlobalEnum.PAGE,
       limit = GlobalEnum.LIMIT,
@@ -27,7 +31,7 @@ export class VisitorRepository {
         'visitor.estado as status',
       ])
       .from(VisitorEntity, 'visitor')
-      .where('visitor.id_residencia = :residencyId', { residencyId })
+      .where('visitor.id_residencia = :mainResidencyId', { mainResidencyId })
       .andWhere('visitor.estado = true');
 
     if (search.trim()) {
