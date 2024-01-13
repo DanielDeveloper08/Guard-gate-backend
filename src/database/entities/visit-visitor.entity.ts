@@ -22,6 +22,7 @@ export class VisitVisitorEntity {
 
   @Column('boolean', {
     name: 'ha_ingresado',
+    nullable: true,
     default: () => 'null',
   })
   hasEntered!: boolean;
