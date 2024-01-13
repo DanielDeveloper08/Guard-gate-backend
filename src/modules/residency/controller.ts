@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../../database';
 import { ServiceResponse } from '../../helpers';
 import { ResidencyService } from './service';
-import { ResidencyDTO } from '../../interfaces/residency.interface';
+import { ResidencyDTO, ResidencyMassiveDTO, ResidencyMassiveRequest } from '../../interfaces/residency.interface';
 import { HttpCodes } from '../../enums/http-codes.enum';
 import { PaginationI } from '../../interfaces/global.interface';
 
@@ -51,6 +51,24 @@ export class ResidencyController {
     try {
       const payload = req.body as ResidencyDTO;
       const data = await this._residencySrv.create(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+        statusCode: HttpCodes.CREATED,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  upsertMany = async (req: Request, res: Response) => {
+    try {
+      const payload = req.body as ResidencyMassiveRequest;
+      const data = await this._residencySrv.upsertMany(this._cnx, payload);
 
       return ServiceResponse.success({
         res,

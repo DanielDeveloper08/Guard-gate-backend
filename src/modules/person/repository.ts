@@ -21,4 +21,10 @@ export class PersonRespository {
     const insert = cnx.create(PersonEntity, payload);
     return cnx.save(insert);
   }
+
+  async update(cnx: EntityManager, id:number, payload: PersonEntity) {
+    const update = await cnx.update(PersonEntity, { id }, payload);
+
+    return update.affected;
+  }
 }

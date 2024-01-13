@@ -33,6 +33,14 @@ export class AuthRouter extends BaseRouter<AuthController, AuthValidations> {
       this.controller.register
     );
 
+    this.router.put(
+      '/auth/update',
+      [
+        this.validation!.updateUser()
+      ],
+      this.controller.updateUser
+    );
+
     this.router.post(
       '/auth/recover-password',
       [

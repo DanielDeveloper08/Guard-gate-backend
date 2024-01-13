@@ -94,6 +94,25 @@ export class UserRepository {
     return query.getRawOne<UserResidencesI>();
   }
 
+  getAllUsers(cnx: EntityManager, showMain: boolean = false) {
+    return cnx.find(
+      UserEntity,
+      { 
+        relations: ['person','role'],
+      },
+    );
+  }
+
+  getUserById(cnx: EntityManager, id:number) {
+    return cnx.findOne(
+      UserEntity,
+      { 
+        where:{id:id},
+        relations: ['person','role'],
+      },
+    );
+  }
+
   getMainResidency(cnx: EntityManager, id: number) {
     const query = cnx
       .createQueryBuilder()
