@@ -6,16 +6,21 @@ import {
   VisitVisitorEntity,
   VisitorEntity,
 } from '../../database';
-import { VisitI } from '../../interfaces/visit.interface';
+import { VisitI, VisitInRangeI } from '../../interfaces/visit.interface';
 import {
   PaginationI,
   ResponsePaginationI,
 } from '../../interfaces/global.interface';
 import { GlobalEnum } from '../../enums/global.enum';
+import { VisitStatusEnum } from '../../enums/visit.enum';
 
 export class VisitRepository {
 
-  async getAll(cnx: EntityManager, payload: PaginationI, mainResidencyId: number) {
+  async getAll(
+    cnx: EntityManager,
+    payload: PaginationI,
+    mainResidencyId: number
+  ) {
     const {
       page = GlobalEnum.PAGE,
       limit = GlobalEnum.LIMIT,
@@ -163,6 +168,27 @@ export class VisitRepository {
       .orderBy('visit.id', 'ASC');
 
     return query.getRawOne<VisitI>();
+  }
+
+  getInRange(cnx: EntityManager) {
+    const query = cnx
+      .createQueryBuilder()
+      .select([
+        'visit.id as id',
+        'visit.tipo as type',
+        'visit.fecha_inicio as "startDate"',
+        'visit.horas_validez as "validityHours"',
+        'visit.estado as status',
+      ])
+      .from(VisitEntity, 'visit')
+      .where('visit.estado = :pending', {
+        pending: VisitStatusEnum.PENDING,
+      })
+      .orWhere('visit.estado = :inProgress', {
+        inProgress: VisitStatusEnum.IN_PROGRESS,
+      });
+
+    return query.getRawMany<VisitInRangeI>();
   }
 
   create(cnx: EntityManager, payload: VisitEntity) {

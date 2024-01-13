@@ -16,6 +16,7 @@ import {
   VALID_LIST_VISITORS,
   VISITOR_HAS_ENTERED,
   VISIT_OUT_RANGE,
+  VISITS_SYNC_STATUS_SUCCESS,
 } from '../../shared/messages';
 import {
   VisitEntity,
@@ -65,21 +66,7 @@ export class VisitService {
 
     const diff = this._dateFormat.getDiffInHours(visit.startDate);
 
-    const visitData = {
-      status: VisitStatusEnum.EXPIRED,
-    } as VisitEntity;
-
-    if (diff > visit.validityHours) {
-      await this._repo.update(cnx, visit.id, visitData);
-
-      return {
-        ...visit,
-        ...visitData,
-        message: VISIT_OUT_RANGE,
-      };
-    }
-
-    if (diff < visit.validityHours) {
+    if (diff > visit.validityHours || diff < visit.validityHours) {
       return {
         ...visit,
         message: VISIT_OUT_RANGE,
@@ -154,7 +141,7 @@ export class VisitService {
 
   async saveDetail(cnx: EntityManager, payload: SaveVisitDetailI) {
     return cnx.transaction(async (cnxTran) => {
-      const { visitId, visitorId, observation, carPlate, photos } = payload;
+      const { visitId, visitorId, observation, carPlate, hasEntered, photos } = payload;
 
       const visitor = await this._repoVisitVisitor.getVisitVisitor(
         cnxTran,
@@ -171,7 +158,7 @@ export class VisitService {
       }
 
       const visitVisitorData = {
-        hasEntered: true,
+        hasEntered,
         entryDate: new Date(),
         observation: observation ?? null,
         carPlate: carPlate ?? null,
@@ -231,6 +218,57 @@ export class VisitService {
       }
 
       return QR_MESSAGE_SUCCESS;
+    });
+  }
+
+  async synchronizeStatus(cnx: EntityManager) {
+    return cnx.transaction<string | null>(async (cnxTran) => {
+      const visits = await this._repo.getInRange(cnxTran);
+
+      if (!visits.length) return null;
+
+      const visitsIdxs = visits.map(
+        async ({ id, type, startDate, validityHours, status }) => {
+          if (type !== VisitTypeEnum.QR) return;
+
+          const diffToInProgress = this._dateFormat.getDiffInMinutes(startDate);
+          const diffToFulfilled = this._dateFormat.getDiffInHours(startDate);
+          const validityMinutes = validityHours * 60;
+
+          const visitInProgress = {
+            status: VisitStatusEnum.IN_PROGRESS,
+          } as VisitEntity;
+
+          const visitFulfilled = {
+            status: VisitStatusEnum.FULFILLED,
+          } as VisitEntity;
+
+          const diffValidations: Partial<Record<VisitStatusEnum, boolean>> = {
+            [VisitStatusEnum.PENDING]:
+              status === VisitStatusEnum.PENDING &&
+              diffToInProgress > 0 &&
+              diffToInProgress < validityMinutes,
+
+            [VisitStatusEnum.IN_PROGRESS]: diffToFulfilled > validityHours,
+          };
+
+          if (diffValidations[VisitStatusEnum.PENDING]) {
+            await this._repo.update(cnxTran, id, visitInProgress);
+            return id;
+          }
+
+          if (diffValidations[VisitStatusEnum.IN_PROGRESS]) {
+            await this._repo.update(cnxTran, id, visitFulfilled);
+            return id;
+          }
+        }
+      );
+
+      const idxs = await Promise.all(visitsIdxs);
+
+      if (!idxs.some(v => v)) return null;
+
+      return VISITS_SYNC_STATUS_SUCCESS;
     });
   }
 }

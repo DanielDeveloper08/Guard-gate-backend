@@ -63,3 +63,5 @@ export const QR_MESSAGE_SUCCESS =
 
 export const QR_MESSAGE_FAIL =
   '¡Error al enviar mensaje con código QR a los visitantes! Por favor, inténtalo de nuevo.';
+
+export const VISITS_SYNC_STATUS_SUCCESS = 'Estados de visitas sincronizados con éxito';

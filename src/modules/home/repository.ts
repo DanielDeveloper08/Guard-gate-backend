@@ -8,6 +8,7 @@ import {
 } from '../../database';
 import { VisitI } from '../../interfaces/visit.interface';
 import { VisitStatusEnum } from '../../enums/visit.enum';
+import { VisitorI } from '../../interfaces/visitor.interface';
 
 export class HomeRepository {
 
@@ -17,7 +18,7 @@ export class HomeRepository {
     limit?: string,
     pending?: boolean
   ) {
-    const limitVisit = Number(limit ?? 5);
+    const limitValue = Number(limit ?? 5);
 
     const visitorQuery = cnx
       .createQueryBuilder()
@@ -59,7 +60,6 @@ export class HomeRepository {
         'visit.estado as status',
         'visit.id_residencia as "idResidency"',
         'visit.tipo as type',
-        `COUNT(visit.id_residencia) OVER (PARTITION BY visit.id_residencia)::INTEGER as frequency`,
       ])
       .addSelect([
         `
@@ -83,8 +83,40 @@ export class HomeRepository {
         status: pending ? VisitStatusEnum.PENDING : VisitStatusEnum.FULFILLED,
       })
       .orderBy('visit.id', 'DESC')
-      .limit(limitVisit);
+      .limit(limitValue);
 
     return query.getRawMany<VisitI>();
+  }
+
+  getFrequentVisitors(
+    cnx: EntityManager,
+    mainResidencyId: number,
+    limit?: string
+  ) {
+    const limitValue = Number(limit ?? 5);
+
+    const query = cnx
+      .createQueryBuilder()
+      .select([
+        'visitor.id as id',
+        'visitor.nombres as names',
+        'visitor.apellidos as surnames',
+        'visitor.cedula as "docNumber"',
+        'visitor.id_residencia as "idResidency"',
+        'visitor.estado as status',
+        `COUNT(visit_visitor.id_visitante)::INTEGER as frequency`,
+      ])
+      .from(VisitorEntity, 'visitor')
+      .leftJoin(
+        VisitVisitorEntity,
+        'visit_visitor',
+        'visitor.id = visit_visitor.id_visitante'
+      )
+      .where('visitor.id_residencia = :mainResidencyId', { mainResidencyId })
+      .andWhere('visitor.estado = true')
+      .groupBy('visitor.id')
+      .limit(limitValue);
+
+    return query.getRawMany<VisitorI>();
   }
 }

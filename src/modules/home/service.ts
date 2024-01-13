@@ -42,14 +42,20 @@ export class HomeService {
       true
     );
 
-    const frequentVisits = pendingVisits.filter(
+    const visitors = await this._repo.getFrequentVisitors(
+      cnx,
+      mainResidency.id,
+      limit
+    );
+
+    const frequentVisitors = visitors.filter(
       (visit) => visit.frequency >= Number(frequency ?? 5)
     );
 
     const data: VisitDataI = {
       lastVisits,
       pendingVisits,
-      frequentVisits,
+      frequentVisitors,
     };
 
     return data;

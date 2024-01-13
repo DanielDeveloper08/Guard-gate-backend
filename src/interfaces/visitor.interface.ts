@@ -9,6 +9,7 @@ export interface VisitorI {
   hasEntered: boolean;
   entryDate: Date;
   carPlate: string;
+  frequency: number;
   observation: string;
   photos: Array<string>;
 }

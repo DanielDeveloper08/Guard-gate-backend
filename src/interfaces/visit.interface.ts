@@ -1,5 +1,5 @@
-import { VisitTypeEnum } from '../enums/visit.enum';
 import { VisitorI } from './visitor.interface';
+import { VisitStatusEnum, VisitTypeEnum } from '../enums/visit.enum';
 
 export interface VisitI {
   id: number;
@@ -9,9 +9,8 @@ export interface VisitI {
   reason?: string;
   generatedBy: string;
   idResidency?: number;
-  status?: string;
+  status?: VisitStatusEnum;
   type: VisitTypeEnum;
-  frequency: number;
   visitors: Array<VisitorI>;
 }
 
@@ -28,10 +27,19 @@ export interface SaveVisitDetailI {
   visitorId: number;
   observation?: string;
   carPlate?: string;
+  hasEntered: boolean;
   photos: Array<string>;
 }
 
 export interface NotificationPayloadI {
   visitId: number;
   imgUrl: string;
+}
+
+export interface VisitInRangeI {
+  id: number;
+  type: VisitTypeEnum;
+  startDate: Date;
+  validityHours: number;
+  status: VisitStatusEnum;
 }
