@@ -32,4 +32,8 @@ export class DateFormatHelper {
   addHours(date: Date, hours: number) {
     return moment(date).add(hours, 'hours').toDate();
   }
+
+  getMinutes(hours: number): number {
+    return moment.duration(hours, 'hours').asMinutes();
+  }
 }

@@ -234,9 +234,8 @@ export class VisitService {
         async ({ id, type, startDate, validityHours, status }) => {
           if (type !== VisitTypeEnum.QR) return;
 
-          const diffToInProgress = this._dateFormat.getDiffInMinutes(startDate);
-          const diffToFulfilled = this._dateFormat.getDiffInHours(startDate);
-          const validityMinutes = validityHours * 60;
+          const diff = this._dateFormat.getDiffInMinutes(startDate);
+          const validityMinutes = this._dateFormat.getMinutes(validityHours);
 
           const visitInProgress = {
             status: VisitStatusEnum.IN_PROGRESS,
@@ -249,10 +248,10 @@ export class VisitService {
           const diffValidations: Partial<Record<VisitStatusEnum, boolean>> = {
             [VisitStatusEnum.PENDING]:
               status === VisitStatusEnum.PENDING &&
-              diffToInProgress > 0 &&
-              diffToInProgress < validityMinutes,
+              diff > 0 &&
+              diff < validityMinutes,
 
-            [VisitStatusEnum.IN_PROGRESS]: diffToFulfilled > validityHours,
+            [VisitStatusEnum.IN_PROGRESS]: diff >= validityMinutes,
           };
 
           if (diffValidations[VisitStatusEnum.PENDING]) {
