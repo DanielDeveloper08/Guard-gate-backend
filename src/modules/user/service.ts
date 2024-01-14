@@ -63,6 +63,45 @@ export class UserService {
     }));
   }
 
+  async getById(cnx: EntityManager , id:number) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+    const user = await this._repo.getUserById(cnx,id);
+
+    if(!user){
+      throw new ServiceException(NO_EXIST_RECORD('usuario')); 
+    }
+    
+    return {
+      id:user.id,
+      username:user.user,
+      roleId:user.roleId,
+      names: user.person.names,
+      surnames: user.person.surnames,
+      email: user.person.email,
+      phone: user.person.phone,
+      role:user.role.name
+    };
+  }
+
+  async getUsers(cnx: EntityManager) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+    
+    return (await this._repo.getAllUsers(cnx)).map(user=>({
+      id:user.id,
+      username:user.user,
+      roleId:user.roleId,
+      names: user.person.names,
+      surnames: user.person.surnames,
+      email: user.person.email,
+      phone: user.person.phone,
+      role:user.role.name
+    }));
+  }
+
   async setMainResidency(
     cnx: EntityManager,
     residencyId: number
