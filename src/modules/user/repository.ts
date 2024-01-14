@@ -118,7 +118,7 @@ export class UserRepository {
       UserEntity,
       { 
         where:{id:id},
-        relations: ['person','role'],
+        relations: ['person','role','person.residences'],
       },
     );
   }
