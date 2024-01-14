@@ -28,4 +28,8 @@ export class DateFormatHelper {
 
     return dateEnd.diff(dateStart, 'hours');
   }
+
+  addHours(date: Date, hours: number) {
+    return moment(date).add(hours, 'hours').toDate();
+  }
 }

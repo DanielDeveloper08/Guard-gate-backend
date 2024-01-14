@@ -95,8 +95,11 @@ export class VisitService {
         throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
       }
 
+      const endDate = this._dateFormat.addHours(startDate, validityHours);
+
       const visitData = {
         startDate,
+        endDate,
         validityHours,
         type,
         reason: reason ?? REASON_VISIT(mainResidency.urbanization),
