@@ -63,12 +63,12 @@ export class UserService {
     }));
   }
 
-  async getAllResidentUsers(cnx: EntityManager) {
+  async getUsersByRoleId(cnx: EntityManager, roleId:number) {
     if (!global.user) {
       throw new ServiceException(ERR_401);
     }
     
-    return (await this._repo.getAllResidentUsers(cnx)).map(user=>({
+    return (await this._repo.getUsersByRoleId(cnx, roleId)).map(user=>({
       id:user.id,
       username:user.user,
       roleId:user.roleId,
