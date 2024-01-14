@@ -41,6 +41,21 @@ export class UserController {
     }
   };
 
+  getAllResidentUsers = async (req: Request, res: Response) => {
+    try {
+      const data = await this._userSrv.getAllResidentUsers(this._cnx);
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
   getUser = async (req: Request, res: Response) => {
     try {
       const payload = Number(req.params.id);

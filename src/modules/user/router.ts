@@ -43,6 +43,13 @@ export class UserRouter extends BaseRouter<UserController, UserValidations> {
       this.controller.getAllUsers
     );
     this.router.get(
+      '/users/residents',
+      [
+        GlobalMiddleware.validateJwtToken,
+      ],
+      this.controller.getAllResidentUsers
+    );
+    this.router.get(
       '/users/:id',
       [
         GlobalMiddleware.validateJwtToken,
