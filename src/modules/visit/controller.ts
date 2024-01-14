@@ -102,4 +102,21 @@ export class VisitController {
       });
     }
   };
+
+  cancel = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const data = await this._visitSrv.cancel(this._cnx, Number(id));
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
 }

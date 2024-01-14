@@ -95,8 +95,11 @@ export class VisitService {
         throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
       }
 
+      const endDate = this._dateFormat.addHours(startDate, validityHours);
+
       const visitData = {
         startDate,
+        endDate,
         validityHours,
         type,
         reason: reason ?? REASON_VISIT(mainResidency.urbanization),
@@ -231,9 +234,8 @@ export class VisitService {
         async ({ id, type, startDate, validityHours, status }) => {
           if (type !== VisitTypeEnum.QR) return;
 
-          const diffToInProgress = this._dateFormat.getDiffInMinutes(startDate);
-          const diffToFulfilled = this._dateFormat.getDiffInHours(startDate);
-          const validityMinutes = validityHours * 60;
+          const diff = this._dateFormat.getDiffInMinutes(startDate);
+          const validityMinutes = this._dateFormat.getMinutes(validityHours);
 
           const visitInProgress = {
             status: VisitStatusEnum.IN_PROGRESS,
@@ -246,10 +248,10 @@ export class VisitService {
           const diffValidations: Partial<Record<VisitStatusEnum, boolean>> = {
             [VisitStatusEnum.PENDING]:
               status === VisitStatusEnum.PENDING &&
-              diffToInProgress > 0 &&
-              diffToInProgress < validityMinutes,
+              diff > 0 &&
+              diff < validityMinutes,
 
-            [VisitStatusEnum.IN_PROGRESS]: diffToFulfilled > validityHours,
+            [VisitStatusEnum.IN_PROGRESS]: diff >= validityMinutes,
           };
 
           if (diffValidations[VisitStatusEnum.PENDING]) {
@@ -269,6 +271,53 @@ export class VisitService {
       if (!idxs.some(v => v)) return null;
 
       return VISITS_SYNC_STATUS_SUCCESS;
+    });
+  }
+
+  async cancel(cnx: EntityManager, id: number) {
+    return cnx.transaction(async (cnxTran) => {
+      if (!global.user) {
+        throw new ServiceException(ERR_401);
+      }
+
+      const userId = global.user.id;
+      const mainResidency = await this._repoUser.getMainResidency(
+        cnxTran,
+        userId
+      );
+
+      if (!mainResidency) {
+        throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
+      }
+
+      const visit = await this._repo.getValidVisit(
+        cnxTran,
+        id,
+        mainResidency.id
+      );
+
+      if (!visit) {
+        throw new ServiceException(NO_EXIST_RECORD('la visita'));
+      }
+
+      const statusValidation: Partial<Record<VisitStatusEnum, boolean>> = {
+        [VisitStatusEnum.FULFILLED]: true,
+        [VisitStatusEnum.CANCELLED]: true,
+      };
+
+      if (statusValidation[visit.status]) return null;
+
+      const visitData = {
+        status: VisitStatusEnum.CANCELLED,
+      } as VisitEntity;
+
+      const visitUpdated = await this._repo.update(cnxTran, id, visitData);
+
+      if (!visitUpdated) {
+        throw new ServiceException(RECORD_EDIT_FAIL('la visita'));
+      }
+
+      return RECORD_EDIT('Visita');
     });
   }
 }
