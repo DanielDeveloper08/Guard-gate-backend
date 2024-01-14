@@ -103,6 +103,16 @@ export class UserRepository {
     );
   }
 
+  getAllResidentUsers(cnx: EntityManager, showMain: boolean = false) {
+    return cnx.find(
+      UserEntity,
+      { 
+        where:{roleId:3},
+        relations: ['person','role'],
+      },
+    );
+  }
+
   getUserById(cnx: EntityManager, id:number) {
     return cnx.findOne(
       UserEntity,
