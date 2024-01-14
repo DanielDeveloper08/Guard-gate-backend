@@ -55,7 +55,6 @@ export class AuthValidations {
         email: this._validations.validString('email', 255),
         phone: this._validations.validStringNoRequired('phone', 255),
         roleId: Joi.number().required(),
-        personId: Joi.number().required(),
       }),
     };
 

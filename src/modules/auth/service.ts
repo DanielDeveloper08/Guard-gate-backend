@@ -180,8 +180,7 @@ export class AuthService extends Environments {
       surnames,
       email,
       phone,
-      roleId,
-      personId
+      roleId
     } = payload;
 
     const userCurrentData = await this._repo.getUserById(cnx,id);
@@ -207,7 +206,7 @@ export class AuthService extends Environments {
       phone: phone ?? null,
     } as PersonEntity;
 
-    const personUpdated = await this._repoPerson.update(cnx, personId, personPayload);
+    const personUpdated = await this._repoPerson.update(cnx, userCurrentData.personId, personPayload);
 
     if (personUpdated==0) {
       throw new ServiceException(RECORD_UPDATED_FAIL(`persona: ${names} ${surnames}`));
