@@ -41,9 +41,10 @@ export class UserController {
     }
   };
 
-  getAllResidentUsers = async (req: Request, res: Response) => {
+  getUsersByRoleId = async (req: Request, res: Response) => {
     try {
-      const data = await this._userSrv.getAllResidentUsers(this._cnx);
+      const payload = Number(req.params.roleId);
+      const data = await this._userSrv.getUsersByRoleId(this._cnx, payload);
       return ServiceResponse.success({
         res,
         data,

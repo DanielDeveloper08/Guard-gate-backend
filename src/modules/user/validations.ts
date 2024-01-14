@@ -26,4 +26,14 @@ export class UserValidations {
 
     return validate(schema);
   };
+
+  getUsersByRoleId = () => {
+    const schema: schema = {
+      params: Joi.object({
+        roleId: this._validations.validNumber('roleId'),
+      }),
+    };
+
+    return validate(schema);
+  };
 }
