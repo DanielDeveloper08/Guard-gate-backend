@@ -105,7 +105,7 @@ export class VisitorService {
       }
 
       const userId = global.user.id;
-      const mainResidency = await this._repoUser.getMainResidency(cnx, userId);
+      const mainResidency = await this._repoUser.getMainResidency(cnxTran, userId);
 
       if (!mainResidency) {
         throw new ServiceException(NO_EXIST_RECORD('residencia principal'));

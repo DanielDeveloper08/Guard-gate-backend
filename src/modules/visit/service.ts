@@ -273,4 +273,51 @@ export class VisitService {
       return VISITS_SYNC_STATUS_SUCCESS;
     });
   }
+
+  async cancel(cnx: EntityManager, id: number) {
+    return cnx.transaction(async (cnxTran) => {
+      if (!global.user) {
+        throw new ServiceException(ERR_401);
+      }
+
+      const userId = global.user.id;
+      const mainResidency = await this._repoUser.getMainResidency(
+        cnxTran,
+        userId
+      );
+
+      if (!mainResidency) {
+        throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
+      }
+
+      const visit = await this._repo.getValidVisit(
+        cnxTran,
+        id,
+        mainResidency.id
+      );
+
+      if (!visit) {
+        throw new ServiceException(NO_EXIST_RECORD('la visita'));
+      }
+
+      const statusValidation: Partial<Record<VisitStatusEnum, boolean>> = {
+        [VisitStatusEnum.FULFILLED]: true,
+        [VisitStatusEnum.CANCELLED]: true,
+      };
+
+      if (statusValidation[visit.status]) return null;
+
+      const visitData = {
+        status: VisitStatusEnum.CANCELLED,
+      } as VisitEntity;
+
+      const visitUpdated = await this._repo.update(cnxTran, id, visitData);
+
+      if (!visitUpdated) {
+        throw new ServiceException(RECORD_EDIT_FAIL('la visita'));
+      }
+
+      return RECORD_EDIT('Visita');
+    });
+  }
 }

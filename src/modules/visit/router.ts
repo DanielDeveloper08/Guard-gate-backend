@@ -53,5 +53,14 @@ export class VisitRouter extends BaseRouter<VisitController, VisitValidations> {
       ],
       this.controller.sendNotification
     );
+
+    this.router.patch(
+      '/visits/:id',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.cancel(),
+      ],
+      this.controller.cancel
+    );
   }
 }
