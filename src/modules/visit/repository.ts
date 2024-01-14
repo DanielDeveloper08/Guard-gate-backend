@@ -191,6 +191,16 @@ export class VisitRepository {
     return query.getRawMany<VisitInRangeI>();
   }
 
+  getValidVisit(
+    cnx: EntityManager,
+    id: number,
+    residencyId: number
+  ) {
+    return cnx.findOne(VisitEntity, {
+      where: { id, residencyId },
+    });
+  }
+
   create(cnx: EntityManager, payload: VisitEntity) {
     const insert = cnx.create(VisitEntity, payload);
     return cnx.save(insert);

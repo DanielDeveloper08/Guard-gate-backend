@@ -78,4 +78,14 @@ export class VisitValidations {
 
     return validate(sendNotificationSchema);
   };
+
+  cancel = () => {
+    const cancelSchema: schema = {
+      params: Joi.object({
+        id: this._validations.validNumber('id'),
+      }),
+    };
+
+    return validate(cancelSchema);
+  };
 }
