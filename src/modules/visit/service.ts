@@ -24,7 +24,7 @@ import {
 } from '../../database';
 import { VisitStatusEnum, VisitTypeEnum } from '../../enums/visit.enum';
 import { VisitorRepository } from '../visitor/repository';
-import { PaginationI } from '../../interfaces/global.interface';
+import { IDateFilter, PaginationI } from '../../interfaces/global.interface';
 import { DateFormatHelper, WsHelper } from '../../helpers';
 import { SendMessageI } from '../../interfaces/ws.interface';
 
@@ -52,6 +52,15 @@ export class VisitService {
     }
 
     const data = await this._repo.getAll(cnx, payload, mainResidency.id);
+    return data;
+  }
+  
+  async getStatusSummary(cnx: EntityManager, payload: IDateFilter) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+    
+    const data = await this._repo.getStatusSummary(cnx, payload);
     return data;
   }
 

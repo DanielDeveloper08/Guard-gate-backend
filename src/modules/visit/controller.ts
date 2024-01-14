@@ -8,7 +8,7 @@ import {
   NotificationPayloadI,
 } from '../../interfaces/visit.interface';
 import { VisitService } from './service';
-import { PaginationI } from '../../interfaces/global.interface';
+import { IDateFilter, PaginationI } from '../../interfaces/global.interface';
 
 export class VisitController {
 
@@ -21,6 +21,23 @@ export class VisitController {
     try {
       const payload = req.query as PaginationI;
       const data = await this._visitSrv.getAll(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+  
+  getStatusSummary = async (req: Request, res: Response) => {
+    try {
+      const payload = req.query as IDateFilter;
+      const data = await this._visitSrv.getStatusSummary(this._cnx, payload);
 
       return ServiceResponse.success({
         res,
