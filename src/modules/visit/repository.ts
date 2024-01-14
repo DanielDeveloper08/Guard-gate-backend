@@ -123,7 +123,7 @@ export class VisitRepository {
     return cnx
       .createQueryBuilder()
       .select([
-        'visit.estado', 
+        'visit.estado as status', 
         'COUNT(*) as count'
       ])
       .from(VisitEntity, 'visit')
