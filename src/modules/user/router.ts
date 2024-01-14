@@ -11,21 +11,6 @@ export class UserRouter extends BaseRouter<UserController, UserValidations> {
 
   initRoutes(): void {
     this.router.get(
-      '/users',
-      [
-        GlobalMiddleware.validateJwtToken,
-      ],
-      this.controller.getAllUsers
-    );
-    this.router.get(
-      '/users/:id',
-      [
-        GlobalMiddleware.validateJwtToken,
-        this.validation!.getUserById()
-      ],
-      this.controller.getUser
-    );
-    this.router.get(
       '/users/residences',
       [
         GlobalMiddleware.validateJwtToken,
@@ -48,6 +33,22 @@ export class UserRouter extends BaseRouter<UserController, UserValidations> {
         GlobalMiddleware.validateJwtToken,
       ],
       this.controller.notifyPanicAlert
+    );
+
+    this.router.get(
+      '/users',
+      [
+        GlobalMiddleware.validateJwtToken,
+      ],
+      this.controller.getAllUsers
+    );
+    this.router.get(
+      '/users/:id',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.getUserById()
+      ],
+      this.controller.getUser
     );
   }
 }
