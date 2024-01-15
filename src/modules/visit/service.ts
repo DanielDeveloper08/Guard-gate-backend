@@ -64,6 +64,18 @@ export class VisitService {
     return data;
   }
 
+  async getDateSummary(cnx: EntityManager, payload: IDateFilter) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+    
+    const data = await this._repo.getDateSummary(cnx, payload);
+    return data.map((datum)=>({
+      date:datum.date.toISOString().slice(0,10),
+      count:datum.count
+    }));
+  }
+
   async getById(cnx: EntityManager, id: number) {
     const visit = await this._repo.getById(cnx, id);
 
