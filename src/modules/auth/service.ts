@@ -10,6 +10,7 @@ import {
 } from '../../helpers';
 import {
   LoginPayloadI,
+  LoginResponseI,
   RecoverPasswordI,
   RegisterPayloadI,
   ResetPasswordI,
@@ -58,13 +59,16 @@ export class AuthService extends Environments {
     super();
   }
 
-  async login(cnx: EntityManager, payload: LoginPayloadI) {
+  async login(cnx: EntityManager, payload: LoginPayloadI): Promise<LoginResponseI> {
     const { username, password } = payload;
 
     const user = await this.getValidUser(cnx, username, true);
-
     const isMatch = this.comparePassword(password, user.password!);
+
     if (!isMatch) throw new ServiceException(LOGIN_FAIL);
+
+    const roles = await this._repoRole.getById(cnx, user.roleId);
+    const operations = roles?.operations.map((op) => op.name) ?? [];
 
     const tokenPayload: UserTokenPayloadI = {
       id: user.id,
@@ -77,10 +81,15 @@ export class AuthService extends Environments {
 
     const token = this._jwt.create(tokenPayload);
 
-    return {
+    const data: LoginResponseI = {
       token,
-      user: tokenPayload,
+      user: {
+        ...tokenPayload,
+        operations,
+      },
     };
+
+    return data;
   }
 
   async validateLogin(cnx: EntityManager, payload: ValidateLoginI) {

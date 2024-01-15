@@ -1,5 +1,6 @@
 import { schema, Joi, validate } from 'express-validation';
 import { GlobalValidations } from '../../shared/global-validations';
+import { RoleTypeEnum } from '../../enums/role.enum';
 
 export class RoleValidations {
 
@@ -20,9 +21,19 @@ export class RoleValidations {
   };
 
   getRoleByName = () => {
+    const rolesOptions: Array<RoleTypeEnum> = [
+      RoleTypeEnum.ADMIN,
+      RoleTypeEnum.RESIDENT,
+      RoleTypeEnum.OPERATIONAL,
+    ];
+
     const getAllSchema: schema = {
       params: Joi.object({
-        rolename: this._validations.validString('rolename',255)
+        rolename: this._validations.validOptions(
+          'rolename',
+          rolesOptions,
+          rolesOptions.join(' - ')
+        ),
       }),
     };
 
