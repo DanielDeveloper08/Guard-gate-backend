@@ -34,3 +34,12 @@ export type UserTokenDecodeI = Record<'data', UserTokenPayloadI> & {
   iat: number;
   exp: number;
 };
+
+export interface LoginResponseI {
+  token: string;
+  user: UserResponseI;
+}
+
+export interface UserResponseI extends UserTokenPayloadI {
+  operations: Array<string>;
+}

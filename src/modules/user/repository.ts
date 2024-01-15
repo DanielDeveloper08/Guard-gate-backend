@@ -27,6 +27,7 @@ export class UserRepository {
         'person.correo as email',
         'person.telefono as phone',
         'role.name as role',
+        'role.id as roleId',
       ])
       .from(UserEntity, 'user')
       .leftJoin(PersonEntity, 'person', 'user.id_persona = person.id')
