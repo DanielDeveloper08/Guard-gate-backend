@@ -31,7 +31,7 @@ export class VisitValidations {
   };
 
   create = () => {
-    const typeOptions = [
+    const typeOptions: Array<VisitTypeEnum> = [
       VisitTypeEnum.QR,
       VisitTypeEnum.PREAUTHORIZED,
     ];
