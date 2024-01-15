@@ -133,6 +133,28 @@ export class VisitRepository {
       .getRawMany();
   }
 
+  async getDateSummary(
+    cnx: EntityManager,
+    payload: IDateFilter
+  ) {
+    const {
+      fromDate,
+      toDate
+    } = payload;
+
+    return cnx
+      .createQueryBuilder()
+      .select([
+        'DATE(visit.fecha_inicio) as date', 
+        'COUNT(*) as count'
+      ])
+      .from(VisitEntity, 'visit')
+      .where('DATE(visit.fecha_inicio) BETWEEN :fromDate AND :toDate', { fromDate, toDate })
+      .groupBy('DATE(visit.fecha_inicio)')
+      .orderBy('DATE(visit.fecha_inicio)', 'ASC')
+      .getRawMany();
+  }
+
   getById(cnx: EntityManager, id: number) {
     const visitorQuery = cnx
       .createQueryBuilder()

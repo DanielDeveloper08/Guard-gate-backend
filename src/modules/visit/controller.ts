@@ -51,6 +51,23 @@ export class VisitController {
     }
   };
 
+  getDateSummary = async (req: Request, res: Response) => {
+    try {
+      const payload = req.query as IDateFilter;
+      const data = await this._visitSrv.getDateSummary(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
   getById = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;

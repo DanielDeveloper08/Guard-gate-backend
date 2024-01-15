@@ -28,6 +28,15 @@ export class VisitRouter extends BaseRouter<VisitController, VisitValidations> {
     );
 
     this.router.get(
+      '/visits-date-summary',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.getDateFiltered(),
+      ],
+      this.controller.getDateSummary
+    );
+
+    this.router.get(
       '/visits/:id',
       [
         GlobalMiddleware.validateJwtToken,
