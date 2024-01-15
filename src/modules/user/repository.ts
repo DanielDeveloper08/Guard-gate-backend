@@ -95,6 +95,35 @@ export class UserRepository {
     return query.getRawOne<UserResidencesI>();
   }
 
+  getAllUsers(cnx: EntityManager, showMain: boolean = false) {
+    return cnx.find(
+      UserEntity,
+      { 
+        relations: ['person','role'],
+      },
+    );
+  }
+
+  getUsersByRoleId(cnx: EntityManager, roleId:number) {
+    return cnx.find(
+      UserEntity,
+      { 
+        where:{roleId:roleId},
+        relations: ['person','role'],
+      },
+    );
+  }
+
+  getUserById(cnx: EntityManager, id:number) {
+    return cnx.findOne(
+      UserEntity,
+      { 
+        where:{id:id},
+        relations: ['person','role','person.residences'],
+      },
+    );
+  }
+
   getMainResidency(cnx: EntityManager, id: number) {
     const query = cnx
       .createQueryBuilder()

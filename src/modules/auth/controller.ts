@@ -7,6 +7,7 @@ import {
   RecoverPasswordI,
   RegisterPayloadI,
   ResetPasswordI,
+  UpdatePayloadI,
   ValidateLoginI,
 } from '../../interfaces/auth.interface';
 
@@ -55,6 +56,23 @@ export class AuthController {
     try {
       const payload = req.body as RegisterPayloadI;
       const data = await this._authSrv.register(this._cnx, payload);
+
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  updateUser = async (req: Request, res: Response) => {
+    try {
+      const payload = req.body as UpdatePayloadI;
+      const data = await this._authSrv.updateUser(this._cnx, payload);
 
       return ServiceResponse.success({
         res,

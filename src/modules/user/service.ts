@@ -46,6 +46,86 @@ export class UserService {
     return userInfo;
   }
 
+  async getAllUsers(cnx: EntityManager) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+    
+    return (await this._repo.getAllUsers(cnx)).map(user=>({
+      id:user.id,
+      username:user.user,
+      roleId:user.roleId,
+      names: user.person.names,
+      surnames: user.person.surnames,
+      email: user.person.email,
+      phone: user.person.phone,
+      role:user.role.name
+    }));
+  }
+
+  async getUsersByRoleId(cnx: EntityManager, roleId:number) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+    
+    return (await this._repo.getUsersByRoleId(cnx, roleId)).map(user=>({
+      id:user.id,
+      username:user.user,
+      roleId:user.roleId,
+      names: user.person.names,
+      surnames: user.person.surnames,
+      email: user.person.email,
+      phone: user.person.phone,
+      role:user.role.name
+    }));
+  }
+
+  async getById(cnx: EntityManager , id:number) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+    const user = await this._repo.getUserById(cnx,id);
+
+    if(!user){
+      throw new ServiceException(NO_EXIST_RECORD('usuario')); 
+    }
+    
+    return {
+      id:user.id,
+      username:user.user,
+      roleId:user.roleId,
+      names: user.person.names,
+      surnames: user.person.surnames,
+      email: user.person.email,
+      phone: user.person.phone,
+      role:user.role.name,
+      residences:user.person.residences.map(residency=>({
+        id:residency.id,
+        block:residency.block,
+        town:residency.town,
+        urbanization: residency.urbanization,
+        isMain: residency.isMain,
+      }))
+    };
+  }
+
+  async getUsers(cnx: EntityManager) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+    
+    return (await this._repo.getAllUsers(cnx)).map(user=>({
+      id:user.id,
+      username:user.user,
+      roleId:user.roleId,
+      names: user.person.names,
+      surnames: user.person.surnames,
+      email: user.person.email,
+      phone: user.person.phone,
+      role:user.role.name
+    }));
+  }
+
   async setMainResidency(
     cnx: EntityManager,
     residencyId: number

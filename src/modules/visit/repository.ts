@@ -8,6 +8,7 @@ import {
 } from '../../database';
 import { VisitI, VisitInRangeI } from '../../interfaces/visit.interface';
 import {
+  IDateFilter,
   PaginationI,
   ResponsePaginationI,
 } from '../../interfaces/global.interface';
@@ -108,6 +109,28 @@ export class VisitRepository {
     };
 
     return response;
+  }
+
+  async getStatusSummary(
+    cnx: EntityManager,
+    payload: IDateFilter
+  ) {
+    const {
+      fromDate,
+      toDate
+    } = payload;
+
+    return cnx
+      .createQueryBuilder()
+      .select([
+        'visit.estado as status', 
+        'COUNT(*) as count'
+      ])
+      .from(VisitEntity, 'visit')
+      .where('DATE(visit.fecha_inicio) BETWEEN :fromDate AND :toDate', { fromDate, toDate })
+      .groupBy('visit.estado')
+      .orderBy('visit.estado', 'ASC')
+      .getRawMany();
   }
 
   getById(cnx: EntityManager, id: number) {

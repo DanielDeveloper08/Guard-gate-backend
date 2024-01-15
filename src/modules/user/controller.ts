@@ -26,6 +26,53 @@ export class UserController {
     }
   };
 
+  getAllUsers = async (req: Request, res: Response) => {
+    try {
+      const data = await this._userSrv.getAllUsers(this._cnx);
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  getUsersByRoleId = async (req: Request, res: Response) => {
+    try {
+      const payload = Number(req.params.roleId);
+      const data = await this._userSrv.getUsersByRoleId(this._cnx, payload);
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
+  getUser = async (req: Request, res: Response) => {
+    try {
+      const payload = Number(req.params.id);
+      const data = await this._userSrv.getById(this._cnx, payload);
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
   setMainResidency = async (req: Request, res: Response) => {
     try {
       const residencyId = Number(req.query.residencyId);

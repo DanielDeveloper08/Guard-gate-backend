@@ -7,6 +7,13 @@ export interface ResidencyI {
   residentEmail: string;
   residentPhone: string;
   personId: number;
+  isMain:boolean;
 }
 
 export type ResidencyDTO = Omit<ResidencyI, 'id' >;
+
+export interface ResidencyMassiveRequest{
+  personId:number,
+  residences:ResidencyI[]
+}
+export type ResidencyMassiveDTO = Omit<ResidencyI, 'residentName' | 'residentEmail' | 'residentPhone' | 'createdAt'>;

@@ -3,7 +3,10 @@ export interface PaginationI {
   page?: number;
   search?: string;
 }
-
+export interface IDateFilter {
+  fromDate?: string;
+  toDate?: string;
+}
 export interface ResponsePaginationI<T> {
   records: Array<T>;
   meta: MetaI;

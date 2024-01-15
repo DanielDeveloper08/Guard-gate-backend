@@ -16,4 +16,24 @@ export class UserValidations {
 
     return validate(setMainResidencySchema);
   };
+
+  getUserById = () => {
+    const schema: schema = {
+      params: Joi.object({
+        id: this._validations.validNumber('id'),
+      }),
+    };
+
+    return validate(schema);
+  };
+
+  getUsersByRoleId = () => {
+    const schema: schema = {
+      params: Joi.object({
+        roleId: this._validations.validNumber('roleId'),
+      }),
+    };
+
+    return validate(schema);
+  };
 }

@@ -34,5 +34,29 @@ export class UserRouter extends BaseRouter<UserController, UserValidations> {
       ],
       this.controller.notifyPanicAlert
     );
+
+    this.router.get(
+      '/users',
+      [
+        GlobalMiddleware.validateJwtToken,
+      ],
+      this.controller.getAllUsers
+    );
+    this.router.get(
+      '/role-users/:roleId',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.getUsersByRoleId()
+      ],
+      this.controller.getUsersByRoleId
+    );
+    this.router.get(
+      '/users/:id',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.getUserById()
+      ],
+      this.controller.getUser
+    );
   }
 }

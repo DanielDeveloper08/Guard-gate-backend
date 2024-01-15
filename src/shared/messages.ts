@@ -6,6 +6,8 @@ export const LOGIN_FAIL = 'Usuario y/o contraseña incorrecta';
 export const TOKEN_INVALID = 'Su sesión ha expirado. Inicie sesión nuevamente';
 
 export const USER_REGISTERED = 'Usuario ya tiene una cuenta previa registrada';
+export const USERNAME_REGISTERED = 'El nombre de usuario ya se encuentra en uso';
+export const USER_EMAIL_REGISTERED = 'El correo ya se encuentra en uso por otro usuario';
 export const UNREGISTERED_USER =
   'Usuario no tiene una cuenta previa registrada';
 
@@ -40,6 +42,12 @@ export const RECORD_DELETE = (detail: string) =>
 
 export const RECORD_CREATED_FAIL = (detail: string) =>
   `No se pudo crear ${detail}`;
+
+export const RECORD_UPDATED_FAIL = (detail: string) =>
+  `No se pudo actualizar ${detail}`;
+
+export const RECORD_UPSERT_FAIL = (detail: string) =>
+  `No se pudo crear o actualizar ${detail}`;
 
 export const RECORD_EDIT_FAIL = (detail: string) =>
   `No se pudo actualizar ${detail}`;

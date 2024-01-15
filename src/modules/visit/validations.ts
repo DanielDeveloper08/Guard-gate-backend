@@ -20,6 +20,17 @@ export class VisitValidations {
     return validate(getAllSchema);
   };
 
+  getDateFiltered = () => {
+    const getDateFiltered: schema = {
+      query: Joi.object({
+        fromDate: this._validations.validString('fromDate',255),
+        toDate: this._validations.validString('toDate',255),
+      }),
+    };
+
+    return validate(getDateFiltered);
+  };
+
   getById = () => {
     const getOneSchema: schema = {
       params: Joi.object({

@@ -39,6 +39,15 @@ export class ResidencyRouter extends BaseRouter<
       this.controller.create
     );
 
+    this.router.post(
+      '/residences-massive',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.upsertMany()
+      ],
+      this.controller.upsertMany
+    );
+
     this.router.put(
       '/residences/:id',
       [

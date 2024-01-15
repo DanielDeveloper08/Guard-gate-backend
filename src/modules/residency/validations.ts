@@ -42,6 +42,25 @@ export class ResidencyValidations {
     return validate(createSchema);
   };
 
+  upsertMany = () => {
+    const createSchema: schema = {
+      body: Joi.object({
+        personId:Joi.number().required(),
+        residences:Joi.array().items(
+          Joi.object({
+            id:Joi.number().required(),
+            block: this._validations.validString('block', 255),
+            town: this._validations.validString('town', 255),
+            urbanization: this._validations.validString('urbanization', 255),
+            isMain:Joi.bool().required(),
+          }),
+        )
+      })
+    };
+
+    return validate(createSchema);
+  };
+
   update = () => {
     const updateSchema: schema = {
       params: Joi.object({
