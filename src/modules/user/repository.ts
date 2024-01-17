@@ -27,7 +27,7 @@ export class UserRepository {
         'person.correo as email',
         'person.telefono as phone',
         'role.name as role',
-        'role.id as roleId',
+        'role.id as "roleId"',
       ])
       .from(UserEntity, 'user')
       .leftJoin(PersonEntity, 'person', 'user.id_persona = person.id')
@@ -98,7 +98,7 @@ export class UserRepository {
   getAllUsers(cnx: EntityManager, showMain: boolean = false) {
     return cnx.find(
       UserEntity,
-      { 
+      {
         relations: ['person','role'],
       },
     );
@@ -107,7 +107,7 @@ export class UserRepository {
   getUsersByRoleId(cnx: EntityManager, roleId:number) {
     return cnx.find(
       UserEntity,
-      { 
+      {
         where:{roleId:roleId},
         relations: ['person','role'],
       },
@@ -117,7 +117,7 @@ export class UserRepository {
   getUserById(cnx: EntityManager, id:number) {
     return cnx.findOne(
       UserEntity,
-      { 
+      {
         where:{id:id},
         relations: ['person','role','person.residences'],
       },
