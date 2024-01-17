@@ -1,5 +1,10 @@
 import { EntityManager } from 'typeorm';
-import { NotificationPayloadI, SaveVisitDetailI, VisitDTO } from '../../interfaces/visit.interface';
+import {
+  NotificationPayloadI,
+  SaveVisitDetailI,
+  VisitDTO,
+  VisitPayloadI,
+} from '../../interfaces/visit.interface';
 import { VisitRepository } from './repository';
 import { UserRepository } from '../user/repository';
 import { VisitVisitorRepository } from '../visit-visitor/repository';
@@ -24,7 +29,7 @@ import {
 } from '../../database';
 import { VisitStatusEnum, VisitTypeEnum } from '../../enums/visit.enum';
 import { VisitorRepository } from '../visitor/repository';
-import { IDateFilter, PaginationI } from '../../interfaces/global.interface';
+import { IDateFilter } from '../../interfaces/global.interface';
 import { DateFormatHelper, WsHelper } from '../../helpers';
 import { SendMessageI } from '../../interfaces/ws.interface';
 
@@ -39,7 +44,14 @@ export class VisitService {
     private readonly _dateFormat = new DateFormatHelper(),
   ) {}
 
-  async getAll(cnx: EntityManager, payload: PaginationI) {
+  async getAll(cnx: EntityManager, payload: VisitPayloadI) {
+    const { residencyId } = payload;
+
+    if (residencyId?.trim()) {
+      const data = await this._repo.getAll(cnx, payload, Number(residencyId));
+      return data;
+    }
+
     if (!global.user) {
       throw new ServiceException(ERR_401);
     }

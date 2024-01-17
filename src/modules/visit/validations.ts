@@ -14,6 +14,7 @@ export class VisitValidations {
         page: this._validations.validNumberNoRequired('page'),
         limit: this._validations.validNumberNoRequired('limit'),
         search: this._validations.validStringNoRequired('search', 255),
+        residencyId: this._validations.validNumberNoRequired('residencyId'),
       }),
     };
 

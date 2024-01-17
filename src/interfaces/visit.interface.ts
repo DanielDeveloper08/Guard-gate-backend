@@ -1,5 +1,6 @@
 import { VisitorI } from './visitor.interface';
 import { VisitStatusEnum, VisitTypeEnum } from '../enums/visit.enum';
+import { PaginationI } from './global.interface';
 
 export interface VisitI {
   id: number;
@@ -45,4 +46,8 @@ export interface VisitInRangeI {
   startDate: Date;
   validityHours: number;
   status: VisitStatusEnum;
+}
+
+export interface VisitPayloadI extends PaginationI {
+  residencyId?: string;
 }
