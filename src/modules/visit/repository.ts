@@ -195,6 +195,9 @@ export class VisitRepository {
         `CONCAT(person.names, ' ', person.surnames) as "generatedBy"`,
         'visit.estado as status',
         'visit.id_residencia as "idResidency"',
+        'residency.manzana as block',
+        'residency.villa as town',
+        'residency.urbanizacion as urbanization',
         'visit.tipo as type',
       ])
       .addSelect([
