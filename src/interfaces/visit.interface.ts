@@ -9,6 +9,9 @@ export interface VisitI {
   reason?: string;
   generatedBy: string;
   idResidency?: number;
+  block: string;
+  town: string;
+  urbanization: string;
   status?: VisitStatusEnum;
   type: VisitTypeEnum;
   visitors: Array<VisitorI>;

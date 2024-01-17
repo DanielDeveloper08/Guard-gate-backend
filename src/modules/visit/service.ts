@@ -54,12 +54,12 @@ export class VisitService {
     const data = await this._repo.getAll(cnx, payload, mainResidency.id);
     return data;
   }
-  
+
   async getStatusSummary(cnx: EntityManager, payload: IDateFilter) {
     if (!global.user) {
       throw new ServiceException(ERR_401);
     }
-    
+
     const data = await this._repo.getStatusSummary(cnx, payload);
     return data;
   }
