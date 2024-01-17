@@ -1,4 +1,4 @@
-import { Admin, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { OperationEntity, RoleEntity, RoleOperationEntity } from '../../database';
 import { RoleTypeEnum } from '../../enums/role.enum';
 import { PaginationI, ResponsePaginationI } from '../../interfaces/global.interface';

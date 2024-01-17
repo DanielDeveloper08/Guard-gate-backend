@@ -84,8 +84,7 @@ export class VisitRepository {
 
     if (search.trim()) {
       query.andWhere(
-        `visit.horas_validez ILIKE :search OR
-          visit.motivo ILIKE :search`,
+        `visit.motivo ILIKE :search`,
         { search: `%${search}%` }
       );
     }
@@ -123,7 +122,7 @@ export class VisitRepository {
     return cnx
       .createQueryBuilder()
       .select([
-        'visit.estado as status', 
+        'visit.estado as status',
         'COUNT(*) as count'
       ])
       .from(VisitEntity, 'visit')
