@@ -6,9 +6,10 @@ import {
   VisitDTO,
   SaveVisitDetailI,
   NotificationPayloadI,
+  VisitPayloadI,
 } from '../../interfaces/visit.interface';
 import { VisitService } from './service';
-import { IDateFilter, PaginationI } from '../../interfaces/global.interface';
+import { IDateFilter } from '../../interfaces/global.interface';
 
 export class VisitController {
 
@@ -19,7 +20,7 @@ export class VisitController {
 
   getAll = async (req: Request, res: Response) => {
     try {
-      const payload = req.query as PaginationI;
+      const payload = req.query as VisitPayloadI;
       const data = await this._visitSrv.getAll(this._cnx, payload);
 
       return ServiceResponse.success({
@@ -33,7 +34,7 @@ export class VisitController {
       });
     }
   };
-  
+
   getStatusSummary = async (req: Request, res: Response) => {
     try {
       const payload = req.query as IDateFilter;
