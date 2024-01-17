@@ -14,6 +14,7 @@ import {
   RoleRouter,
   VisitRouter,
   VisitorRouter,
+  PersonRouter,
 } from './modules';
 
 class AppServer extends ConfigServer {
@@ -50,6 +51,7 @@ class AppServer extends ConfigServer {
       new RoleRouter().router,
       new VisitRouter().router,
       new VisitorRouter().router,
+      new PersonRouter().router,
     ];
   }
 
