@@ -19,6 +19,9 @@ export class ResidencyEntity extends BaseEntity {
   @Column('boolean', { name: 'es_principal', default: false })
   isMain!: boolean;
 
+  @Column('boolean', { name: 'estado', default: true })
+  status!: boolean;
+
   @Column('integer', { name: 'id_persona' })
   personId!: number;
 
