@@ -96,6 +96,7 @@ export class UserService {
       roleId:user.roleId,
       names: user.person.names,
       surnames: user.person.surnames,
+      personId:user.person.id,
       email: user.person.email,
       phone: user.person.phone,
       role:user.role.name,
