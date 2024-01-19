@@ -100,12 +100,12 @@ export class UserService {
       email: user.person.email,
       phone: user.person.phone,
       role:user.role.name,
-      residences:user.person.residences.map(residency=>({
-        id:residency.id,
-        block:residency.block,
-        town:residency.town,
-        urbanization: residency.urbanization,
-        isMain: residency.isMain,
+      residences:user.person.residences.filter(residence=>residence.status).map(residence=>({
+        id:residence.id,
+        block:residence.block,
+        town:residence.town,
+        urbanization: residence.urbanization,
+        isMain: residence.isMain,
       }))
     };
   }

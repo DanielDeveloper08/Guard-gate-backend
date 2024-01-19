@@ -30,10 +30,15 @@ export class ResidencyRepository {
 
     if (search.trim()) {
       query.where(
-        `residency.manzana ILIKE :search OR
+        `(residency.manzana ILIKE :search OR
         residency.villa ILIKE :search OR
-        residency.urbanizacion ILIKE :search`,
-        { search: `%${search}%` }
+        residency.urbanizacion ILIKE :search) AND residency.estado= :status`,
+        { search: `%${search}%`, status:true }
+      );
+    }else{
+      query.where(
+        `residency.estado= :status`,
+        { status:true }
       );
     }
 
@@ -64,7 +69,7 @@ export class ResidencyRepository {
       .from(ResidencyEntity, 'residency')
       .leftJoin(PersonEntity, 'person', 'residency.id_persona = person.id')
       .leftJoin(UserEntity, 'user', 'person.id = user.id_persona')
-      .where('user.id = :userId', { userId });
+      .where('user.id = :userId AND residency.estado= :status', { userId, status:true});
 
     return query.getRawMany<ResidencyEntity>();
   }
@@ -101,7 +106,7 @@ export class ResidencyRepository {
   }
 
   async remove(cnx: EntityManager, id: number) {
-    const remove = await cnx.delete(ResidencyEntity, { id });
+    const remove = await cnx.update(ResidencyEntity, { id }, { status: false });
     return remove.affected;
   }
 
