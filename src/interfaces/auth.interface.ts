@@ -14,6 +14,7 @@ export interface RegisterPayloadI extends LoginPayloadI {
 export interface UpdatePayloadI extends Omit<RegisterPayloadI, 'password' > {
   id: number;
   personId:number;
+  status:boolean;
 }
 
 export interface ValidateLoginI {
