@@ -189,7 +189,8 @@ export class AuthService extends Environments {
       surnames,
       email,
       phone,
-      roleId
+      roleId,
+      status
     } = payload;
 
     const userCurrentData = await this._repo.getUserById(cnx,id);
@@ -225,6 +226,7 @@ export class AuthService extends Environments {
       user: username,
       personId: id,
       roleId: roleId,
+      status:status
     } as UserEntity;
 
     const userUpdated = await this._repo.update(cnx, id, userPayload);
