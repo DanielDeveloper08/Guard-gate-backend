@@ -73,6 +73,22 @@ export class UserController {
     }
   };
 
+  deleteUser = async (req: Request, res: Response) => {
+    try {
+      const payload = Number(req.params.id);
+      const data = await this._userSrv.deleteById(this._cnx, payload);
+      return ServiceResponse.success({
+        res,
+        data,
+      });
+    } catch (error) {
+      return ServiceResponse.fail({
+        res,
+        error,
+      });
+    }
+  };
+
   setMainResidency = async (req: Request, res: Response) => {
     try {
       const residencyId = Number(req.query.residencyId);

@@ -3,7 +3,7 @@ import { UserEntity } from '../../database';
 import { UserRepository } from './repository';
 import { ResidencyRepository } from '../residency/repository';
 import { ServiceException } from '../../shared/service-exception';
-import { ERR_401, NO_EXIST_RECORD, RECORD_EDIT, RECORD_EDIT_FAIL } from '../../shared/messages';
+import { ERR_401, NO_EXIST_RECORD, RECORD_DELETE, RECORD_DELETE_FAIL, RECORD_EDIT, RECORD_EDIT_FAIL } from '../../shared/messages';
 
 export class UserService {
 
@@ -108,6 +108,25 @@ export class UserService {
         isMain: residence.isMain,
       }))
     };
+  }
+
+  async deleteById(cnx: EntityManager , id:number) {
+    if (!global.user) {
+      throw new ServiceException(ERR_401);
+    }
+    const user = await this._repo.getUserById(cnx,id);
+
+    if(!user){
+      throw new ServiceException(NO_EXIST_RECORD('usuario')); 
+    }
+
+    const result = await this._repo.delete(cnx,id);
+
+    if (!result) {
+      throw new ServiceException(RECORD_DELETE_FAIL('Usuario'));
+    }
+    
+    return RECORD_DELETE('Usuario');
   }
 
   async getUsers(cnx: EntityManager) {
