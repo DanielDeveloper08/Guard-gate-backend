@@ -100,6 +100,7 @@ export class UserService {
       email: user.person.email,
       phone: user.person.phone,
       role:user.role.name,
+      status:user.status,
       residences:user.person.residences.filter(residence=>residence.status).map(residence=>({
         id:residence.id,
         block:residence.block,
