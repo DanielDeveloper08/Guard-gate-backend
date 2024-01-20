@@ -58,5 +58,14 @@ export class UserRouter extends BaseRouter<UserController, UserValidations> {
       ],
       this.controller.getUser
     );
+
+    this.router.delete(
+      '/users/:id',
+      [
+        GlobalMiddleware.validateJwtToken,
+        this.validation!.getUserById()
+      ],
+      this.controller.deleteUser
+    );
   }
 }

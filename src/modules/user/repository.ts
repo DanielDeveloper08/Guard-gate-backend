@@ -60,7 +60,7 @@ export class UserRepository {
         'residency.es_principal as "isMain"',
       ])
       .from(ResidencyEntity, 'residency')
-      .where('residency.id_persona = person.id')
+      .where('residency.id_persona = person.id AND residency.estado = true ')
       .andWhere(
         new Brackets(qb => {
           if (showMain) {
@@ -175,6 +175,12 @@ export class UserRepository {
 
   async update(cnx: EntityManager, id: number, payload: UserEntity) {
     const update = await cnx.update(UserEntity, { id }, payload);
+
+    return update.affected;
+  }
+
+  async delete(cnx: EntityManager, id: number) {
+    const update = await cnx.update(UserEntity, { id }, {status:false});
 
     return update.affected;
   }
