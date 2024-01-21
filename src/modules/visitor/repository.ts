@@ -64,9 +64,9 @@ export class VisitorRepository {
     return response;
   }
 
-  getByDocNumber(cnx: EntityManager, docNumber: string) {
+  getByDocNumber(cnx: EntityManager, docNumber: string, residencyId: number) {
     return cnx.findOne(VisitorEntity, {
-      where: { docNumber, status: true },
+      where: { docNumber, residencyId, status: true },
     });
   }
 
