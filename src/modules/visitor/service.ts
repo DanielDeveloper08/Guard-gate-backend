@@ -68,13 +68,20 @@ export class VisitorService {
       const { names, surnames, docNumber, phone } = payload;
 
       const userId = global.user.id;
-      const mainResidency = await this._repoUser.getMainResidency(cnxTran, userId);
+      const mainResidency = await this._repoUser.getMainResidency(
+        cnxTran,
+        userId
+      );
 
       if (!mainResidency) {
         throw new ServiceException(NO_EXIST_RECORD('residencia principal'));
       }
 
-      const existsVisitor = await this._repo.getByDocNumber(cnxTran, docNumber);
+      const existsVisitor = await this._repo.getByDocNumber(
+        cnxTran,
+        docNumber,
+        mainResidency.id
+      );
 
       if (existsVisitor) {
         throw new ServiceException(EXISTS_RECORD('visitante'));
