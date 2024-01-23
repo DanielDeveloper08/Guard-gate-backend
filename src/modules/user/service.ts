@@ -50,7 +50,7 @@ export class UserService {
     if (!global.user) {
       throw new ServiceException(ERR_401);
     }
-    
+
     return (await this._repo.getAllUsers(cnx)).map(user=>({
       id:user.id,
       username:user.user,
@@ -67,7 +67,7 @@ export class UserService {
     if (!global.user) {
       throw new ServiceException(ERR_401);
     }
-    
+
     return (await this._repo.getUsersByRoleId(cnx, roleId)).map(user=>({
       id:user.id,
       username:user.user,
@@ -87,9 +87,9 @@ export class UserService {
     const user = await this._repo.getUserById(cnx,id);
 
     if(!user){
-      throw new ServiceException(NO_EXIST_RECORD('usuario')); 
+      throw new ServiceException(NO_EXIST_RECORD('usuario'));
     }
-    
+
     return {
       id:user.id,
       username:user.user,
@@ -113,7 +113,7 @@ export class UserService {
     if (!global.user) {
       throw new ServiceException(ERR_401);
     }
-    
+
     return (await this._repo.getAllUsers(cnx)).map(user=>({
       id:user.id,
       username:user.user,
@@ -128,14 +128,15 @@ export class UserService {
 
   async setMainResidency(
     cnx: EntityManager,
-    residencyId: number
+    residencyId: number,
+    userId?: string,
   ) {
     if (!global.user) {
       throw new ServiceException(ERR_401);
     }
 
-    const userId = global.user.id;
-    const user = await this._repo.getById(cnx, userId);
+    const currentUserId = global.user.id;
+    const user = await this._repo.getById(cnx, Number(userId ?? currentUserId));
     const residency = await this._repoResidency.getById(cnx, residencyId);
 
     if (!user) {
@@ -146,9 +147,11 @@ export class UserService {
       throw new ServiceException(NO_EXIST_RECORD('residencia'));
     }
 
-    const residences = await this._repoResidency.getByUserId(cnx, userId);
+    const residences = await this._repoResidency.getByUserId(cnx, user.id);
 
-    if (!residences.length) return null;
+    if (!residences.length) {
+      throw new ServiceException(NO_EXIST_RECORD('residencias'));
+    };
 
     await this._repoResidency.disableMain(cnx);
 

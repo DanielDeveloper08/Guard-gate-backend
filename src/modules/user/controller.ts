@@ -76,7 +76,8 @@ export class UserController {
   setMainResidency = async (req: Request, res: Response) => {
     try {
       const residencyId = Number(req.query.residencyId);
-      const data = await this._userSrv.setMainResidency(this._cnx, residencyId);
+      const userId = req.query.userId as string;
+      const data = await this._userSrv.setMainResidency(this._cnx, residencyId, userId);
 
       return ServiceResponse.success({
         res,

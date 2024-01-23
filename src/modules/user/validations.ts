@@ -11,6 +11,7 @@ export class UserValidations {
     const setMainResidencySchema: schema = {
       query: Joi.object({
         residencyId: this._validations.validNumber('residencyId'),
+        userId: this._validations.validNumberNoRequired('userId'),
       }),
     };
 
