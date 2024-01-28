@@ -1,15 +1,11 @@
 import { EntityManager } from 'typeorm';
-import { RoleEntity, RoleOperationEntity } from '../../database';
+import { OperationEntity } from '../../database';
 import { RoleRepository } from './repository';
 import { OperationRepository } from '../operation/repository';
 import { PaginationI } from '../../interfaces/global.interface';
 import { UpdateRoleDTO } from '../../interfaces/role.interface';
 import { ServiceException } from '../../shared/service-exception';
-import {
-  NO_EXIST_RECORD,
-  RECORD_EDIT,
-  RECORD_EDIT_FAIL,
-} from '../../shared/messages';
+import { NO_EXIST_RECORD, RECORD_EDIT } from '../../shared/messages';
 import { RoleOperationRepository } from '../role-operation/repository';
 import { RoleTypeEnum } from '../../enums/role.enum';
 
@@ -34,7 +30,7 @@ export class RoleService {
       name: datum.name,
       route: datum.route,
       moduleId: datum.moduleId,
-      selected: false,
+      status: datum.status,
     }));
   }
 
@@ -56,69 +52,52 @@ export class RoleService {
   }
 
   async update(cnx: EntityManager, id: number, payload: UpdateRoleDTO) {
-    const { name, operationsIds } = payload;
+    return cnx.transaction(async (cnxTran) => {
+      const { operationsIds } = payload;
 
-    const role = await this._repo.getById(cnx, id);
+      const role = await this._repo.getById(cnxTran, id);
 
-    if (!role) {
-      throw new ServiceException(NO_EXIST_RECORD('el role'));
-    }
-
-    const roleData = {
-      name,
-    } as RoleEntity;
-
-    const roleUpdated = await this._repo.update(cnx, id, roleData);
-
-    if (!roleUpdated) {
-      throw new ServiceException(RECORD_EDIT_FAIL('el role'));
-    }
-
-    if (!operationsIds.length) {
-      await this._repoRoleOp.removeOpByRoleId(cnx, id);
-
-      return RECORD_EDIT('Rol');
-    }
-
-    for (const opId of operationsIds) {
-      const operation = await this._repoOperation.getById(cnx, opId);
-
-      if (!operation) {
-        throw new ServiceException(
-          NO_EXIST_RECORD(`la operación con ID: ${opId}`)
-        );
+      if (!role) {
+        throw new ServiceException(NO_EXIST_RECORD('el rol'));
       }
 
-      const existsOp = await this._repoRoleOp.getOperation(cnx, id, opId);
+      if (!operationsIds.length) {
+        const allOp = await this._repoRoleOp.getAllOpByRoleId(cnxTran, id);
+        const idxs = allOp.map(op => op.id);
 
-      if (existsOp) continue;
+        await this._repoOperation.resetOperations(cnxTran, idxs);
 
-      const opData = {
-        roleId: id,
-        operationId: opId,
-      } as RoleOperationEntity;
+        return RECORD_EDIT('Rol');
+      }
 
-      await this._repoRoleOp.addOperation(cnx, opData);
-    }
+      for (const opId of operationsIds) {
+        const operation = await this._repoOperation.getById(cnxTran, opId);
 
-    const anothersOp = await this._repoRoleOp.getAnotherOperations(
-      cnx,
-      id,
-      operationsIds
-    );
+        if (!operation) {
+          throw new ServiceException(
+            NO_EXIST_RECORD(`la operación con ID: ${opId}`)
+          );
+        }
 
-    if (!anothersOp.length) return RECORD_EDIT('Rol');
+        const existsOp = await this._repoRoleOp.getValidOperation(
+          cnxTran,
+          id,
+          opId
+        );
 
-    const operationsUpdated = await this._repoRoleOp.resetOperation(
-      cnx,
-      id,
-      operationsIds
-    );
+        if (existsOp) continue;
 
-    if (!operationsUpdated) {
-      throw new ServiceException(RECORD_EDIT_FAIL('las operaciones del rol'));
-    }
+        const updateData = {
+          status: true,
+          updatedAt: new Date(),
+        } as OperationEntity;
 
-    return RECORD_EDIT('Rol');
+        await this._repoOperation.update(cnxTran, opId, updateData);
+      }
+
+      await this._repoOperation.disableOperations(cnxTran, operationsIds);
+
+      return RECORD_EDIT('Rol');
+    });
   }
 }

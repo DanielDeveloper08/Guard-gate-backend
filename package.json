@@ -1,7 +1,7 @@
 {
   "name": "guard_gate_back",
   "version": "1.0.0",
-  "author": "José Domínguez Pérez <josemidev24@gmail.com>",
+  "author": "Guard Gate",
   "license": "MIT",
   "scripts": {
     "build": "tsc",

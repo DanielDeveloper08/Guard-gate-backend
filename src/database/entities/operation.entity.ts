@@ -21,6 +21,9 @@ export class OperationEntity extends BaseEntity {
   @Column('varchar', { name: 'ruta', nullable: true })
   route?: string;
 
+  @Column('boolean', { name: 'estado', default: true })
+  status!: boolean;
+
   @Column('integer', { name: 'id_modulo' })
   moduleId!: number;
 
