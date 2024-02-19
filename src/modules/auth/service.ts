@@ -1,13 +1,18 @@
-import { EntityManager } from 'typeorm';
-import { PersonEntity, RoleEntity, TokenOtpEntity, UserEntity } from '../../database';
-import { UserRepository } from '../user/repository';
+import { EntityManager } from "typeorm";
+import {
+  PersonEntity,
+  RoleEntity,
+  TokenOtpEntity,
+  UserEntity,
+} from "../../database";
+import { UserRepository } from "../user/repository";
 import {
   JwtHelper,
   EncryptorHelper,
   RandomHelper,
   DateFormatHelper,
   EmailHelper,
-} from '../../helpers';
+} from "../../helpers";
 import {
   LoginPayloadI,
   LoginResponseI,
@@ -17,7 +22,7 @@ import {
   UpdatePayloadI,
   UserTokenPayloadI,
   ValidateLoginI,
-} from '../../interfaces/auth.interface';
+} from "../../interfaces/auth.interface";
 import {
   INVALID_OTP,
   LOGIN_FAIL,
@@ -33,18 +38,17 @@ import {
   USERNAME_REGISTERED,
   USER_EMAIL_REGISTERED,
   USER_REGISTERED,
-} from '../../shared/messages';
-import { PersonRespository } from '../person/repository';
-import { RoleRepository } from '../role/repository';
-import { TokenOtpRepository } from '../token-otp/repository';
-import { Environments } from '../../config/environments';
-import { AuthTypeEnum } from '../../enums/auth.enum';
-import { UserI } from '../../interfaces/user.interface';
-import { RoleTypeEnum } from '../../enums/role.enum';
-import { ServiceException } from '../../shared/service-exception';
+} from "../../shared/messages";
+import { PersonRespository } from "../person/repository";
+import { RoleRepository } from "../role/repository";
+import { TokenOtpRepository } from "../token-otp/repository";
+import { Environments } from "../../config/environments";
+import { AuthTypeEnum } from "../../enums/auth.enum";
+import { UserI } from "../../interfaces/user.interface";
+import { RoleTypeEnum } from "../../enums/role.enum";
+import { ServiceException } from "../../shared/service-exception";
 
 export class AuthService extends Environments {
-
   constructor(
     private readonly _repo = new UserRepository(),
     private readonly _repoPerson = new PersonRespository(),
@@ -59,7 +63,10 @@ export class AuthService extends Environments {
     super();
   }
 
-  async login(cnx: EntityManager, payload: LoginPayloadI): Promise<LoginResponseI> {
+  async login(
+    cnx: EntityManager,
+    payload: LoginPayloadI
+  ): Promise<LoginResponseI> {
     const { username, password } = payload;
 
     const user = await this.getValidUser(cnx, username, true);
@@ -113,15 +120,8 @@ export class AuthService extends Environments {
   }
 
   async register(cnx: EntityManager, payload: RegisterPayloadI) {
-    const {
-      username,
-      password,
-      names,
-      surnames,
-      email,
-      phone,
-      roleId
-    } = payload;
+    const { username, password, names, surnames, email, phone, roleId } =
+      payload;
 
     const existsUser = await this._repo.getByUsername(cnx, username);
     const existsEmail = await this._repoPerson.getByEmail(cnx, email);
@@ -140,7 +140,9 @@ export class AuthService extends Environments {
     const personCreated = await this._repoPerson.create(cnx, personPayload);
 
     if (!personCreated) {
-      throw new ServiceException(RECORD_CREATED_FAIL(`persona: ${names} ${surnames}`));
+      throw new ServiceException(
+        RECORD_CREATED_FAIL(`persona: ${names} ${surnames}`)
+      );
     }
 
     const exitsRole = await this._repoRole.getByRoleName(
@@ -182,18 +184,10 @@ export class AuthService extends Environments {
   }
 
   async updateUser(cnx: EntityManager, payload: UpdatePayloadI) {
-    const {
-      id,
-      username,
-      names,
-      surnames,
-      email,
-      phone,
-      roleId,
-      status
-    } = payload;
+    const { id, username, names, surnames, email, phone, roleId, status } =
+      payload;
 
-    const userCurrentData = await this._repo.getUserById(cnx,id);
+    const userCurrentData = await this._repo.getUserById(cnx, id);
     if (!userCurrentData) {
       throw new ServiceException(UNREGISTERED_USER);
     }
@@ -201,11 +195,11 @@ export class AuthService extends Environments {
     const existsUser = await this._repo.getByUsername(cnx, username);
     const existsEmail = await this._repoPerson.getByEmail(cnx, email);
 
-    if (existsUser && userCurrentData.user.trim()!=username.trim()) {
+    if (existsUser && userCurrentData.user.trim() != username.trim()) {
       throw new ServiceException(USERNAME_REGISTERED);
     }
 
-    if (existsEmail && userCurrentData.person.email.trim()!=email.trim()) {
+    if (existsEmail && userCurrentData.person.email.trim() != email.trim()) {
       throw new ServiceException(USER_EMAIL_REGISTERED);
     }
 
@@ -216,17 +210,23 @@ export class AuthService extends Environments {
       phone: phone ?? null,
     } as PersonEntity;
 
-    const personUpdated = await this._repoPerson.update(cnx, userCurrentData.personId, personPayload);
+    const personUpdated = await this._repoPerson.update(
+      cnx,
+      userCurrentData.personId,
+      personPayload
+    );
 
-    if (personUpdated==0) {
-      throw new ServiceException(RECORD_UPDATED_FAIL(`persona: ${names} ${surnames}`));
+    if (personUpdated == 0) {
+      throw new ServiceException(
+        RECORD_UPDATED_FAIL(`persona: ${names} ${surnames}`)
+      );
     }
 
     const userPayload = {
       user: username,
-      personId: id,
+      personId: userCurrentData.personId,
       roleId: roleId,
-      status:status
+      status: status,
     } as UserEntity;
 
     const userUpdated = await this._repo.update(cnx, id, userPayload);
@@ -235,22 +235,22 @@ export class AuthService extends Environments {
       throw new ServiceException(RECORD_UPDATED_FAIL(`usuario: ${username}`));
     }
 
-    const user = await this._repo.getUserById(cnx,id);
+    const user = await this._repo.getUserById(cnx, id);
 
     if (!user) {
       throw new ServiceException(RECORD_UPDATED_FAIL(`usuario: ${username}`));
     }
 
     return {
-      id:user.id,
-      username:user.user,
-      roleId:user.roleId,
+      id: user.id,
+      username: user.user,
+      roleId: user.roleId,
       personId: user.person.id,
       names: user.person.names,
       surnames: user.person.surnames,
       email: user.person.email,
       phone: user.person.phone,
-      role:user.role.name
+      role: user.role.name,
     };
   }
 
@@ -288,7 +288,7 @@ export class AuthService extends Environments {
     const userUpdated = await this._repo.update(cnx, user.id, userPayload);
 
     if (!userUpdated) {
-      throw new ServiceException(RECORD_EDIT_FAIL('la contraseña'));
+      throw new ServiceException(RECORD_EDIT_FAIL("la contraseña"));
     }
 
     return RESET_PASSWORD;
@@ -327,7 +327,7 @@ export class AuthService extends Environments {
   }
 
   private async createOtpCode(cnx: EntityManager, userId: number) {
-    const code = this._random.generateCharacters('num', 6);
+    const code = this._random.generateCharacters("num", 6);
 
     const otpPayload = {
       code,
@@ -345,7 +345,7 @@ export class AuthService extends Environments {
   }
 
   private validateDurationOTP(creationDate: Date): boolean {
-    const durationOtp = this.getNumberEnv('DURATION_OTP') ?? 3;
+    const durationOtp = this.getNumberEnv("DURATION_OTP") ?? 3;
     const diff = this._dateFormat.getDiffInMinutes(creationDate);
 
     return diff > durationOtp;
