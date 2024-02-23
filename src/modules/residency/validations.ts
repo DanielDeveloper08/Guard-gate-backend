@@ -34,7 +34,6 @@ export class ResidencyValidations {
       body: Joi.object({
         block: this._validations.validString('block', 255),
         town: this._validations.validString('town', 255),
-        urbanization: this._validations.validString('urbanization', 255),
         personId: this._validations.validNumber('personId'),
       }),
     };
@@ -51,7 +50,6 @@ export class ResidencyValidations {
             id:Joi.number().required(),
             block: this._validations.validString('block', 255),
             town: this._validations.validString('town', 255),
-            urbanization: this._validations.validString('urbanization', 255),
             isMain:Joi.bool().required(),
           }),
         )
@@ -69,7 +67,6 @@ export class ResidencyValidations {
       body: Joi.object({
         block: this._validations.validString('block', 255),
         town: this._validations.validString('town', 255),
-        urbanization: this._validations.validString('urbanization', 255),
         personId: this._validations.validNumber('personId'),
       }),
     };

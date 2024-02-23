@@ -57,8 +57,7 @@ export const RECORD_DELETE_FAIL = (detail: string) =>
 
 export const VALID_LIST_VISITORS = 'Debe seleccionar mínimo un visitante';
 
-export const REASON_VISIT = (residencyName: string) =>
-  `Visita a ${residencyName.toUpperCase()}`;
+export const REASON_VISIT = 'Visita a residencia';
 
 export const VISITOR_HAS_ENTERED = 'Visitante ya registra un ingreso previo';
 

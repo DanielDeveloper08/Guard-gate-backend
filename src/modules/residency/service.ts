@@ -39,7 +39,7 @@ export class ResidencyService {
 
   async create(cnx: EntityManager, payload: ResidencyDTO) {
     return cnx.transaction(async (cnxTran) => {
-      const { block, town, urbanization, personId } = payload;
+      const { block, town, personId } = payload;
 
       const person = await this._repoPerson.getById(cnxTran, personId);
 
@@ -52,7 +52,6 @@ export class ResidencyService {
       const residencyData = {
         block,
         town,
-        urbanization,
         personId,
         isMain: !existsResidency,
       } as ResidencyEntity;
@@ -80,12 +79,11 @@ export class ResidencyService {
       }
 
       for(const residency of residences){
-        const {id, block, town, urbanization, isMain} = residency;
+        const { id, block, town, isMain } = residency;
 
         const residencyData = {
           block,
           town,
-          urbanization,
           personId,
           isMain,
         } as ResidencyEntity;
@@ -117,7 +115,7 @@ export class ResidencyService {
 
   async update(cnx: EntityManager, id: number, payload: ResidencyDTO) {
     return cnx.transaction(async (cnxTran) => {
-      const { block, town, urbanization, personId } = payload;
+      const { block, town, personId } = payload;
 
       const residency = await this._repo.getById(cnxTran, id);
       const person = await this._repoPerson.getById(cnxTran, personId);
@@ -133,7 +131,6 @@ export class ResidencyService {
       const residencyData = {
         block,
         town,
-        urbanization,
         personId,
       } as ResidencyEntity;
 

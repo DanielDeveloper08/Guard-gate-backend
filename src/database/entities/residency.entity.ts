@@ -13,9 +13,6 @@ export class ResidencyEntity extends BaseEntity {
   @Column('varchar', { name: 'villa', length: 255 })
   town!: string;
 
-  @Column('varchar', { name: 'urbanizacion', length: 255 })
-  urbanization!: string;
-
   @Column('boolean', { name: 'es_principal', default: false })
   isMain!: boolean;
 

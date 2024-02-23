@@ -56,7 +56,6 @@ export class UserRepository {
         'residency.id_persona as "personId"',
         'residency.manzana as block',
         'residency.villa as town',
-        'residency.urbanizacion as urbanization',
         'residency.es_principal as "isMain"',
       ])
       .from(ResidencyEntity, 'residency')
@@ -133,7 +132,6 @@ export class UserRepository {
       .createQueryBuilder()
       .select([
         'residency.id as id',
-        'residency.urbanizacion as urbanization',
       ])
       .from(UserEntity, 'user')
       .leftJoin(PersonEntity, 'person', 'user.id_persona = person.id')

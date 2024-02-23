@@ -105,7 +105,6 @@ export class UserService {
         id:residence.id,
         block:residence.block,
         town:residence.town,
-        urbanization: residence.urbanization,
         isMain: residence.isMain,
       }))
     };
@@ -118,7 +117,7 @@ export class UserService {
     const user = await this._repo.getUserById(cnx,id);
 
     if(!user){
-      throw new ServiceException(NO_EXIST_RECORD('usuario')); 
+      throw new ServiceException(NO_EXIST_RECORD('usuario'));
     }
 
     const result = await this._repo.delete(cnx,id);
@@ -126,7 +125,7 @@ export class UserService {
     if (!result) {
       throw new ServiceException(RECORD_DELETE_FAIL('Usuario'));
     }
-    
+
     return RECORD_DELETE('Usuario');
   }
 

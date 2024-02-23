@@ -11,6 +11,5 @@ export interface ResidencyByPersonI {
   id: number;
   block: string;
   town: string;
-  urbanization: string;
   isMain: boolean;
 }
