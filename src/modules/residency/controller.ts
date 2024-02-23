@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../../database';
 import { ServiceResponse } from '../../helpers';
 import { ResidencyService } from './service';
-import { ResidencyDTO, ResidencyMassiveDTO, ResidencyMassiveRequest } from '../../interfaces/residency.interface';
 import { HttpCodes } from '../../enums/http-codes.enum';
 import { PaginationI } from '../../interfaces/global.interface';
+import { ResidencyDTO, ResidencyMassiveRequest } from '../../interfaces/residency.interface';
 
 export class ResidencyController {
 

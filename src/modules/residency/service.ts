@@ -70,7 +70,7 @@ export class ResidencyService {
   async upsertMany(cnx: EntityManager, payload: ResidencyMassiveRequest) {
     return cnx.transaction(async (cnxTran) => {
       const {personId,residences} = payload;
-      
+
       const person = await this._repoPerson.getById(cnxTran, personId);
 
       var residencesUpserted:ResidencyMassiveDTO[]=[];
@@ -81,7 +81,7 @@ export class ResidencyService {
 
       for(const residency of residences){
         const {id, block, town, urbanization, isMain} = residency;
-        const existsResidency = await this._repo.getByPersonId(cnxTran, personId);
+
         const residencyData = {
           block,
           town,
@@ -109,7 +109,7 @@ export class ResidencyService {
 
         residencesUpserted.push(residencyUpserted);
       };
-      
+
 
       return residencesUpserted;
     });
