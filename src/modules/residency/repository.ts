@@ -87,6 +87,13 @@ export class ResidencyRepository {
     });
   }
 
+  getByBlock(cnx: EntityManager, block: string) {
+    return cnx.find(
+      ResidencyEntity,
+      { where: { block } },
+    );
+  }
+
   getByPersonId(cnx: EntityManager, personId: number) {
     return cnx.findOne(ResidencyEntity, {
       where: { personId },

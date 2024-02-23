@@ -5,6 +5,7 @@ import { ResidencyDTO, ResidencyMassiveDTO, ResidencyMassiveRequest } from '../.
 import { ResidencyEntity } from '../../database';
 import { ServiceException } from '../../shared/service-exception';
 import {
+  EXISTS_RECORD,
   NO_EXIST_RECORD,
   RECORD_CREATED_FAIL,
   RECORD_DELETE,
@@ -48,6 +49,15 @@ export class ResidencyService {
       }
 
       const existsResidency = await this._repo.getByPersonId(cnxTran, personId);
+      const residencesByBlock = await this._repo.getByBlock(cnxTran, block) ?? [];
+
+      const existsTown = residencesByBlock.find(r => r.town === town);
+
+      if (existsTown) {
+        throw new ServiceException(
+          EXISTS_RECORD(`villa dentro de la manzana: ${block}`)
+        );
+      }
 
       const residencyData = {
         block,
