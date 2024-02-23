@@ -68,9 +68,17 @@ export class ResidencyRepository {
       .from(ResidencyEntity, 'residency')
       .leftJoin(PersonEntity, 'person', 'residency.id_persona = person.id')
       .leftJoin(UserEntity, 'user', 'person.id = user.id_persona')
-      .where('user.id = :userId AND residency.estado= :status', { userId, status:true});
+      .andWhere('user.id = :userId AND residency.estado = true', {
+        userId,
+      });
 
     return query.getRawMany<ResidencyEntity>();
+  }
+
+  getValidResidency(cnx: EntityManager, id: number, personId: number) {
+    return cnx.findOne(ResidencyEntity, {
+      where: { id, personId },
+    });
   }
 
   getById(cnx: EntityManager, id: number) {
@@ -109,7 +117,7 @@ export class ResidencyRepository {
     return remove.affected;
   }
 
-  async disableMain(cnx: EntityManager) {
+  async disableMain(cnx: EntityManager, personId: number) {
     const update = await cnx
       .createQueryBuilder()
       .update(ResidencyEntity)
@@ -117,7 +125,8 @@ export class ResidencyRepository {
         isMain: false,
         updatedAt: new Date(),
       })
-      .where('es_principal = true')
+      .where('id_persona = :personId', { personId })
+      .andWhere('es_principal = true')
       .execute();
 
     return update.affected;
