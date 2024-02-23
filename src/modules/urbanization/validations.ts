@@ -7,6 +7,16 @@ export class UrbanizationValidations {
     private readonly _validations = new GlobalValidations()
   ) {}
 
+  getOne = () => {
+    const getOneSchema: schema = {
+      params: Joi.object({
+        id: this._validations.validNumber('id'),
+      }),
+    };
+
+    return validate(getOneSchema);
+  };
+
   create = () => {
     const createSchema: schema = {
       body: Joi.object({

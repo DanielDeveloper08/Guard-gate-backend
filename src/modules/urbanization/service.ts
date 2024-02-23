@@ -17,8 +17,8 @@ export class UrbanizationService {
     private readonly _repo = new UrbanizationRepository(),
   ) {}
 
-  getOne(cnx: EntityManager) {
-    return this._repo.getOne(cnx);
+  getOne(cnx: EntityManager, id: number) {
+    return this._repo.getById(cnx, id);
   }
 
   create(cnx: EntityManager, payload: UrbanizationDTO) {

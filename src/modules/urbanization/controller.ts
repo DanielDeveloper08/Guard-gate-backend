@@ -14,7 +14,8 @@ export class UrbanizationController {
 
   getOne = async (req: Request, res: Response) => {
     try {
-      const data = await this._urbanizationSrv.getOne(this._cnx);
+      const { id } = req.params;
+      const data = await this._urbanizationSrv.getOne(this._cnx, Number(id));
 
       return ServiceResponse.success({
         res,

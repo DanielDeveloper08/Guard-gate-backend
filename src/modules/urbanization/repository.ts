@@ -3,12 +3,6 @@ import { UrbanizationEntity } from '../../database';
 
 export class UrbanizationRepository {
 
-  getOne(cnx: EntityManager) {
-    return cnx.findOne(UrbanizationEntity, {
-      where: { id: undefined }
-    });
-  }
-
   getById(cnx: EntityManager, id: number) {
     return cnx.findOne(UrbanizationEntity, {
       where: { id },

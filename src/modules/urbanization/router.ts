@@ -13,9 +13,10 @@ export class UrbanizationRouter extends BaseRouter<
 
   initRoutes(): void {
     this.router.get(
-      '/urbanization',
+      '/urbanization/:id',
       [
         GlobalMiddleware.validateJwtToken,
+        this.validation!.getOne(),
       ],
       this.controller.getOne
     );
