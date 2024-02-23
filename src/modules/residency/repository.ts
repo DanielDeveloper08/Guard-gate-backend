@@ -19,7 +19,6 @@ export class ResidencyRepository {
         'residency.id as id',
         'residency.manzana as block',
         'residency.villa as town',
-        'residency.urbanizacion as urbanization',
         `CONCAT(person.names, ' ', person.surnames) as "residentName"`,
         'person.correo as "residentEmail"',
         'person.phone as "residentPhone"',

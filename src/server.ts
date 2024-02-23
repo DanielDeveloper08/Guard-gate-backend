@@ -15,6 +15,7 @@ import {
   VisitRouter,
   VisitorRouter,
   PersonRouter,
+  UrbanizationRouter,
 } from './modules';
 
 class AppServer extends ConfigServer {
@@ -52,6 +53,7 @@ class AppServer extends ConfigServer {
       new VisitRouter().router,
       new VisitorRouter().router,
       new PersonRouter().router,
+      new UrbanizationRouter().router,
     ];
   }
 

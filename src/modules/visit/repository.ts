@@ -144,7 +144,7 @@ export class VisitRepository {
     return cnx
       .createQueryBuilder()
       .select([
-        'DATE(visit.fecha_inicio) as date', 
+        'DATE(visit.fecha_inicio) as date',
         'COUNT(*) as count'
       ])
       .from(VisitEntity, 'visit')
@@ -197,7 +197,6 @@ export class VisitRepository {
         'visit.id_residencia as "idResidency"',
         'residency.manzana as block',
         'residency.villa as town',
-        'residency.urbanizacion as urbanization',
         'visit.tipo as type',
       ])
       .addSelect([

@@ -22,11 +22,10 @@ export interface ResidencyI {
   personId: number;
   block: string;
   town: string;
-  urbanization: string;
   isMain: boolean;
 }
 
-export type MainResidencyI = Pick<ResidencyI, 'urbanization'> & {
+export interface MainResidencyI {
   id: number;
 };
 

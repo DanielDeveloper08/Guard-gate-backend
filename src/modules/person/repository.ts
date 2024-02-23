@@ -19,7 +19,6 @@ export class PersonRespository {
         'residency.id as id',
         'residency.manzana as block',
         'residency.villa as town',
-        'residency.urbanizacion as urbanization',
         'residency.es_principal as "isMain"',
       ])
       .from(ResidencyEntity, 'residency')

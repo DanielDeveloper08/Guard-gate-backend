@@ -80,7 +80,7 @@ export class VisitService {
     if (!global.user) {
       throw new ServiceException(ERR_401);
     }
-    
+
     const data = await this._repo.getDateSummary(cnx, payload);
     return data.map((datum)=>({
       date:datum.date.toISOString().slice(0,10),
@@ -135,7 +135,7 @@ export class VisitService {
         endDate,
         validityHours,
         type,
-        reason: reason ?? REASON_VISIT(mainResidency.urbanization),
+        reason: reason ?? REASON_VISIT,
         residencyId: mainResidency.id,
       } as VisitEntity;
 

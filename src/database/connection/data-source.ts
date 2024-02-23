@@ -12,6 +12,7 @@ import {
   VisitEntity,
   VisitVisitorEntity,
   VisitorEntity,
+  UrbanizationEntity,
 } from '..';
 
 export class AppDataSource extends Environments {
@@ -43,6 +44,7 @@ export class AppDataSource extends Environments {
         RoleOperationEntity,
         RoleEntity,
         TokenOtpEntity,
+        UrbanizationEntity,
         UserEntity,
         VisitVisitorEntity,
         VisitEntity,

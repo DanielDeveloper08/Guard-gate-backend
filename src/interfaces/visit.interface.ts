@@ -12,7 +12,6 @@ export interface VisitI {
   idResidency?: number;
   block: string;
   town: string;
-  urbanization: string;
   status?: VisitStatusEnum;
   type: VisitTypeEnum;
   visitors: Array<VisitorI>;
