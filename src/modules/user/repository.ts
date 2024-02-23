@@ -45,6 +45,7 @@ export class UserRepository {
   getById(cnx: EntityManager, id: number) {
     return cnx.findOne(UserEntity, {
       where: { id },
+      relations: ['person'],
     });
   }
 

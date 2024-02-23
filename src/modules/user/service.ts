@@ -3,7 +3,14 @@ import { UserEntity } from '../../database';
 import { UserRepository } from './repository';
 import { ResidencyRepository } from '../residency/repository';
 import { ServiceException } from '../../shared/service-exception';
-import { ERR_401, NO_EXIST_RECORD, RECORD_DELETE, RECORD_DELETE_FAIL, RECORD_EDIT, RECORD_EDIT_FAIL } from '../../shared/messages';
+import {
+  ERR_401,
+  NO_EXIST_RECORD,
+  RECORD_DELETE,
+  RECORD_DELETE_FAIL,
+  RECORD_EDIT,
+   RECORD_EDIT_FAIL,
+} from '../../shared/messages';
 
 export class UserService {
 
@@ -157,15 +164,20 @@ export class UserService {
 
     const currentUserId = global.user.id;
     const user = await this._repo.getById(cnx, Number(userId ?? currentUserId));
-    const residency = await this._repoResidency.getById(cnx, residencyId);
 
     if (!user) {
       throw new ServiceException(NO_EXIST_RECORD('usuario'));
     }
 
+    const residency = await this._repoResidency.getValidResidency(
+      cnx,
+      residencyId,
+      user.person?.id
+    );
+
     if (!residency) {
       throw new ServiceException(NO_EXIST_RECORD('residencia'));
-    }
+    };
 
     const residences = await this._repoResidency.getByUserId(cnx, user.id);
 
@@ -173,7 +185,7 @@ export class UserService {
       throw new ServiceException(NO_EXIST_RECORD('residencias'));
     };
 
-    await this._repoResidency.disableMain(cnx);
+    await this._repoResidency.disableMain(cnx, user.person?.id);
 
     const residencyUpdated = await this._repoResidency.setMain(cnx, residencyId);
 
