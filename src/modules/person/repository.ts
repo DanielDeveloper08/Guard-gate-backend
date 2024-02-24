@@ -23,6 +23,7 @@ export class PersonRespository {
       ])
       .from(ResidencyEntity, 'residency')
       .where('person.id = residency.id_persona')
+      .andWhere('residency.estado = true')
       .groupBy('residency.id')
       .orderBy('residency.id', 'ASC')
       .getQuery();

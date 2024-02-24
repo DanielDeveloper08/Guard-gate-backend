@@ -91,6 +91,16 @@ export class ResidencyService {
       for(const residency of residences){
         const { id, block, town, isMain } = residency;
 
+        const residencesByBlock = await this._repo.getByBlock(cnxTran, block) ?? [];
+
+        const existsTown = residencesByBlock.find(r => r.town === town);
+
+        if (existsTown) {
+          throw new ServiceException(
+            EXISTS_RECORD(`villa dentro de la manzana: ${block}`)
+          );
+        }
+
         const residencyData = {
           block,
           town,
@@ -127,15 +137,25 @@ export class ResidencyService {
     return cnx.transaction(async (cnxTran) => {
       const { block, town, personId } = payload;
 
-      const residency = await this._repo.getById(cnxTran, id);
       const person = await this._repoPerson.getById(cnxTran, personId);
+
+      if (!person) {
+        throw new ServiceException(NO_EXIST_RECORD('persona'));
+      }
+
+      const residency = await this._repo.getValidResidency(cnxTran, id, person.id);
 
       if (!residency) {
         throw new ServiceException(NO_EXIST_RECORD('la residencia'));
       }
 
-      if (!person) {
-        throw new ServiceException(NO_EXIST_RECORD('persona'));
+      const residencesByBlock = await this._repo.getByBlock(cnxTran, block) ?? [];
+      const existsTown = residencesByBlock.find(r => r.town === town);
+
+      if (existsTown) {
+        throw new ServiceException(
+          EXISTS_RECORD(`villa dentro de la manzana: ${block}`)
+        );
       }
 
       const residencyData = {
