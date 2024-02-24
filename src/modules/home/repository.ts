@@ -79,8 +79,10 @@ export class HomeRepository {
       .where('visit.id_residencia = :mainResidencyId', {
         mainResidencyId,
       })
-      .andWhere('visit.estado = :status', {
-        status: pending ? VisitStatusEnum.PENDING : VisitStatusEnum.FULFILLED,
+      .andWhere('visit.estado IN(:...status)', {
+        status: pending
+          ? [VisitStatusEnum.PENDING, VisitStatusEnum.IN_PROGRESS]
+          : [VisitStatusEnum.FULFILLED],
       })
       .orderBy('visit.id', 'DESC')
       .limit(limitValue);
